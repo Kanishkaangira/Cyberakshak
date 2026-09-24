@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+﻿import React, { useState, useEffect, useCallback } from 'react';
 import {
   StyleSheet,
   Text,
@@ -13,6 +13,7 @@ import {
   RefreshControl,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { COLORS } from '../constants/theme';
 import { fetchCyberSecurityNews } from '../services/newsApi';
 
@@ -167,7 +168,8 @@ export default function NewsScreen({ navigation }) {
         >
           {errorMsg ? (
             <View style={styles.errorBanner}>
-              <Text style={styles.errorText}>⚠️ {errorMsg}</Text>
+              <Icon name="warning-outline" size={15} color={COLORS.orange} />
+              <Text style={styles.errorText}>{errorMsg}</Text>
             </View>
           ) : null}
 
@@ -182,7 +184,7 @@ export default function NewsScreen({ navigation }) {
 
           {articles.length === 0 && !loading && (
             <View style={styles.emptyContainer}>
-              <Text style={styles.emptyEmoji}>🛡️</Text>
+              <Icon name="shield-checkmark-outline" size={42} color={COLORS.brand} />
               <Text style={styles.emptyTitle}>No Cyber Alerts</Text>
               <Text style={styles.emptySubtitle}>
                 Pull down to refresh and fetch the latest cybersecurity intelligence.
@@ -215,7 +217,7 @@ export default function NewsScreen({ navigation }) {
                 style={styles.closeBtn}
                 onPress={() => setActiveArticle(null)}
               >
-                <Text style={styles.closeBtnText}>✕</Text>
+                <Icon name="close" size={17} color={COLORS.muted} />
               </TouchableOpacity>
             </View>
 
@@ -256,9 +258,7 @@ export default function NewsScreen({ navigation }) {
                       Linking.openURL(activeArticle.url).catch(() => {});
                     }}
                   >
-                    <Text style={styles.openWebBtnText}>
-                      🌐 Read Full Article on Source Website
-                    </Text>
+                    <View style={styles.openWebBtnContent}><Icon name="globe-outline" size={16} color="#1E293B" /><Text style={styles.openWebBtnText}>Read full article on source website</Text></View>
                   </TouchableOpacity>
                 ) : null}
 
@@ -274,9 +274,7 @@ export default function NewsScreen({ navigation }) {
                     });
                   }}
                 >
-                  <Text style={styles.askAiBtnText}>
-                    🛡️ Ask AI About This Threat
-                  </Text>
+                  <View style={styles.askAiBtnContent}><Icon name="shield-checkmark-outline" size={18} color="#FFFFFF" /><Text style={styles.askAiBtnText}>Ask AI about this threat</Text></View>
                 </TouchableOpacity>
               </ScrollView>
             )}
@@ -337,7 +335,7 @@ const styles = StyleSheet.create({
   listContainer: {
     paddingHorizontal: 18,
     paddingTop: 4,
-    paddingBottom: 36,
+    paddingBottom: 104,
   },
   centerContainer: {
     flex: 1,
@@ -352,6 +350,9 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   errorBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
     backgroundColor: '#FEF3C7',
     padding: 10,
     borderRadius: 8,
@@ -586,6 +587,12 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 13.5,
   },
+  openWebBtnContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 7,
+  },
   askAiBtn: {
     backgroundColor: '#2563EB',
     borderRadius: 10,
@@ -596,5 +603,11 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '700',
     fontSize: 14,
+  },
+  askAiBtnContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 7,
   },
 });

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+﻿import React, { useState, useEffect, useCallback } from 'react';
 import {
   StyleSheet,
   Text,
@@ -11,8 +11,12 @@ import {
   RefreshControl,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { COLORS, SIZES } from '../constants/theme';
 import { subscribeToEvents, fetchEventsOnce } from '../services/eventsService';
+
+const FALLBACK_EVENT_IMAGE =
+  'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80';
 
 export default function EventsScreen() {
   const insets = useSafeAreaInsets();
@@ -26,23 +30,41 @@ export default function EventsScreen() {
 
   // Real-time Firestore subscription to 'events' collection
   useEffect(() => {
+    let isActive = true;
     setLoading(true);
     setError(null);
 
+    fetchEventsOnce()
+      .then((eventsList) => {
+        if (isActive) setEvents(eventsList);
+      })
+      .catch((err) => {
+        console.error('Error fetching Firestore events:', err);
+        if (isActive) {
+          setError(err?.message || 'Failed to load events from Firebase');
+        }
+      })
+      .finally(() => {
+        if (isActive) setLoading(false);
+      });
+
     const unsubscribe = subscribeToEvents(
       (eventsList) => {
+        if (!isActive) return;
         setEvents(eventsList);
         setLoading(false);
         setError(null);
       },
       (err) => {
         console.error('Error fetching Firestore events:', err);
+        if (!isActive) return;
         setError(err?.message || 'Failed to load events from Firebase');
         setLoading(false);
       }
     );
 
     return () => {
+      isActive = false;
       if (typeof unsubscribe === 'function') {
         unsubscribe();
       }
@@ -161,7 +183,7 @@ export default function EventsScreen() {
         {/* Error State */}
         {!loading && error && (
           <View style={styles.errorCard}>
-            <Text style={styles.errorIcon}>⚠️</Text>
+            <Icon name="warning-outline" size={30} color={COLORS.red} />
             <Text style={styles.errorTitle}>Could not load events</Text>
             <Text style={styles.errorMsg}>{error}</Text>
             {error.includes('permissions') && (
@@ -177,7 +199,7 @@ export default function EventsScreen() {
               activeOpacity={0.8}
               onPress={onRefresh}
             >
-              <Text style={styles.retryBtnText}>🔄 Retry Connection</Text>
+              <Text style={styles.retryBtnText}>Retry connection</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -185,7 +207,7 @@ export default function EventsScreen() {
         {/* Empty State */}
         {!loading && !error && filteredEvents.length === 0 && (
           <View style={styles.stateContainer}>
-            <Text style={styles.emptyEmoji}>📅</Text>
+            <Icon name="calendar-outline" size={42} color={COLORS.brand} />
             <Text style={styles.stateTitle}>
               No events found
             </Text>
@@ -209,7 +231,10 @@ export default function EventsScreen() {
           !error &&
           filteredEvents.map((ev) => {
             const isExpanded = Boolean(expandedMap[ev.id]);
-            const hasImage = Boolean(ev.imageUrl) && !imageErrorMap[ev.id];
+            const imageStatus = imageErrorMap[ev.id] || 0;
+            const imageUrl =
+              imageStatus === 1 ? FALLBACK_EVENT_IMAGE : ev.imageUrl;
+            const hasImage = Boolean(imageUrl) && imageStatus !== 2;
 
             return (
               <View key={ev.id} style={styles.eventCard}>
@@ -217,11 +242,14 @@ export default function EventsScreen() {
                 {hasImage ? (
                   <View style={styles.imageContainer}>
                     <Image
-                      source={{ uri: ev.imageUrl }}
+                      source={{ uri: imageUrl }}
                       style={styles.eventImage}
                       resizeMode="cover"
                       onError={() =>
-                        setImageErrorMap((prev) => ({ ...prev, [ev.id]: true }))
+                        setImageErrorMap((prev) => ({
+                          ...prev,
+                          [ev.id]: imageStatus === 0 ? 1 : 2,
+                        }))
                       }
                     />
                     <View style={styles.categoryBadgeFloat}>
@@ -234,7 +262,7 @@ export default function EventsScreen() {
                     <View style={styles.categoryBadgeStatic}>
                       <Text style={styles.categoryBadgeText}>{ev.category}</Text>
                     </View>
-                    <Text style={styles.fallbackIcon}>🛡️</Text>
+                    <Icon name="shield-checkmark-outline" size={40} color={COLORS.brandLight} style={styles.fallbackIcon} />
                   </View>
                 )}
 
@@ -246,19 +274,19 @@ export default function EventsScreen() {
                   {/* Date & Time Row */}
                   <View style={styles.metaRow}>
                     <View style={styles.metaItem}>
-                      <Text style={styles.metaIcon}>📅</Text>
+                      <Icon name="calendar-outline" size={14} color={COLORS.muted} />
                       <Text style={styles.metaText}>{ev.date}</Text>
                     </View>
                     <View style={styles.metaDivider} />
                     <View style={styles.metaItem}>
-                      <Text style={styles.metaIcon}>⏰</Text>
+                      <Icon name="time-outline" size={14} color={COLORS.muted} />
                       <Text style={styles.metaText}>{ev.time}</Text>
                     </View>
                   </View>
 
                   {/* Venue / Location */}
                   <View style={styles.venueRow}>
-                    <Text style={styles.metaIcon}>📍</Text>
+                    <Icon name="location-outline" size={14} color={COLORS.muted} />
                     <Text style={styles.venueText} numberOfLines={1}>
                       {ev.venue}
                     </Text>
@@ -372,7 +400,7 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     paddingHorizontal: 20,
-    paddingBottom: 36,
+    paddingBottom: 104,
     gap: 16,
   },
   eventCard: {

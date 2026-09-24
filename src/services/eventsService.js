@@ -19,6 +19,12 @@ export function normalizeEventDoc(doc) {
         : new Date(date);
   const validDate = dateValue && !Number.isNaN(dateValue.getTime());
 
+  let normalizedImageUrl = typeof imageUrl === 'string' ? imageUrl.trim() : '';
+  normalizedImageUrl = normalizedImageUrl.replace(
+    /^https?:\/\/github\.com\/([^/]+\/[^/]+)\/blob\/([^/]+)\/(.+)$/i,
+    'https://raw.githubusercontent.com/$1/$2/$3',
+  );
+
   return {
     id: doc.id,
     title: typeof title === 'string' ? title : '',
@@ -36,7 +42,7 @@ export function normalizeEventDoc(doc) {
     time: typeof time === 'string' ? time : '',
     venue: typeof venue === 'string' ? venue : '',
     category: typeof category === 'string' ? category : '',
-    imageUrl: typeof imageUrl === 'string' ? imageUrl : '',
+    imageUrl: normalizedImageUrl,
   };
 }
 

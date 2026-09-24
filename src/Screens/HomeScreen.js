@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import {
   StyleSheet,
   Text,
@@ -10,8 +10,10 @@ import {
   StatusBar,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { COLORS, SIZES } from '../constants/theme';
 import { FRAUD_CATEGORIES, QUICK_ACTIONS } from '../constants/data';
+import { SeverityPill } from '../components/fraud/FraudUI';
 
 export default function HomeScreen({ navigation }) {
   const insets = useSafeAreaInsets();
@@ -21,7 +23,7 @@ export default function HomeScreen({ navigation }) {
       navigation.navigate('Chatbot', { initialQuery: 'Is this link safe?' });
     } else if (action === 'report_fraud') {
       Alert.alert(
-        '🚨 Report Cyber Fraud',
+        'Report Cyber Fraud',
         'If you suspect or suffered a financial fraud, report immediately to the National Cyber Crime Helpline:\n\n• Dial: 1930\n• Portal: cybercrime.gov.in\n\nReporting within 2 to 24 hours increases the chance to freeze lost funds.',
         [
           { text: 'Cancel', style: 'cancel' },
@@ -37,7 +39,7 @@ export default function HomeScreen({ navigation }) {
       );
     } else if (action === 'call_helpline') {
       Alert.alert(
-        '📞 National Cyber Helpline (1930)',
+        'National Cyber Helpline (1930)',
         '1930 is the official citizen financial cyber fraud reporting helpline managed by the Ministry of Home Affairs (I4C).\n\nWould you like to dial now?',
         [
           { text: 'Cancel', style: 'cancel' },
@@ -59,7 +61,7 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.topBar}>
           <View style={styles.brandRow}>
             <View style={styles.logoBadge}>
-              <Text style={styles.logoIcon}>🛡️</Text>
+              <Icon name="shield-checkmark" size={20} color="#FFFFFF" />
             </View>
             <Text style={styles.brandTitle}>Cyberakshak</Text>
           </View>
@@ -70,12 +72,12 @@ export default function HomeScreen({ navigation }) {
               activeOpacity={0.7}
               onPress={() =>
                 Alert.alert(
-                  '🔔 Cyber Alerts',
+                  'Cyber Alerts',
                   'You have 2 new security alerts:\n• New courier SMS phishing detected\n• National UPI advisory issued'
                 )
               }
             >
-              <Text style={styles.iconText}>🔔</Text>
+              <Icon name="notifications-outline" size={19} color={COLORS.ink} />
               <View style={styles.notificationDot} />
             </TouchableOpacity>
 
@@ -92,7 +94,7 @@ export default function HomeScreen({ navigation }) {
         {/* Greeting Section */}
         <View style={styles.greetingSection}>
           <Text style={styles.welcomeText}>Welcome back</Text>
-          <Text style={styles.userName}>Hi, Kanishka 👋</Text>
+          <Text style={styles.userName}>Hi, Kanishka</Text>
         </View>
 
         {/* Hero Card: AI Safety Assistant */}
@@ -106,7 +108,7 @@ export default function HomeScreen({ navigation }) {
               <Text style={styles.heroTagText}>AI safety assistant</Text>
             </View>
             <View style={styles.sparkleIcon}>
-              <Text style={styles.sparkleEmoji}>✨</Text>
+              <Icon name="sparkles-outline" size={19} color="#FFFFFF" />
             </View>
           </View>
 
@@ -118,7 +120,7 @@ export default function HomeScreen({ navigation }) {
           <View style={styles.fakeInput}>
             <Text style={styles.fakeInputPlaceholder}>Type or paste a message</Text>
             <View style={styles.fakeInputArrow}>
-              <Text style={styles.arrowText}>→</Text>
+              <Icon name="arrow-forward" size={16} color="#FFFFFF" />
             </View>
           </View>
         </TouchableOpacity>
@@ -133,7 +135,7 @@ export default function HomeScreen({ navigation }) {
               onPress={() => handleQuickAction(item.action)}
             >
               <View style={[styles.actionIconContainer, { backgroundColor: item.bg }]}>
-                <Text style={styles.actionEmoji}>{item.icon}</Text>
+                <Icon name={item.icon} size={21} color={COLORS.ink} />
               </View>
               <Text style={styles.actionLabel}>{item.label}</Text>
             </TouchableOpacity>
@@ -160,17 +162,17 @@ export default function HomeScreen({ navigation }) {
           {FRAUD_CATEGORIES.map((item) => (
             <TouchableOpacity
               key={item.id}
-              style={[styles.fraudCard, { backgroundColor: item.bg }]}
+              style={styles.fraudCard}
               activeOpacity={0.8}
               onPress={() =>
                 navigation.navigate('FraudEducation', { selectedId: item.id })
               }
             >
-              <Text style={styles.fraudIcon}>{item.icon}</Text>
-              <Text style={styles.fraudTitle} numberOfLines={1}>
+              <SeverityPill severity={item.severity} />
+              <Text style={styles.fraudTitle} numberOfLines={2}>
                 {item.title}
               </Text>
-              <Text style={styles.fraudLessons}>{item.lessons}</Text>
+              <Text style={styles.fraudLessons}>Read guide</Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
@@ -178,7 +180,7 @@ export default function HomeScreen({ navigation }) {
         {/* Tip of the Day */}
         <View style={styles.tipCard}>
           <View style={styles.tipIconBadge}>
-            <Text style={styles.tipIcon}>💡</Text>
+            <Icon name="bulb-outline" size={20} color={COLORS.green} />
           </View>
           <View style={styles.tipContent}>
             <Text style={styles.tipTitle}>Tip of the day</Text>
@@ -199,7 +201,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 20,
-    paddingBottom: 32,
+    paddingBottom: 104,
     gap: 16,
   },
   topBar: {
@@ -429,29 +431,26 @@ const styles = StyleSheet.create({
     paddingRight: 6,
   },
   fraudCard: {
-    width: 120,
+    width: 150,
+    minHeight: 112,
+    backgroundColor: COLORS.surface,
     borderRadius: SIZES.radiusMd,
+    borderWidth: 1,
+    borderColor: COLORS.line,
     padding: 12,
     justifyContent: 'space-between',
-    shadowColor: COLORS.cardShadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 3,
-    elevation: 1,
-  },
-  fraudIcon: {
-    fontSize: 26,
-    marginBottom: 8,
   },
   fraudTitle: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '700',
     color: COLORS.ink,
-    marginBottom: 2,
+    marginTop: 10,
+    marginBottom: 6,
   },
   fraudLessons: {
-    fontSize: 11.5,
-    color: COLORS.muted,
+    fontSize: 12,
+    fontWeight: '600',
+    color: COLORS.brand,
   },
   tipCard: {
     flexDirection: 'row',

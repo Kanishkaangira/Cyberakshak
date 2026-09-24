@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+﻿import React, { useState, useRef, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -12,6 +12,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { COLORS, SIZES } from '../constants/theme';
 import {
   INITIAL_CHAT_MESSAGES,
@@ -100,11 +101,11 @@ export default function ChatbotScreen({ navigation, route }) {
           activeOpacity={0.7}
           onPress={() => navigation.goBack()}
         >
-          <Text style={styles.backBtnText}>‹</Text>
+          <Icon name="chevron-back" size={21} color={COLORS.ink} />
         </TouchableOpacity>
 
         <View style={styles.botAvatar}>
-          <Text style={styles.botAvatarEmoji}>🛡️</Text>
+          <Icon name="shield-checkmark" size={23} color={COLORS.brand} />
         </View>
 
         <View style={styles.headerInfo}>
@@ -190,7 +191,7 @@ export default function ChatbotScreen({ navigation, route }) {
                       Linking.openURL(`tel:${item.helpline}`).catch(() => {})
                     }
                   >
-                    <Text style={styles.helplineBtnIcon}>📞</Text>
+                    <Icon name="call-outline" size={16} color="#FFFFFF" />
                     <Text style={styles.helplineBtnText}>
                       Call National Helpline 1930
                     </Text>
@@ -245,7 +246,7 @@ export default function ChatbotScreen({ navigation, route }) {
             onPress={() => handleSend()}
             disabled={!inputText.trim()}
           >
-            <Text style={styles.sendButtonText}>↑</Text>
+            <Text style={styles.sendButtonText}>â†‘</Text>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>

@@ -1,212 +1,121 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  BackHandler,
+  ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
-  View,
-  ScrollView,
   TouchableOpacity,
-  StatusBar,
+  View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { COLORS, SIZES } from '../constants/theme';
-import { FRAUD_CATEGORIES } from '../constants/data';
+import { useFocusEffect } from '@react-navigation/native';
+import { COLORS } from '../constants/theme';
+import { FRAUD_CATEGORIES, getFraudById } from '../constants/data';
+import { Chevron } from '../components/fraud/FraudUI';
+import FraudListHeader from '../components/fraud/FraudListHeader';
+import FraudCard from '../components/fraud/FraudCard';
+import FraudDetail from '../components/fraud/FraudDetail';
 
 export default function FraudEducationScreen({ navigation, route }) {
   const insets = useSafeAreaInsets();
-  const [selectedId, setSelectedId] = useState(
-    route.params?.selectedId || FRAUD_CATEGORIES[0].id
-  );
+  const scrollRef = useRef(null);
+
+  // Opened from a Home card -> straight to that guide.
+  const fromHome = !!route.params?.selectedId;
+  const [selectedId, setSelectedId] = useState(route.params?.selectedId || null);
+  const [filter, setFilter] = useState('all');
 
   useEffect(() => {
-    if (route.params?.selectedId) {
-      setSelectedId(route.params.selectedId);
-    }
+    if (route.params?.selectedId) setSelectedId(route.params.selectedId);
   }, [route.params?.selectedId]);
 
-  const selectedFraud =
-    FRAUD_CATEGORIES.find((f) => f.id === selectedId) || FRAUD_CATEGORIES[0];
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ y: 0, animated: false });
+  }, [selectedId]);
+
+  const goBack = useCallback(() => {
+    if (selectedId && !fromHome) setSelectedId(null);
+    else navigation.goBack();
+  }, [selectedId, fromHome, navigation]);
+
+  // Android back button: from a guide, return to the list first.
+  useFocusEffect(
+    useCallback(() => {
+      const sub = BackHandler.addEventListener('hardwareBackPress', () => {
+        if (selectedId && !fromHome) {
+          setSelectedId(null);
+          return true;
+        }
+        return false;
+      });
+      return () => sub.remove();
+    }, [selectedId, fromHome])
+  );
+
+  const items = useMemo(
+    () =>
+      filter === 'all' ? FRAUD_CATEGORIES : FRAUD_CATEGORIES.filter((f) => f.group === filter),
+    [filter]
+  );
+  const fraud = selectedId ? getFraudById(selectedId) : null;
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <StatusBar barStyle="dark-content" backgroundColor={COLORS.surface} />
 
-      {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backBtn}
-          activeOpacity={0.7}
-          onPress={() => navigation.goBack()}
-        >
-          <Text style={styles.backBtnText}>‹</Text>
+        <TouchableOpacity style={styles.backBtn} activeOpacity={0.7} onPress={goBack}>
+          <Chevron direction="left" color={COLORS.ink} size={10} />
         </TouchableOpacity>
-
         <View style={styles.headerInfo}>
-          <Text style={styles.headerTitle}>Fraud Awareness Hub</Text>
-          <Text style={styles.headerSubtitle}>
-            Learn modus operandi & prevention rules
-          </Text>
+          <Text style={styles.headerTitle}>{fraud ? 'Fraud guide' : 'Fraud awareness'}</Text>
+          {!fraud && (
+            <Text style={styles.headerSubtitle}>
+              {FRAUD_CATEGORIES.length} common scams and how to stay safe
+            </Text>
+          )}
         </View>
       </View>
 
       <ScrollView
-        contentContainerStyle={styles.scrollContent}
+        ref={scrollRef}
+        contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 32 }]}
         showsVerticalScrollIndicator={false}
       >
-        {/* Horizontal Category Selector */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.selectorScroll}
-        >
-          {FRAUD_CATEGORIES.map((cat) => {
-            const isSelected = cat.id === selectedId;
-            return (
-              <TouchableOpacity
-                key={cat.id}
-                style={[
-                  styles.tabChip,
-                  isSelected && styles.tabChipActive,
-                  { borderColor: isSelected ? COLORS.brand : COLORS.line },
-                ]}
-                activeOpacity={0.8}
-                onPress={() => setSelectedId(cat.id)}
-              >
-                <Text style={styles.tabIcon}>{cat.icon}</Text>
-                <Text
-                  style={[
-                    styles.tabTitle,
-                    isSelected && styles.tabTitleActive,
-                  ]}
-                >
-                  {cat.title}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
-
-        {/* Selected Fraud Detailed View */}
-        <View style={styles.detailCard}>
-          {/* Header Row */}
-          <View style={styles.detailHeader}>
-            <View
-              style={[
-                styles.detailIconBox,
-                { backgroundColor: selectedFraud.bg },
-              ]}
-            >
-              <Text style={styles.detailIcon}>{selectedFraud.icon}</Text>
+        {fraud ? (
+          <FraudDetail
+            fraud={fraud}
+            onCheckMessage={() =>
+              navigation.navigate('Chatbot', { initialQuery: `Is this a scam? ${fraud.example}` })
+            }
+          />
+        ) : (
+          <>
+            <FraudListHeader filter={filter} onFilterChange={setFilter} />
+            <View style={styles.list}>
+              {items.map((item) => (
+                <FraudCard key={item.id} item={item} onPress={() => setSelectedId(item.id)} />
+              ))}
             </View>
-
-            <View style={styles.detailMeta}>
-              <View style={styles.severityRow}>
-                <View
-                  style={[
-                    styles.severityBadge,
-                    {
-                      backgroundColor:
-                        selectedFraud.severity === 'Critical'
-                          ? COLORS.redSoft
-                          : COLORS.orangeSoft,
-                    },
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.severityText,
-                      {
-                        color:
-                          selectedFraud.severity === 'Critical'
-                            ? COLORS.red
-                            : COLORS.orange,
-                      },
-                    ]}
-                  >
-                    {selectedFraud.severity} Risk
-                  </Text>
-                </View>
-                <Text style={styles.lessonCountText}>{selectedFraud.lessons}</Text>
-              </View>
-
-              <Text style={styles.detailTitle}>{selectedFraud.title}</Text>
-            </View>
-          </View>
-
-          {/* Description */}
-          <Text style={styles.overviewText}>{selectedFraud.desc}</Text>
-
-          {/* How Scammers Execute It */}
-          <View style={styles.sectionBlock}>
-            <Text style={styles.blockHeading}>⚠️ How It Works (Modus Operandi)</Text>
-            <Text style={styles.blockBody}>{selectedFraud.howItWorks}</Text>
-          </View>
-
-          {/* Real-World Example */}
-          <View style={styles.exampleBox}>
-            <Text style={styles.exampleLabel}>💬 Typical Scam Script</Text>
-            <Text style={styles.exampleText}>{selectedFraud.example}</Text>
-          </View>
-
-          {/* Red Flags Checklist */}
-          <View style={styles.sectionBlock}>
-            <Text style={styles.blockHeading}>🚩 Warning Signs & Red Flags</Text>
-            {selectedFraud.redFlags.map((flag, idx) => (
-              <View key={idx} style={styles.listItem}>
-                <Text style={styles.redDot}>•</Text>
-                <Text style={styles.listText}>{flag}</Text>
-              </View>
-            ))}
-          </View>
-
-          {/* Prevention Guidelines */}
-          <View style={styles.sectionBlock}>
-            <Text style={styles.blockHeading}>🛡️ How to Protect Yourself</Text>
-            {selectedFraud.prevention.map((item, idx) => (
-              <View key={idx} style={styles.listItem}>
-                <Text style={styles.greenCheck}>✓</Text>
-                <Text style={styles.listText}>{item}</Text>
-              </View>
-            ))}
-          </View>
-
-          {/* Test With AI Chatbot Button */}
-          <TouchableOpacity
-            style={styles.testAiBtn}
-            activeOpacity={0.85}
-            onPress={() => {
-              navigation.navigate('Chatbot', {
-                initialQuery: `Can you check this ${selectedFraud.title} message: ${selectedFraud.example}`,
-              });
-            }}
-          >
-            <Text style={styles.testAiBtnIcon}>🤖</Text>
-            <View>
-              <Text style={styles.testAiBtnTitle}>Test with Cyberakshak AI</Text>
-              <Text style={styles.testAiBtnSub}>
-                Simulate how the assistant analyzes this fraud
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
+          </>
+        )}
       </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.bg,
-  },
+  container: { flex: 1, backgroundColor: COLORS.bg },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
+    gap: 12,
+    backgroundColor: COLORS.surface,
     borderBottomWidth: 1,
     borderBottomColor: COLORS.line,
-    backgroundColor: COLORS.surface,
-    gap: 12,
   },
   backBtn: {
     width: 36,
@@ -215,192 +124,11 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.bg,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingLeft: 4,
   },
-  backBtnText: {
-    fontSize: 26,
-    color: COLORS.ink,
-    lineHeight: 30,
-    marginTop: -2,
-  },
-  headerInfo: {
-    flex: 1,
-  },
-  headerTitle: {
-    fontSize: 17,
-    fontWeight: '700',
-    color: COLORS.ink,
-  },
-  headerSubtitle: {
-    fontSize: 12,
-    color: COLORS.muted,
-  },
-  scrollContent: {
-    paddingBottom: 36,
-  },
-  selectorScroll: {
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    gap: 8,
-  },
-  tabChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: COLORS.surface,
-    borderWidth: 1.5,
-    borderRadius: SIZES.radiusPill,
-    paddingVertical: 8,
-    paddingHorizontal: 14,
-  },
-  tabChipActive: {
-    backgroundColor: COLORS.brandSoft,
-  },
-  tabIcon: {
-    fontSize: 16,
-  },
-  tabTitle: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: COLORS.muted,
-  },
-  tabTitleActive: {
-    color: COLORS.brand,
-    fontWeight: '700',
-  },
-  detailCard: {
-    backgroundColor: COLORS.surface,
-    marginHorizontal: 16,
-    borderRadius: SIZES.radiusLg,
-    padding: 20,
-    shadowColor: COLORS.cardShadow,
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.08,
-    shadowRadius: 5,
-    elevation: 2,
-    gap: 16,
-  },
-  detailHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 14,
-  },
-  detailIconBox: {
-    width: 58,
-    height: 58,
-    borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  detailIcon: {
-    fontSize: 30,
-  },
-  detailMeta: {
-    flex: 1,
-  },
-  severityRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 4,
-  },
-  severityBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: SIZES.radiusPill,
-  },
-  severityText: {
-    fontSize: 11,
-    fontWeight: '700',
-  },
-  lessonCountText: {
-    fontSize: 12,
-    color: COLORS.muted,
-  },
-  detailTitle: {
-    fontSize: 19,
-    fontWeight: '700',
-    color: COLORS.ink,
-  },
-  overviewText: {
-    fontSize: 14,
-    color: COLORS.muted,
-    lineHeight: 20,
-  },
-  sectionBlock: {
-    gap: 8,
-  },
-  blockHeading: {
-    fontSize: 14.5,
-    fontWeight: '700',
-    color: COLORS.ink,
-  },
-  blockBody: {
-    fontSize: 13.5,
-    color: COLORS.ink,
-    lineHeight: 20,
-  },
-  exampleBox: {
-    backgroundColor: '#FFF9ED',
-    borderWidth: 1,
-    borderColor: '#FFE8B8',
-    borderRadius: SIZES.radiusSm,
-    padding: 12,
-    gap: 6,
-  },
-  exampleLabel: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: COLORS.orange,
-  },
-  exampleText: {
-    fontSize: 13,
-    color: COLORS.ink,
-    fontStyle: 'italic',
-    lineHeight: 18,
-  },
-  listItem: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 8,
-    marginVertical: 2,
-  },
-  redDot: {
-    fontSize: 18,
-    lineHeight: 18,
-    color: COLORS.red,
-  },
-  greenCheck: {
-    fontSize: 14,
-    fontWeight: '800',
-    color: COLORS.green,
-    lineHeight: 18,
-  },
-  listText: {
-    flex: 1,
-    fontSize: 13,
-    color: COLORS.ink,
-    lineHeight: 18,
-  },
-  testAiBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: COLORS.brand,
-    borderRadius: SIZES.radiusMd,
-    padding: 14,
-    gap: 12,
-    marginTop: 8,
-  },
-  testAiBtnIcon: {
-    fontSize: 24,
-  },
-  testAiBtnTitle: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#FFFFFF',
-  },
-  testAiBtnSub: {
-    fontSize: 11.5,
-    color: 'rgba(255, 255, 255, 0.85)',
-    marginTop: 2,
-  },
+  headerInfo: { flex: 1 },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: COLORS.ink },
+  headerSubtitle: { fontSize: 12.5, color: COLORS.muted, marginTop: 1 },
+  content: { paddingTop: 16 },
+  list: { paddingHorizontal: 16, gap: 12 },
 });

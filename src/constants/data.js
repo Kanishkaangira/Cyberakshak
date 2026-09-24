@@ -1,137 +1,496 @@
+import { COLORS } from './theme';
+
 export const QUICK_ACTIONS = [
-  { id: 'link', label: 'Check link', icon: '🔗', bg: '#FFF0D6', action: 'check_link' },
-  { id: 'report', label: 'Report fraud', icon: '🚨', bg: '#FFE3E3', action: 'report_fraud' },
-  { id: 'helpline', label: 'Helpline 1930', icon: '📞', bg: '#DFF5EC', action: 'call_helpline' },
+  { id: 'link', label: 'Check link', icon: 'link-outline', bg: '#FFF0D6', action: 'check_link' },
+  { id: 'report', label: 'Report fraud', icon: 'warning-outline', bg: '#FFE3E3', action: 'report_fraud' },
+  { id: 'helpline', label: 'Helpline 1930', icon: 'call-outline', bg: '#DFF5EC', action: 'call_helpline' },
 ];
 
+export const HELPLINE = {
+  number: '1930',
+  portal: 'https://cybercrime.gov.in',
+};
+
+export const SEVERITY = {
+  Critical: { fg: COLORS.red, bg: COLORS.redSoft },
+  High: { fg: COLORS.orange, bg: COLORS.orangeSoft },
+  Medium: { fg: COLORS.brand, bg: COLORS.brandSoft },
+};
+
+export const FRAUD_GROUPS = [
+  { id: 'banking', label: 'Banking & payments' },
+  { id: 'impersonation', label: 'Impersonation' },
+  { id: 'money', label: 'Jobs & investment' },
+  { id: 'social', label: 'Personal & social' },
+  { id: 'shopping', label: 'Shopping & delivery' },
+];
+
+/**
+ * One entry per fraud type.
+ * severity: 'Critical' | 'High' | 'Medium'
+ * group:    must match an id in FRAUD_GROUPS
+ */
 export const FRAUD_CATEGORIES = [
   {
     id: 'phishing',
-    title: 'Phishing',
-    icon: '🎣',
-    lessons: '5 lessons',
-    bg: '#ECEDFC',
+    title: 'Phishing & smishing',
+    group: 'banking',
     severity: 'High',
-    desc: 'Fraudulent emails, texts, or fake websites designed to steal passwords, credentials, or bank details.',
-    howItWorks: 'Scammers send messages impersonating trusted brands (banks, courier services, Netflix, income tax) with urgency, prompting you to click a link.',
+    summary:
+      'Fake emails, SMS and websites that imitate banks or government bodies to steal your login details.',
+    overview:
+      'Phishing tricks you into entering credentials or card details on a page controlled by the attacker. Smishing is the same attack delivered by SMS or WhatsApp. KYC updates, blocked accounts and tax refunds are the most common themes.',
+    howItWorks: [
+      'You receive a message that appears to come from your bank, a courier or a government office.',
+      'It creates urgency: your account will be blocked or a refund will expire.',
+      'The link opens a look-alike website that records your password, card number and OTP.',
+      'The attacker signs in to your real account within minutes using the OTP you just typed.',
+    ],
     redFlags: [
-      'Urgent threats like "Account suspended within 24 hours"',
-      'Mismatched domain URLs (e.g. sbi-secure-update.xyz instead of sbi.co.in)',
-      'Requests for passwords, OTPs, or PINs',
-      'Spelling mistakes and generic greetings ("Dear Customer")',
+      'Threats of account closure or penalties within hours',
+      'Shortened links or domains that are not the bank’s own',
+      'Requests for OTP, PIN, CVV or full card details',
+      'Generic greetings and a mobile number instead of a registered sender ID',
     ],
-    prevention: [
-      'Never tap unverified links received via SMS or WhatsApp.',
-      'Check the true domain name before entering credentials.',
-      'Use 2-Factor Authentication (2FA) with authenticator apps instead of plain SMS OTP.',
+    protect: [
+      'Open your bank’s app or type the website address yourself instead of tapping links',
+      'Read the full domain name before entering any detail',
+      'Use app-based two-factor authentication where available',
+      'Save your bank’s customer care number from its official website or card',
     ],
-    example: '“Dear customer, your bank account is blocked. Update PAN immediately at bit.ly/bank-kyc-verify to avoid penalties.”',
+    ifVictim: [
+      'Call your bank at once and block cards and net banking',
+      'Change the password of the affected account and any account that shares it',
+      'Call 1930 and report at cybercrime.gov.in',
+    ],
+    example:
+      'Dear customer, your account will be blocked today. Update your PAN at bit.ly/kyc-verify to avoid a penalty.',
   },
   {
-    id: 'payment',
-    title: 'Payment fraud',
-    icon: '💳',
-    lessons: '4 lessons',
-    bg: '#FFF0D6',
+    id: 'upi',
+    title: 'UPI & QR code fraud',
+    group: 'banking',
     severity: 'Critical',
-    desc: 'UPI frauds, fake QR codes, and fraudulent refund requests aimed at draining accounts.',
-    howItWorks: 'Scammers ask you to scan a QR code or enter your UPI PIN to "receive money" or claim a cashback/refund.',
+    summary:
+      'Tricks that make you approve a payment or scan a code while believing you are receiving money.',
+    overview:
+      'Your UPI PIN is needed only to send money. Any request to enter it, scan a QR code or approve a collect request in order to receive money is a fraud.',
+    howItWorks: [
+      'A buyer, seller or “refund agent” says they will pay you and asks for a QR scan or UPI ID.',
+      'They send a collect request or QR code framed as a refund, cashback or advance.',
+      'When you enter your PIN, money leaves your account instead of arriving.',
+      'The attacker asks again, claiming the first payment “failed”.',
+    ],
     redFlags: [
-      'Entering a UPI PIN is NEVER required to receive money.',
-      'Scammer sends money request on PhonePe/GPay disguised as "Refund Voucher".',
-      'Buyer on OLX insists on sending money via QR code.',
+      'Anyone asking you to enter a PIN to receive money',
+      'Collect requests you did not start',
+      'Buyers who insist on QR codes or advance payments',
+      'Pressure to act quickly before a payment “expires”',
     ],
-    prevention: [
-      'Remember the golden rule: UPI PIN is ONLY entered to deduct money, NEVER to receive it.',
-      'Do not scan any QR code sent to your WhatsApp.',
-      'Verify payments directly in your bank app passbook, not screenshot proofs.',
+    protect: [
+      'Never enter your UPI PIN to receive money',
+      'Decline collect requests from people you do not know',
+      'Confirm receipt in your bank passbook, not in a screenshot',
+      'Set a daily UPI transaction limit in your bank app',
     ],
-    example: '“Please scan this QR code and type your 4-digit PIN to receive Rs. 5,000 lottery cashback.”',
-  },
-  {
-    id: 'jobs',
-    title: 'Fake jobs',
-    icon: '💼',
-    lessons: '3 lessons',
-    bg: '#DFF5EC',
-    severity: 'High',
-    desc: 'Work-from-home tasks like Telegram video liking or review rating scams demanding deposit fees.',
-    howItWorks: 'Victims are offered high daily earnings for rating hotels or liking YouTube videos, then asked to deposit crypto or money for "VIP prepaid tasks".',
-    redFlags: [
-      'Unsolicited job offers via WhatsApp or Telegram from international numbers.',
-      'Easy money promises (e.g., Rs. 5000/day for 30 minutes of work).',
-      'Asking for an upfront "registration fee" or deposit.',
+    ifVictim: [
+      'Call your bank, block UPI and ask them to flag the transaction',
+      'Call 1930 within the first few hours so a freeze request can be raised',
+      'Note the transaction ID and the receiver’s UPI ID',
     ],
-    prevention: [
-      'Legitimate employers never demand payment for hiring or equipment kits.',
-      'Avoid joining unofficial Telegram investment/task groups.',
-      'Report and block recruitment numbers immediately.',
-    ],
-    example: '“Earn ₹3,000-₹8,000 daily part-time by liking YouTube clips. Join our Telegram coordinator now.”',
+    example:
+      'Scan this QR code and enter your PIN to receive your Rs 5,000 cashback.',
   },
   {
     id: 'sim_swap',
-    title: 'SIM swap',
-    icon: '📱',
-    lessons: '3 lessons',
-    bg: '#FDE4EC',
+    title: 'SIM swap & SIM-block calls',
+    group: 'banking',
     severity: 'Critical',
-    desc: 'Attackers trick telecom providers into reissuing your phone number to intercept your OTPs.',
-    howItWorks: 'Scammers collect your identity data, report a lost SIM, and redirect your number to their device to empty bank accounts.',
+    summary:
+      'Attackers take over your mobile number to intercept OTPs and reset your banking access.',
+    overview:
+      'By collecting personal details or tricking you into sharing SIM information, a fraudster obtains a duplicate SIM. Your phone loses service and your OTPs go to the attacker.',
+    howItWorks: [
+      'You get a call or message saying your SIM will be blocked or needs an upgrade.',
+      'You are asked to press a key or share your SIM serial number or an OTP.',
+      'The attacker uses this to request a duplicate SIM in your name.',
+      'Your phone loses signal while passwords are reset and money is moved.',
+    ],
     redFlags: [
-      'Unexpected loss of cell service and signal bars in populated areas.',
-      'Calls demanding you press 9 or share a 20-digit SIM number to "upgrade to 5G".',
-      'Notification emails about password resets you didn’t initiate.',
+      'Sudden loss of network with no explanation',
+      'Calls asking you to press a key or read out your SIM number',
+      'Alerts about password resets you did not request',
+      'Requests to install a “network” or “KYC” app',
     ],
-    prevention: [
-      'If your mobile phone suddenly shows "No Service", contact your carrier immediately.',
-      'Never share the 20-digit SIM number printed on your SIM card.',
-      'Do not press keys prompted by automated robot verification calls.',
+    protect: [
+      'Never share your SIM number, OTP or Aadhaar details on a call',
+      'Contact your operator at once if your phone shows “No service” unexpectedly',
+      'Check the connections registered in your name on the Sanchar Saathi portal',
+      'Report suspicious calls and messages through the Chakshu option on Sanchar Saathi',
     ],
-    example: '“Your SIM will be disconnected in 2 hours for KYC verification. Press 9 now to speak to an executive.”',
+    ifVictim: [
+      'Call your operator and block the duplicate SIM',
+      'Alert your bank and freeze cards and accounts',
+      'Call 1930 and file a report',
+    ],
+    example:
+      'Your SIM will be disconnected in 2 hours due to incomplete KYC. Press 9 to speak to an executive.',
+  },
+  {
+    id: 'remote_access',
+    title: 'Fake customer care & remote access',
+    group: 'banking',
+    severity: 'Critical',
+    summary:
+      'Fraudsters posing as support staff persuade you to install screen-sharing apps.',
+    overview:
+      'Fake helpline numbers appear in search results and on social media. The “agent” asks you to install a remote-access tool, which lets them see your screen, your OTPs and your banking apps.',
+    howItWorks: [
+      'You search for a customer care number and call a fake listing.',
+      'The agent asks you to install AnyDesk, TeamViewer or a similar app.',
+      'They ask for the connection code and watch you open your bank app.',
+      'Money is moved out while you believe they are fixing your problem.',
+    ],
+    redFlags: [
+      'Support numbers found only through search or social media',
+      'Requests for a screen-sharing code',
+      'Agents who ask you to open banking apps during the call',
+      'Refunds that require you to “enter” an amount',
+    ],
+    protect: [
+      'Take support numbers from the company’s official website or your card',
+      'Never install screen-sharing apps at the request of a caller',
+      'Close banking apps whenever someone else can see your screen',
+    ],
+    ifVictim: [
+      'Disconnect from the internet and uninstall the tool',
+      'Call your bank to block cards and net banking',
+      'Change all passwords and call 1930',
+    ],
+    example:
+      'To process your refund, please install AnyDesk and tell me the 9-digit code.',
   },
   {
     id: 'digital_arrest',
-    title: 'Digital arrest',
-    icon: '👮',
-    lessons: '4 lessons',
-    bg: '#E0F2FE',
+    title: 'Digital arrest scam',
+    group: 'impersonation',
     severity: 'Critical',
-    desc: 'Impersonating police, CBI, ED, or customs on Skype/video calls claiming illegal parcels were seized in your name.',
-    howItWorks: 'Scammers wear fake uniforms or show forged court arrest warrants, confining victims on video calls and coercing them to transfer funds into "clearing accounts".',
+    summary:
+      'Fraudsters pose as police, CBI, customs or courts on a video call and claim you are under arrest.',
+    overview:
+      'No Indian agency arrests anyone, holds a hearing or collects “verification deposits” over a phone or video call. The scam relies on fear, isolation and secrecy.',
+    howItWorks: [
+      'A call claims a parcel or SIM linked to your Aadhaar was used in a crime.',
+      'You are transferred to an “officer” on a video call in a staged office or uniform.',
+      'You are told not to disconnect or speak to family while the “case” is investigated.',
+      'You are asked to move your savings to a “safe” or “RBI verification” account.',
+    ],
     redFlags: [
-      'Police or law enforcement NEVER conduct arrests, trials, or clearances via Skype or WhatsApp video.',
-      'Requests to transfer your savings into a "Reserve Bank of India verification account".',
-      'Threatening absolute secrecy from family members.',
+      'Any demand to stay on a video call for hours',
+      'Instructions to keep the matter secret',
+      'Requests to transfer money for verification or bail',
+      'Forged notices and warrants sent over WhatsApp',
     ],
-    prevention: [
-      'Law enforcement agencies never arrest citizens virtually or demand financial deposits.',
-      'Disconnect such video calls immediately.',
-      'Report the incident promptly on the National Cyber Crime Portal (1930).',
+    protect: [
+      'Hang up. Real agencies serve notices in person or through official channels',
+      'Never transfer money to prove your innocence',
+      'Talk to family or a friend before acting on any threat',
+      'Verify by calling your local police station on a number you look up yourself',
     ],
-    example: '“This is CBI officer Sharma. A DHL courier containing illegal narcotics with your Aadhaar ID was confiscated at Mumbai Airport. You are under digital arrest.”',
+    ifVictim: [
+      'Call 1930 immediately and give the recipient account details',
+      'Ask your bank to hold the beneficiary account',
+      'Report at cybercrime.gov.in and keep call logs and screenshots',
+    ],
+    example:
+      'This is an officer from the Narcotics Bureau. A parcel in your name contains illegal items. You are under digital arrest. Do not disconnect.',
   },
   {
-    id: 'courier_scam',
-    title: 'Courier APK scam',
-    icon: '📦',
-    lessons: '3 lessons',
-    bg: '#FEF3C7',
+    id: 'deepfake',
+    title: 'Deepfake & voice-clone scams',
+    group: 'impersonation',
     severity: 'High',
-    desc: 'Fake delivery alerts urging you to download an APK file or pay ₹5 for address updates.',
-    howItWorks: 'An SMS claims your India Post or courier parcel is held up. Clicking the link downloads spyware or prompts credit card entry.',
+    summary:
+      'AI-generated voices and videos imitate relatives, colleagues or officials to demand urgent money.',
+    overview:
+      'A few seconds of audio from social media can be enough to clone a voice. Attackers call in a panic as a family member or a manager and ask for money immediately.',
+    howItWorks: [
+      'Audio or video of the target is collected from public posts.',
+      'A cloned voice or fake video call is used to imitate them.',
+      'The story is an emergency: an accident, an arrest, a hospital bill.',
+      'You are asked to send money quickly and to tell no one.',
+    ],
     redFlags: [
-      'SMS with short links from personal mobile numbers instead of registered sender IDs (like IP-INDIA).',
-      'Requests to download an `.apk` file onto Android phones.',
-      'Asking for a nominal ₹5 or ₹10 redelivery fee to capture payment card details.',
+      'Emergency requests from a new or unknown number',
+      'Pressure to act at once and not tell others',
+      'Payments to unfamiliar accounts',
+      'Video that glitches or avoids natural movement',
     ],
-    prevention: [
-      'Track parcels only via the official tracking portals (e.g. indiapost.gov.in, bluedart.com).',
-      'Never install `.apk` files from browser links.',
+    protect: [
+      'Agree on a family safe word for emergencies',
+      'Hang up and call the person back on their usual number',
+      'Limit public voice and video posts',
+      'Confirm any money request through a second channel',
     ],
-    example: '“India Post Alert: Your package is detained due to invalid address. Please update within 24h at indiapost-track.apk”',
+    ifVictim: [
+      'Call your bank to try to stop the transfer',
+      'Call 1930 as quickly as possible',
+      'Warn family members about the number that was used',
+    ],
+    example:
+      'Papa, I had an accident and my phone is broken. Please send Rs 25,000 to this number right now.',
+  },
+  {
+    id: 'investment',
+    title: 'Investment & trading scams',
+    group: 'money',
+    severity: 'Critical',
+    summary:
+      'Fake stock, IPO and crypto platforms that show made-up profits until you deposit large sums.',
+    overview:
+      'Victims are added to WhatsApp or Telegram groups with “experts” and screenshots of gains. A convincing app shows growing balances, but withdrawals are blocked and extra “tax” or “fee” payments are demanded.',
+    howItWorks: [
+      'You are added to a group where fake members share profits.',
+      'A “mentor” guides you to a trading app or website that is not a registered broker.',
+      'Small early withdrawals work to build trust.',
+      'When you deposit more, withdrawal is blocked behind fees, taxes or a minimum balance.',
+    ],
+    redFlags: [
+      'Guaranteed or unusually high returns',
+      'Advice from unknown people on messaging apps',
+      'Apps installed from a link instead of an official store',
+      'Payments to personal accounts or many different accounts',
+    ],
+    protect: [
+      'Invest only through SEBI-registered brokers and advisers and verify them on the SEBI website',
+      'Never install trading apps from links shared in chats',
+      'Ignore stock tips in unsolicited groups',
+      'Treat any guaranteed return as a fraud',
+    ],
+    ifVictim: [
+      'Stop sending money, even to “release” your funds',
+      'Call 1930 and report at cybercrime.gov.in with all payment details',
+      'Save chats, app details and account numbers as evidence',
+    ],
+    example:
+      'Join our VIP group for IPO allotment. Members made 40% last week. Limited seats.',
+  },
+  {
+    id: 'jobs',
+    title: 'Fake job & task scams',
+    group: 'money',
+    severity: 'High',
+    summary:
+      'Part-time offers that pay small amounts at first, then demand deposits to continue.',
+    overview:
+      'Task scams begin with an unsolicited message offering easy income for liking videos or rating products. After a few small payouts you are pushed to “prepay” for higher-paying tasks, and the money cannot be withdrawn.',
+    howItWorks: [
+      'You get a WhatsApp or Telegram message about a flexible part-time job.',
+      'You complete simple tasks and receive a small payment.',
+      'You are added to a group and asked to deposit for premium tasks.',
+      'Every deposit is followed by a new fee until you stop.',
+    ],
+    redFlags: [
+      'Job offers from unknown numbers',
+      'High pay for very little work',
+      'Any registration, training or equipment fee',
+      'Recruiters who only use messaging apps',
+    ],
+    protect: [
+      'Genuine employers do not charge candidates',
+      'Verify the company on its official website and careers page',
+      'Do not join task or investment groups',
+      'Report and block the sender',
+    ],
+    ifVictim: [
+      'Stop paying and ignore withdrawal demands',
+      'Call 1930 and report the accounts you paid',
+      'Keep chat history and payment receipts',
+    ],
+    example:
+      'Earn Rs 3,000 to 8,000 a day by rating hotels. No experience needed. Contact our coordinator on Telegram.',
+  },
+  {
+    id: 'loan_apps',
+    title: 'Instant loan app harassment',
+    group: 'money',
+    severity: 'High',
+    summary:
+      'Unregulated lending apps that access your contacts and threaten you to force repayment.',
+    overview:
+      'These apps promise fast loans and ask for access to your contacts and photos. Borrowers receive less than promised, face very high charges and are harassed, sometimes with morphed images sent to relatives.',
+    howItWorks: [
+      'An app offers instant approval with almost no paperwork.',
+      'It requests access to contacts, gallery and SMS.',
+      'A smaller amount than approved reaches you after heavy fees.',
+      'Threats and abusive messages follow, sometimes to your contacts.',
+    ],
+    redFlags: [
+      'Loan apps installed from links or outside the official store',
+      'Permission requests for contacts and photos',
+      'Very short repayment periods and hidden fees',
+      'Threatening calls before the due date',
+    ],
+    protect: [
+      'Borrow only from RBI-regulated banks and NBFCs or their partner apps',
+      'Deny contact and gallery permissions',
+      'Read the fees and interest before accepting',
+      'Never pay through links sent by recovery agents',
+    ],
+    ifVictim: [
+      'Do not pay extra “settlement” amounts under threat',
+      'Screenshot messages and call logs',
+      'Report at cybercrime.gov.in',
+    ],
+    example:
+      'Pay Rs 8,000 today or we will send your photos to everyone in your contact list.',
+  },
+  {
+    id: 'sextortion',
+    title: 'Sextortion & blackmail',
+    group: 'social',
+    severity: 'Critical',
+    summary:
+      'Fraudsters use intimate or morphed content to threaten you into paying.',
+    overview:
+      'Contact starts on social media or a video chat. The attacker records or fabricates compromising content and threatens to share it. Paying rarely ends the demands.',
+    howItWorks: [
+      'A friendly stranger builds rapport and moves the chat to video.',
+      'Compromising content is recorded or created with editing tools.',
+      'You receive threats to send it to family, friends or your employer.',
+      'Payment demands increase after every transfer.',
+    ],
+    redFlags: [
+      'Unknown people who quickly move the chat to video',
+      'Requests for intimate photos or calls',
+      'Threats with a deadline and a payment demand',
+      'Fake “police” contacts who add more pressure',
+    ],
+    protect: [
+      'Do not accept video calls from strangers',
+      'Keep social media privacy settings restricted',
+      'Never share intimate images',
+      'Remember that you are the victim, not the offender',
+    ],
+    ifVictim: [
+      'Do not pay, and stop replying',
+      'Preserve chats, numbers and account links',
+      'Report at cybercrime.gov.in or call 1930, and talk to someone you trust',
+    ],
+    example:
+      'We have your video. Send Rs 20,000 within the hour or it goes to all your contacts.',
+  },
+  {
+    id: 'account_takeover',
+    title: 'WhatsApp & social account takeover',
+    group: 'social',
+    severity: 'High',
+    summary:
+      'Attackers hijack your account with a verification code, then ask your contacts for money.',
+    overview:
+      'A message or call convinces you to share a 6-digit verification code. With it, the attacker registers your number on their phone and messages your contacts pretending to be you.',
+    howItWorks: [
+      'You get a message asking you to “return” a code sent by mistake.',
+      'The code is your account’s verification code.',
+      'The attacker signs in as you and locks you out.',
+      'Your contacts receive urgent requests for money.',
+    ],
+    redFlags: [
+      'Anyone asking for a code you just received',
+      'Messages from friends asking for urgent money or gift cards',
+      'Being logged out of your account without warning',
+      'Links that ask you to “verify” your account',
+    ],
+    protect: [
+      'Never share verification codes with anyone',
+      'Turn on two-step verification in WhatsApp and other apps',
+      'Call a friend before sending money on a chat request',
+      'Review linked devices regularly',
+    ],
+    ifVictim: [
+      'Re-register your number to regain control and log out other devices',
+      'Warn your contacts that messages from your account are fake',
+      'Report on 1930 if anyone paid money',
+    ],
+    example:
+      'Hi, I sent my code to your number by mistake. Can you please send it back?',
+  },
+  {
+    id: 'shopping',
+    title: 'Online shopping & marketplace fraud',
+    group: 'shopping',
+    severity: 'Medium',
+    summary:
+      'Fake stores, and fake buyers or sellers on classifieds who take your money and disappear.',
+    overview:
+      'Fake websites and social media stores advertise deep discounts. On classified platforms, sellers ask for advance payment, while fake buyers use refund tricks to pull money from your account.',
+    howItWorks: [
+      'An advert shows a popular item at a very low price.',
+      'You pay online or send an advance to “reserve” the product.',
+      'The seller stops responding, or sends a poor or empty package.',
+      'On classifieds, a “buyer” sends a QR code or collect request to pay you.',
+    ],
+    redFlags: [
+      'Prices far below the market rate',
+      'Websites with no address, reviews or return policy',
+      'Payment only by UPI transfer to a personal account',
+      'Buyers who send QR codes or “advance” links',
+    ],
+    protect: [
+      'Prefer cash on delivery or well-known platforms with buyer protection',
+      'Check the website address and read independent reviews',
+      'Meet in person and inspect before paying on classifieds',
+      'Never scan a QR code to receive money',
+    ],
+    ifVictim: [
+      'Save the advert, chats and payment proof',
+      'Raise a dispute with your bank or card issuer',
+      'Report at cybercrime.gov.in',
+    ],
+    example:
+      'Brand-new phone, sealed box, only Rs 9,999 today. Pay Rs 2,000 advance to book.',
+  },
+  {
+    id: 'courier',
+    title: 'Courier & parcel scams',
+    group: 'shopping',
+    severity: 'High',
+    summary:
+      'Fake delivery notices that push you to pay a small fee or install a malicious app.',
+    overview:
+      'A message claims a parcel is held because of an address or customs issue. The link asks for card details or installs an APK file that can read your SMS and OTPs.',
+    howItWorks: [
+      'You receive a delivery-failure SMS from a personal number with a link.',
+      'The page asks for a small redelivery fee or offers a “tracking app”.',
+      'Card details are captured or the app is installed.',
+      'With access to your SMS, the attacker approves payments using your OTPs.',
+    ],
+    redFlags: [
+      'Delivery messages for parcels you are not expecting',
+      'Files ending in .apk sent by SMS or WhatsApp',
+      'Small fee requests on unfamiliar pages',
+      'A sender that is a mobile number and not a registered sender ID',
+    ],
+    protect: [
+      'Track parcels only on the courier’s official website or app',
+      'Install apps only from the Play Store or App Store',
+      'Turn off “install unknown apps” for your browser and messaging apps',
+    ],
+    ifVictim: [
+      'Switch on airplane mode and uninstall the unknown app',
+      'Block your cards and change banking passwords from another device',
+      'Call 1930 if any money has left your account',
+    ],
+    example:
+      'India Post: your parcel is held due to an incorrect address. Update within 24 hours: postal-track.apk',
   },
 ];
+
+export const getFraudById = (id) =>
+  FRAUD_CATEGORIES.find((f) => f.id === id) || FRAUD_CATEGORIES[0];
+
+export const getGroupLabel = (groupId) =>
+  (FRAUD_GROUPS.find((g) => g.id === groupId) || {}).label || '';
 
 export const NEWS_ARTICLES = [
   {

@@ -1,6 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import HomeScreen from '../Screens/HomeScreen';
 import NewsScreen from '../Screens/NewsScreen';
 import EventsScreen from '../Screens/EventsScreen';
@@ -10,21 +12,27 @@ import { COLORS } from '../constants/theme';
 const Tab = createBottomTabNavigator();
 
 function TabIcon({ focused, name }) {
-  let emoji = '🏠';
-  if (name === 'News') emoji = '📰';
-  if (name === 'Events') emoji = '📅';
-  if (name === 'Profile') emoji = '👤';
+  const icons = {
+    Home: 'home-outline',
+    News: 'newspaper-outline',
+    Events: 'calendar-outline',
+    Profile: 'person-outline',
+  };
 
   return (
     <View style={[styles.iconContainer, focused && styles.iconContainerFocused]}>
-      <Text style={[styles.iconText, focused && styles.iconTextFocused]}>
-        {emoji}
-      </Text>
+      <Icon
+        name={icons[name] || 'ellipse-outline'}
+        size={19}
+        color={focused ? COLORS.brand : COLORS.muted}
+      />
     </View>
   );
 }
 
 export default function HomeBottomNav() {
+  const insets = useSafeAreaInsets();
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -32,7 +40,7 @@ export default function HomeBottomNav() {
         tabBarActiveTintColor: COLORS.brand,
         tabBarInactiveTintColor: COLORS.muted,
         tabBarLabelStyle: styles.tabLabel,
-        tabBarStyle: styles.tabBar,
+        tabBarStyle: [styles.tabBar, { bottom: insets.bottom + 8 }],
         tabBarIcon: ({ focused }) => (
           <TabIcon focused={focused} name={route.name} />
         ),
@@ -48,13 +56,17 @@ export default function HomeBottomNav() {
 
 const styles = StyleSheet.create({
   tabBar: {
+    position: 'absolute',
+    left: 16,
+    right: 16,
+    bottom: 8,
     backgroundColor: COLORS.surface,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.line,
-    height: 60,
-    paddingBottom: 6,
-    paddingTop: 6,
-    elevation: 8,
+    borderTopWidth: 0,
+    borderRadius: 22,
+    height: 64,
+    paddingBottom: 8,
+    paddingTop: 8,
+    elevation: 12,
     shadowColor: COLORS.cardShadow,
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.05,
@@ -74,12 +86,5 @@ const styles = StyleSheet.create({
   },
   iconContainerFocused: {
     backgroundColor: COLORS.brandSoft,
-  },
-  iconText: {
-    fontSize: 18,
-    opacity: 0.65,
-  },
-  iconTextFocused: {
-    opacity: 1,
   },
 });
