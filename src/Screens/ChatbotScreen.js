@@ -10,6 +10,7 @@ import {
   Platform,
   Linking,
   ActivityIndicator,
+  Keyboard,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -19,14 +20,61 @@ import {
   SUGGESTIONS,
   analyzeUserQuery,
 } from '../constants/data';
+import { sendMessage, warmUp, resetChat, toBotMessage } from '../services/chatService';
+
+// Your INITIAL_CHAT_MESSAGES holds the greeting + 2 demo messages. Keep only the greeting.
+const WELCOME_MESSAGES = INITIAL_CHAT_MESSAGES.slice(0, 1);
 
 export default function ChatbotScreen({ navigation, route }) {
   const insets = useSafeAreaInsets();
   const scrollViewRef = useRef(null);
 
-  const [messages, setMessages] = useState(INITIAL_CHAT_MESSAGES);
+  const [messages, setMessages] = useState(WELCOME_MESSAGES);
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [chips, setChips] = useState([]);   // quick replies sent by the server
+  const showStartChips = messages.length <= 1;
+  const chipsToShow = showStartChips ? SUGGESTIONS : chips;
+
+    const inputBarRef = useRef(null);
+  const [kbVisible, setKbVisible] = useState(false);
+  const [kbPad, setKbPad] = useState(0);
+
+  useEffect(() => {
+    const showEvt = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvt = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+    let timer;
+
+    const onShow = (e) => {
+      setKbVisible(true);
+      if (Platform.OS !== 'android') {
+        scrollToBottom(); // iOS: KeyboardAvoidingView already moves the input
+        return;
+      }
+      const keyboardTop = e.endCoordinates.screenY;
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        inputBarRef.current?.measureInWindow((x, y, w, h) => {
+          const overlap = y + h - keyboardTop; // how much the keyboard covers the input bar
+          setKbPad(overlap > 4 ? overlap : 0);
+          scrollToBottom();
+        });
+      }, 150);
+    };
+    const onHide = () => {
+      clearTimeout(timer);
+      setKbVisible(false);
+      setKbPad(0);
+    };
+
+    const s1 = Keyboard.addListener(showEvt, onShow);
+    const s2 = Keyboard.addListener(hideEvt, onHide);
+    return () => {
+      clearTimeout(timer);
+      s1.remove();
+      s2.remove();
+    };
+  }, []);
 
   // If navigated with initialQuery, process it immediately
   useEffect(() => {
@@ -35,13 +83,18 @@ export default function ChatbotScreen({ navigation, route }) {
     }
   }, [route.params?.initialQuery]);
 
+  // wakes the server while the user is still reading / typing
+  useEffect(() => {
+    warmUp();
+  }, []);
+
   const scrollToBottom = () => {
     setTimeout(() => {
       scrollViewRef.current?.scrollToEnd({ animated: true });
     }, 120);
   };
 
-  const handleSend = (textToSend) => {
+    const handleSend = async (textToSend) => {
     const query = (textToSend || inputText).trim();
     if (!query) return;
 
@@ -53,26 +106,38 @@ export default function ChatbotScreen({ navigation, route }) {
 
     setMessages((prev) => [...prev, userMsg]);
     setInputText('');
+    setChips([]);
     setIsTyping(true);
     scrollToBottom();
 
-    // Simulate AI model inference delay
-    setTimeout(() => {
-      const response = analyzeUserQuery(query);
-      const botMsg = {
-        id: `b_${Date.now()}`,
-        sender: 'bot',
-        badge: response.badge,
-        badgeType: response.badgeType,
-        text: response.text,
-        steps: response.steps,
-        helpline: response.helpline,
-      };
+    let response;
+    let nextChips = [];
+    try {
+      const r = await sendMessage(query); // never throws
+      if (r.ok) {
+        response = toBotMessage(r);
+        nextChips = r.chips || [];
+      } else {
+        response = analyzeUserQuery(query); // old local answer if the server fails
+      }
+    } catch (e) {
+      response = analyzeUserQuery(query);
+    }
 
-      setMessages((prev) => [...prev, botMsg]);
-      setIsTyping(false);
-      scrollToBottom();
-    }, 600);
+    const botMsg = {
+      id: `b_${Date.now()}`,
+      sender: 'bot',
+      badge: response.badge,
+      badgeType: response.badgeType,
+      text: response.text,
+      steps: response.steps,
+      helpline: response.helpline,
+    };
+
+    setMessages((prev) => [...prev, botMsg]);
+    setChips(nextChips);
+    setIsTyping(false);
+    scrollToBottom();
   };
 
   const handleChipPress = (chipText) => {
@@ -119,14 +184,18 @@ export default function ChatbotScreen({ navigation, route }) {
         <TouchableOpacity
           style={styles.resetBtn}
           activeOpacity={0.7}
-          onPress={() => setMessages(INITIAL_CHAT_MESSAGES)}
+            onPress={() => {
+            setMessages(WELCOME_MESSAGES);
+            setChips([]);
+            resetChat();
+          }}
         >
           <Text style={styles.resetBtnText}>Clear</Text>
         </TouchableOpacity>
       </View>
 
       <KeyboardAvoidingView
-        style={styles.chatArea}
+        style={[styles.chatArea, kbPad > 0 && { paddingBottom: kbPad }]}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <ScrollView
@@ -209,25 +278,33 @@ export default function ChatbotScreen({ navigation, route }) {
           )}
 
           {/* Quick Suggestions Chips */}
-          <View style={styles.suggestionsContainer}>
-            <Text style={styles.suggestionsLabel}>Suggested queries:</Text>
-            <View style={styles.chipsWrap}>
-              {SUGGESTIONS.map((chip, idx) => (
-                <TouchableOpacity
-                  key={idx}
-                  style={styles.chip}
-                  activeOpacity={0.7}
-                  onPress={() => handleChipPress(chip)}
-                >
-                  <Text style={styles.chipText}>{chip}</Text>
-                </TouchableOpacity>
-              ))}
+          {!isTyping && chipsToShow.length > 0 && (
+            <View style={styles.suggestionsContainer}>
+              <Text style={styles.suggestionsLabel}>
+                {showStartChips ? 'Suggested queries:' : 'Quick replies:'}
+              </Text>
+              <View style={styles.chipsWrap}>
+                {chipsToShow.map((chip, idx) => (
+                  <TouchableOpacity
+                    key={idx}
+                    style={styles.chip}
+                    activeOpacity={0.7}
+                    onPress={() => handleChipPress(chip)}
+                  >
+                    <Text style={styles.chipText}>{chip}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
             </View>
-          </View>
+          )}
         </ScrollView>
 
         {/* Input Bar */}
-        <View style={[styles.inputBar, { paddingBottom: Math.max(insets.bottom, 12) }]}>
+        <View
+          ref={inputBarRef}
+          collapsable={false}
+          style={[styles.inputBar, { paddingBottom: kbVisible ? 12 : Math.max(insets.bottom, 12) }]}
+        >
           <TextInput
             style={styles.textInput}
             placeholder="Type your question or paste message..."
@@ -246,7 +323,7 @@ export default function ChatbotScreen({ navigation, route }) {
             onPress={() => handleSend()}
             disabled={!inputText.trim()}
           >
-            <Text style={styles.sendButtonText}>â†‘</Text>
+            <Icon name="arrow-up" size={20} color="#FFFFFF" />
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
