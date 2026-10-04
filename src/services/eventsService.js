@@ -1,62 +1,108 @@
-import { collection, getDocs, onSnapshot } from 'firebase/firestore';
-import { db } from '../../firebase';
+import { supabase, isSupabaseConfigured } from './supabaseClient';
+import { UPCOMING_EVENTS } from '../constants/data';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-/** Convert a Firestore document into the fields used by the event cards. */
-export function normalizeEventDoc(doc) {
-  const data = doc.data();
-  const title = data.title ?? data.Title;
-  const description = data.description ?? data.Description;
-  const date = data.date ?? data.Date;
-  const time = data.time ?? data.Time;
-  const venue = data.venue ?? data.Venue;
-  const category = data.category ?? data.Category;
-  const imageUrl = data.imageUrl ?? data.ImageUrl;
-  const dateValue =
-    date && typeof date.toDate === 'function'
-      ? date.toDate()
-      : date == null
-        ? null
-        : new Date(date);
+const CACHE_KEY = 'CYBERAKSHAK_EVENTS_CACHE';
+let cachedEvents = null;
+
+/** Convert a Supabase event row or Firestore object into normalized event shape. */
+export function normalizeEventDoc(row) {
+  const title = row.title ?? row.Title ?? '';
+  const description = row.description ?? row.Description ?? '';
+  const startsAt = row.starts_at ?? row.startsAt ?? row.date ?? row.Date;
+  const location = row.location ?? row.venue ?? row.Venue ?? row.mode ?? '';
+  const category = row.category ?? row.Category ?? row.type ?? 'Webinar';
+  const imageUrl = row.image_url ?? row.imageUrl ?? row.ImageUrl ?? '';
+
+  const dateValue = startsAt ? new Date(startsAt) : null;
   const validDate = dateValue && !Number.isNaN(dateValue.getTime());
 
   let normalizedImageUrl = typeof imageUrl === 'string' ? imageUrl.trim() : '';
   normalizedImageUrl = normalizedImageUrl.replace(
     /^https?:\/\/github\.com\/([^/]+\/[^/]+)\/blob\/([^/]+)\/(.+)$/i,
-    'https://raw.githubusercontent.com/$1/$2/$3',
+    'https://raw.githubusercontent.com/$1/$2/$3'
   );
 
   return {
-    id: doc.id,
+    id: String(row.id || Math.random()),
     title: typeof title === 'string' ? title : '',
     description: typeof description === 'string' ? description : '',
-    date:
-      validDate && typeof date.toDate === 'function'
-        ? dateValue.toLocaleDateString()
-        : date == null
-          ? ''
-          : String(date),
-    day: validDate ? String(dateValue.getDate()).padStart(2, '0') : '--',
+    date: validDate ? dateValue.toLocaleDateString() : '',
+    day: validDate ? String(dateValue.getDate()).padStart(2, '0') : (row.day || '--'),
     month: validDate
       ? dateValue.toLocaleString('en-US', { month: 'short' }).toUpperCase()
-      : '---',
-    time: typeof time === 'string' ? time : '',
-    venue: typeof venue === 'string' ? venue : '',
+      : (row.month || '---'),
+    time: row.time || (validDate ? dateValue.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''),
+    venue: typeof location === 'string' ? location : '',
     category: typeof category === 'string' ? category : '',
     imageUrl: normalizedImageUrl,
+    registrationUrl: row.registration_url || '',
   };
 }
 
-/** Subscribe to live changes in the Firestore events collection. */
+/** Subscribe to live changes or poll Supabase events table. */
 export function subscribeToEvents(onEventsUpdate, onError) {
-  return onSnapshot(
-    collection(db, 'events'),
-    (snapshot) => onEventsUpdate(snapshot.docs.map(normalizeEventDoc)),
-    onError,
-  );
+  fetchEventsOnce()
+    .then(onEventsUpdate)
+    .catch((err) => {
+      if (onError) onError(err);
+      onEventsUpdate(getFallbackEvents());
+    });
+
+  if (!isSupabaseConfigured()) {
+    return () => {};
+  }
+
+  // Subscribe to real-time changes on published events
+  const channel = supabase
+    .channel('public:events')
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'events', filter: 'status=eq.published' },
+      () => {
+        fetchEventsOnce().then(onEventsUpdate).catch(() => {});
+      }
+    )
+    .subscribe();
+
+  return () => {
+    supabase.removeChannel(channel);
+  };
 }
 
-/** Fetch the current events collection, used by pull-to-refresh. */
+/** Fetch published events once from Supabase DB, with cache fallback. */
 export async function fetchEventsOnce() {
-  const snapshot = await getDocs(collection(db, 'events'));
-  return snapshot.docs.map(normalizeEventDoc);
+  if (!isSupabaseConfigured()) {
+    return getFallbackEvents();
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('events')
+      .select('*')
+      .eq('status', 'published')
+      .order('starts_at', { ascending: true });
+
+    if (error) throw error;
+
+    if (Array.isArray(data) && data.length > 0) {
+      const normalized = data.map(normalizeEventDoc);
+      cachedEvents = normalized;
+      AsyncStorage.setItem(CACHE_KEY, JSON.stringify(normalized)).catch(() => {});
+      return normalized;
+    }
+
+    return getFallbackEvents();
+  } catch (err) {
+    console.warn('[EventsService] Fetch failed, returning cached/fallback events:', err.message);
+    return getFallbackEvents();
+  }
+}
+
+/** Helper to get cached events or bundled static UPCOMING_EVENTS fallback */
+function getFallbackEvents() {
+  if (cachedEvents && cachedEvents.length > 0) {
+    return cachedEvents;
+  }
+  return UPCOMING_EVENTS.map(normalizeEventDoc);
 }
