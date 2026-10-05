@@ -43,7 +43,7 @@ export default function VerifyOTPScreen({ route, navigation }) {
     setSuccessMsg('');
     const cleanToken = otpToken.trim();
 
-    if (cleanToken.length < 6) {
+    if (cleanToken.length < 4) {
       setErrorMsg(AUTH_STRINGS.errOtpLength);
       return;
     }
@@ -133,8 +133,10 @@ export default function VerifyOTPScreen({ route, navigation }) {
               style={styles.otpInput}
               placeholder={AUTH_STRINGS.otpPlaceholder}
               placeholderTextColor={COLORS.muted}
-              keyboardType="number-pad"
-              maxLength={6}
+              keyboardType="default"
+              autoCapitalize="none"
+              autoCorrect={false}
+              maxLength={32}
               value={otpToken}
               onChangeText={setOtpToken}
             />
@@ -290,9 +292,9 @@ const styles = StyleSheet.create({
   },
   otpInput: {
     color: COLORS.ink,
-    fontSize: 22,
-    fontWeight: '800',
-    letterSpacing: 10,
+    fontSize: 18,
+    fontWeight: '700',
+    letterSpacing: 2,
     textAlign: 'center',
   },
   submitBtn: {
