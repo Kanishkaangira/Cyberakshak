@@ -174,6 +174,7 @@ export default function ProfileScreen() {
               icon={darkTheme ? 'moon-outline' : 'sunny-outline'}
               title="Dark theme"
               last
+              onPress={() => setDarkTheme(!darkTheme)}
               right={
                 <Switch
                   value={darkTheme}

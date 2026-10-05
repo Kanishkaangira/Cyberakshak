@@ -18,43 +18,41 @@ import { COLORS, SIZES } from '../../constants/theme';
 
 /**
  * Bottom sheet for editing the user's name.
- * The parent only controls `visible`; the slide animation is handled here.
  */
 export default function EditNameSheet({ visible, initialName, onSave, onClose }) {
   const insets = useSafeAreaInsets();
-  const [mounted, setMounted] = useState(false);
-  const [draft, setDraft] = useState(initialName);
+  const [draft, setDraft] = useState(initialName || '');
   const slide = useRef(new Animated.Value(0)).current;
   const inputRef = useRef(null);
 
   useEffect(() => {
     if (visible) {
-      setDraft(initialName);
-      setMounted(true);
+      setDraft(initialName || '');
       Animated.timing(slide, {
         toValue: 1,
         duration: 260,
         easing: Easing.out(Easing.cubic),
         useNativeDriver: true,
-      }).start(() => inputRef.current?.focus());
-    } else if (mounted) {
+      }).start(() => {
+        setTimeout(() => inputRef.current?.focus(), 50);
+      });
+    } else {
       Keyboard.dismiss();
-      Animated.timing(slide, {
-        toValue: 0,
-        duration: 200,
-        easing: Easing.in(Easing.cubic),
-        useNativeDriver: true,
-      }).start(({ finished }) => finished && setMounted(false));
+      slide.setValue(0);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [visible]);
+  }, [visible, initialName, slide]);
 
   const trimmed = draft.trim();
   const canSave = trimmed.length > 0 && trimmed !== initialName;
   const save = () => canSave && onSave(trimmed);
 
   return (
-    <Modal transparent visible={mounted} animationType="none" onRequestClose={onClose}>
+    <Modal
+      transparent
+      visible={!!visible}
+      animationType="none"
+      onRequestClose={onClose}
+    >
       <KeyboardAvoidingView
         style={styles.root}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -69,14 +67,21 @@ export default function EditNameSheet({ visible, initialName, onSave, onClose })
             {
               paddingBottom: insets.bottom + 20,
               transform: [
-                { translateY: slide.interpolate({ inputRange: [0, 1], outputRange: [340, 0] }) },
+                {
+                  translateY: slide.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [340, 0],
+                  }),
+                },
               ],
             },
           ]}
         >
           <View style={styles.handle} />
           <Text style={styles.title}>Edit name</Text>
-          <Text style={styles.subtitle}>This is how your name appears in the app.</Text>
+          <Text style={styles.subtitle}>
+            This is how your name appears in CyberAkshak.
+          </Text>
 
           <Text style={styles.label}>FULL NAME</Text>
           <TextInput
