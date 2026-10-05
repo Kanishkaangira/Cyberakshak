@@ -1,5 +1,19 @@
 import { supabase, isSupabaseConfigured } from './supabaseClient';
 import { GOOGLE_WEB_CLIENT_ID } from '../config/secrets';
+import {
+  isErrorWithCode,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
+
+function logGoogleSigninDiagnostic(stage, error) {
+  if (!__DEV__) return;
+
+  console.warn('[GoogleSignin]', stage, {
+    code: error?.code,
+    message: error?.message,
+    nativeCause: error?.cause?.message || error?.cause || error?.nativeStackAndroid,
+  });
+}
 
 /**
  * Configure Google Sign-In natively on launch if web client ID is present.
@@ -145,14 +159,42 @@ export async function signInWithGoogle() {
 
   try {
     initGoogleSignin();
-    const { GoogleSignin } = require('@react-native-google-signin/google-signin');
+    const {
+      GoogleSignin,
+      isCancelledResponse,
+      isSuccessResponse,
+    } = require('@react-native-google-signin/google-signin');
     await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-    
+
     const signInResult = await GoogleSignin.signIn();
-    const idToken = signInResult.data?.idToken || signInResult.idToken;
+
+    if (isCancelledResponse(signInResult)) {
+      throw new Error('Google sign-in was cancelled.');
+    }
+
+    if (!isSuccessResponse(signInResult)) {
+      throw new Error('Google sign-in did not complete. Please try again.');
+    }
+
+    let idToken =
+      signInResult.data?.idToken ||
+      signInResult.idToken ||
+      signInResult.data?.id_token ||
+      signInResult.id_token;
 
     if (!idToken) {
-      throw new Error('Could not retrieve Google ID Token.');
+      try {
+        const tokens = await GoogleSignin.getTokens();
+        idToken = tokens.idToken;
+      } catch (tokenErr) {
+        logGoogleSigninDiagnostic('getTokens failed', tokenErr);
+      }
+    }
+
+    if (!idToken) {
+      throw new Error(
+        'Google returned an account selection, but no ID token was issued. Ensure SHA-1 fingerprint is added in Firebase project cyberakshak-c02c2.'
+      );
     }
 
     const { data, error } = await supabase.auth.signInWithIdToken({
@@ -163,9 +205,24 @@ export async function signInWithGoogle() {
     if (error) throw error;
     return data;
   } catch (e) {
-    if (e.code === 'SIGN_IN_CANCELLED') {
+    logGoogleSigninDiagnostic('sign-in failed', e);
+
+    if (e.message === 'Google sign-in was cancelled.') {
       throw new Error('Google sign-in was cancelled.');
     }
+
+    if (isErrorWithCode?.(e)) {
+      if (e.code === statusCodes.IN_PROGRESS) {
+        throw new Error('Google sign-in is already in progress.');
+      }
+      if (e.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        throw new Error('Google Play services are unavailable or need updating.');
+      }
+      if (e.code === statusCodes.SIGN_IN_CANCELLED) {
+        throw new Error('Google sign-in was cancelled.');
+      }
+    }
+
     throw e;
   }
 }
