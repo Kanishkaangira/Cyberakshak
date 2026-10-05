@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { COLORS, SIZES } from '../constants/theme';
 import ProfileHeader from '../components/profile/ProfileHeader';
 import SettingRow from '../components/profile/SettingRow';
@@ -24,6 +25,8 @@ import {
   deleteUserAccount,
 } from '../services/authService';
 
+const THEME_KEY = 'CYBERAKSHAK_DARK_THEME';
+
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
   const [profile, setProfile] = useState(null);
@@ -33,6 +36,18 @@ export default function ProfileScreen() {
   const [language, setLanguage] = useState('English');
   const [darkTheme, setDarkTheme] = useState(false);
   const [editingName, setEditingName] = useState(false);
+
+  // Restore dark theme preference from AsyncStorage
+  useEffect(() => {
+    AsyncStorage.getItem(THEME_KEY).then((val) => {
+      if (val !== null) setDarkTheme(val === 'true');
+    }).catch(() => {});
+  }, []);
+
+  const toggleDarkTheme = (val) => {
+    setDarkTheme(val);
+    AsyncStorage.setItem(THEME_KEY, String(val)).catch(() => {});
+  };
 
   const loadProfile = useCallback(async () => {
     setLoading(true);
@@ -124,8 +139,14 @@ export default function ProfileScreen() {
   const userName = profile?.full_name || 'CyberAkshak User';
   const userEmail = profile?.email || 'user@cyberakshak.in';
 
+  // Dynamic Theme Colors
+  const bgColor = darkTheme ? '#0F172A' : COLORS.bg;
+  const cardColor = darkTheme ? '#1E293B' : COLORS.surface;
+  const borderColor = darkTheme ? '#334155' : COLORS.line;
+  const textColor = darkTheme ? '#F8FAFC' : COLORS.ink;
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: bgColor }]}>
       <StatusBar barStyle="light-content" backgroundColor={COLORS.brand} />
 
       <ScrollView
@@ -163,7 +184,7 @@ export default function ProfileScreen() {
           ) : null}
 
           <Text style={styles.sectionTitle}>Preferences</Text>
-          <View style={styles.card}>
+          <View style={[styles.card, { backgroundColor: cardColor, borderColor }]}>
             <SettingRow
               icon="globe-outline"
               title="Language"
@@ -174,11 +195,11 @@ export default function ProfileScreen() {
               icon={darkTheme ? 'moon-outline' : 'sunny-outline'}
               title="Dark theme"
               last
-              onPress={() => setDarkTheme(!darkTheme)}
+              onPress={() => toggleDarkTheme(!darkTheme)}
               right={
                 <Switch
                   value={darkTheme}
-                  onValueChange={setDarkTheme}
+                  onValueChange={toggleDarkTheme}
                   trackColor={{ false: COLORS.line, true: COLORS.brand }}
                   thumbColor="#FFFFFF"
                 />
@@ -187,7 +208,7 @@ export default function ProfileScreen() {
           </View>
 
           <Text style={styles.sectionTitle}>More</Text>
-          <View style={styles.card}>
+          <View style={[styles.card, { backgroundColor: cardColor, borderColor }]}>
             <SettingRow
               icon="information-circle-outline"
               title="About app"
@@ -203,7 +224,7 @@ export default function ProfileScreen() {
 
           {/* Log Out Button */}
           <TouchableOpacity
-            style={styles.logout}
+            style={[styles.logout, { backgroundColor: cardColor, borderColor: COLORS.redSoft }]}
             activeOpacity={0.8}
             onPress={confirmLogout}
           >
@@ -236,7 +257,7 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: COLORS.bg },
+  container: { flex: 1 },
   loadingHeader: {
     backgroundColor: COLORS.brand,
     alignItems: 'center',
@@ -289,11 +310,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   card: {
-    backgroundColor: COLORS.surface,
     borderRadius: SIZES.radiusMd,
     paddingHorizontal: 14,
     borderWidth: 1,
-    borderColor: COLORS.line,
   },
   logout: {
     minHeight: 52,
@@ -302,10 +321,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    backgroundColor: COLORS.surface,
     borderRadius: SIZES.radiusMd,
     borderWidth: 1,
-    borderColor: COLORS.redSoft,
   },
   logoutText: { color: COLORS.red, fontSize: 14.5, fontWeight: '700' },
   deleteBtn: {

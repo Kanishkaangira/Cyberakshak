@@ -3,15 +3,13 @@ import {
   Animated,
   Easing,
   Keyboard,
-  KeyboardAvoidingView,
   Modal,
-  Platform,
-  Pressable,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLORS, SIZES } from '../../constants/theme';
@@ -30,12 +28,10 @@ export default function EditNameSheet({ visible, initialName, onSave, onClose })
       setDraft(initialName || '');
       Animated.timing(slide, {
         toValue: 1,
-        duration: 260,
+        duration: 250,
         easing: Easing.out(Easing.cubic),
         useNativeDriver: true,
-      }).start(() => {
-        setTimeout(() => inputRef.current?.focus(), 50);
-      });
+      }).start();
     } else {
       Keyboard.dismiss();
       slide.setValue(0);
@@ -53,24 +49,23 @@ export default function EditNameSheet({ visible, initialName, onSave, onClose })
       animationType="none"
       onRequestClose={onClose}
     >
-      <KeyboardAvoidingView
-        style={styles.root}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
-        <Animated.View style={[styles.backdrop, { opacity: slide }]}>
-          <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
-        </Animated.View>
+      <View style={styles.root}>
+        {/* Backdrop (dismisses keyboard/modal when explicitly tapped) */}
+        <TouchableWithoutFeedback onPress={onClose}>
+          <Animated.View style={[styles.backdrop, { opacity: slide }]} />
+        </TouchableWithoutFeedback>
 
+        {/* Sheet Content */}
         <Animated.View
           style={[
             styles.sheet,
             {
-              paddingBottom: insets.bottom + 20,
+              paddingBottom: Math.max(insets.bottom + 20, 28),
               transform: [
                 {
                   translateY: slide.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [340, 0],
+                    outputRange: [360, 0],
                   }),
                 },
               ],
@@ -115,7 +110,7 @@ export default function EditNameSheet({ visible, initialName, onSave, onClose })
             </TouchableOpacity>
           </View>
         </Animated.View>
-      </KeyboardAvoidingView>
+      </View>
     </Modal>
   );
 }
@@ -129,6 +124,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 28,
     paddingHorizontal: 20,
     paddingTop: 10,
+    elevation: 24,
   },
   handle: {
     alignSelf: 'center',
