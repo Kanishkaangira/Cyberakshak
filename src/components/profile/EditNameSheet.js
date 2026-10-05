@@ -3,7 +3,9 @@ import {
   Animated,
   Easing,
   Keyboard,
+  KeyboardAvoidingView,
   Modal,
+  Platform,
   StyleSheet,
   Text,
   TextInput,
@@ -16,6 +18,7 @@ import { COLORS, SIZES } from '../../constants/theme';
 
 /**
  * Bottom sheet for editing the user's name.
+ * Stays floating cleanly above soft keyboard.
  */
 export default function EditNameSheet({ visible, initialName, onSave, onClose }) {
   const insets = useSafeAreaInsets();
@@ -49,7 +52,11 @@ export default function EditNameSheet({ visible, initialName, onSave, onClose })
       animationType="none"
       onRequestClose={onClose}
     >
-      <View style={styles.root}>
+      <KeyboardAvoidingView
+        style={styles.root}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}
+        keyboardVerticalOffset={Platform.OS === 'android' ? -20 : 0}
+      >
         {/* Backdrop (dismisses keyboard/modal when explicitly tapped) */}
         <TouchableWithoutFeedback onPress={onClose}>
           <Animated.View style={[styles.backdrop, { opacity: slide }]} />
@@ -60,7 +67,7 @@ export default function EditNameSheet({ visible, initialName, onSave, onClose })
           style={[
             styles.sheet,
             {
-              paddingBottom: Math.max(insets.bottom + 20, 28),
+              paddingBottom: Math.max(insets.bottom + 20, 24),
               transform: [
                 {
                   translateY: slide.interpolate({
@@ -110,7 +117,7 @@ export default function EditNameSheet({ visible, initialName, onSave, onClose })
             </TouchableOpacity>
           </View>
         </Animated.View>
-      </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }

@@ -37,7 +37,7 @@ export default function ProfileScreen() {
   const [darkTheme, setDarkTheme] = useState(false);
   const [editingName, setEditingName] = useState(false);
 
-  // Restore dark theme preference from AsyncStorage
+  // Restore dark theme state
   useEffect(() => {
     AsyncStorage.getItem(THEME_KEY).then((val) => {
       if (val !== null) setDarkTheme(val === 'true');
@@ -139,14 +139,8 @@ export default function ProfileScreen() {
   const userName = profile?.full_name || 'CyberAkshak User';
   const userEmail = profile?.email || 'user@cyberakshak.in';
 
-  // Dynamic Theme Colors
-  const bgColor = darkTheme ? '#0F172A' : COLORS.bg;
-  const cardColor = darkTheme ? '#1E293B' : COLORS.surface;
-  const borderColor = darkTheme ? '#334155' : COLORS.line;
-  const textColor = darkTheme ? '#F8FAFC' : COLORS.ink;
-
   return (
-    <View style={[styles.container, { backgroundColor: bgColor }]}>
+    <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={COLORS.brand} />
 
       <ScrollView
@@ -184,7 +178,7 @@ export default function ProfileScreen() {
           ) : null}
 
           <Text style={styles.sectionTitle}>Preferences</Text>
-          <View style={[styles.card, { backgroundColor: cardColor, borderColor }]}>
+          <View style={styles.card}>
             <SettingRow
               icon="globe-outline"
               title="Language"
@@ -208,7 +202,7 @@ export default function ProfileScreen() {
           </View>
 
           <Text style={styles.sectionTitle}>More</Text>
-          <View style={[styles.card, { backgroundColor: cardColor, borderColor }]}>
+          <View style={styles.card}>
             <SettingRow
               icon="information-circle-outline"
               title="About app"
@@ -224,7 +218,7 @@ export default function ProfileScreen() {
 
           {/* Log Out Button */}
           <TouchableOpacity
-            style={[styles.logout, { backgroundColor: cardColor, borderColor: COLORS.redSoft }]}
+            style={styles.logout}
             activeOpacity={0.8}
             onPress={confirmLogout}
           >
@@ -257,7 +251,7 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: { flex: 1, backgroundColor: COLORS.bg },
   loadingHeader: {
     backgroundColor: COLORS.brand,
     alignItems: 'center',
@@ -310,9 +304,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   card: {
+    backgroundColor: COLORS.surface,
     borderRadius: SIZES.radiusMd,
     paddingHorizontal: 14,
     borderWidth: 1,
+    borderColor: COLORS.line,
   },
   logout: {
     minHeight: 52,
@@ -321,8 +317,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
+    backgroundColor: COLORS.surface,
     borderRadius: SIZES.radiusMd,
     borderWidth: 1,
+    borderColor: COLORS.redSoft,
   },
   logoutText: { color: COLORS.red, fontSize: 14.5, fontWeight: '700' },
   deleteBtn: {

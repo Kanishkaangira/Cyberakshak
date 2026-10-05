@@ -133,6 +133,16 @@ export async function signInWithGoogle() {
     throw new Error('Supabase is not configured yet. Please set SUPABASE_URL and SUPABASE_ANON_KEY in src/config/secrets.js.');
   }
 
+  if (
+    !GOOGLE_WEB_CLIENT_ID ||
+    GOOGLE_WEB_CLIENT_ID.includes('placeholder') ||
+    GOOGLE_WEB_CLIENT_ID.startsWith('00000000')
+  ) {
+    throw new Error(
+      'Google Sign-In is not ready. Please copy your real Google OAuth Web Client ID from Google Cloud Console into src/config/secrets.js.'
+    );
+  }
+
   try {
     initGoogleSignin();
     const { GoogleSignin } = require('@react-native-google-signin/google-signin');
