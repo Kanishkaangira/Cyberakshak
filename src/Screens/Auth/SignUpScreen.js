@@ -67,7 +67,25 @@ export default function SignUpScreen({ navigation }) {
         type: 'signup',
       });
     } catch (err) {
-      setErrorMsg(err.message || AUTH_STRINGS.errGeneric);
+      if (__DEV__) {
+        console.warn('[Auth] Sign-up failed', {
+          name: err?.name,
+          code: err?.code,
+          status: err?.status,
+          message: err?.message,
+        });
+      }
+
+      const isServerFailure =
+        err?.status >= 500 ||
+        err?.code === 'unexpected_failure' ||
+        String(err?.message || '').includes('"status":500');
+
+      setErrorMsg(
+        isServerFailure
+          ? 'Account creation is temporarily unavailable. Please try again shortly.'
+          : err?.message || AUTH_STRINGS.errGeneric
+      );
     } finally {
       setLoading(false);
     }
