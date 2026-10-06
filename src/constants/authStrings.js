@@ -9,8 +9,6 @@ export const AUTH_STRINGS = {
   confirmLogout: 'Are you sure you want to log out?',
   deleteAccount: 'Delete My Account',
   confirmDeleteAccount: 'Are you sure you want to delete your account? This will permanently remove all your profile data and cannot be undone.',
-  googleSignIn: 'Continue with Google',
-  or: 'OR',
   continue: 'Continue',
   submit: 'Submit',
   verify: 'Verify OTP',

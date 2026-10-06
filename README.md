@@ -20,7 +20,7 @@
 - **Framework**: React Native `0.87.1` (Plain JavaScript, no TypeScript)
 - **Target Platform**: Android (primary launch target)
 - **Navigation**: React Navigation 6 (`@react-navigation/native-stack` + `@react-navigation/bottom-tabs`)
-- **Backend & Auth**: Supabase (PostgreSQL, Row Level Security, Supabase Auth with Email OTP & Google Sign-In)
+- **Backend & Auth**: Supabase (PostgreSQL, Row Level Security, Supabase Auth with email/password and email OTP verification)
 - **Push Notifications**: Firebase Cloud Messaging (FCM)
 - **Icons & UI**: `react-native-vector-icons` (Ionicons), custom design system (`src/constants/theme.js`)
 - **Chatbot API**: External FastAPI backend (`chatService.js`) with local fallback detection (`analyzeUserQuery`).

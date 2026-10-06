@@ -43,7 +43,7 @@ export default function VerifyOTPScreen({ route, navigation }) {
     setSuccessMsg('');
     const cleanToken = otpToken.trim();
 
-    if (cleanToken.length < 4) {
+    if (!/^\d{6}$/.test(cleanToken)) {
       setErrorMsg(AUTH_STRINGS.errOtpLength);
       return;
     }
@@ -133,10 +133,10 @@ export default function VerifyOTPScreen({ route, navigation }) {
               style={styles.otpInput}
               placeholder={AUTH_STRINGS.otpPlaceholder}
               placeholderTextColor={COLORS.muted}
-              keyboardType="default"
+              keyboardType="number-pad"
               autoCapitalize="none"
               autoCorrect={false}
-              maxLength={32}
+              maxLength={6}
               value={otpToken}
               onChangeText={setOtpToken}
             />

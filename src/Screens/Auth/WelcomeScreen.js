@@ -6,29 +6,14 @@ import {
   TouchableOpacity,
   StatusBar,
   ScrollView,
-  Alert,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { COLORS, SIZES } from '../../constants/theme';
 import { AUTH_STRINGS } from '../../constants/authStrings';
-import { signInWithGoogle } from '../../services/authService';
 
 export default function WelcomeScreen({ navigation }) {
   const insets = useSafeAreaInsets();
-  const [googleLoading, setGoogleLoading] = React.useState(false);
-
-  const handleGoogleSignIn = async () => {
-    setGoogleLoading(true);
-    try {
-      await signInWithGoogle();
-    } catch (err) {
-      Alert.alert('Google Sign-In', err.message || AUTH_STRINGS.errGeneric);
-    } finally {
-      setGoogleLoading(false);
-    }
-  };
-
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <StatusBar barStyle="light-content" backgroundColor={COLORS.brand} />
@@ -70,23 +55,6 @@ export default function WelcomeScreen({ navigation }) {
             <Text style={styles.secondaryBtnText}>{AUTH_STRINGS.signUp}</Text>
           </TouchableOpacity>
 
-          <View style={styles.dividerRow}>
-            <View style={styles.dividerLine} />
-            <Text style={styles.dividerText}>{AUTH_STRINGS.or}</Text>
-            <View style={styles.dividerLine} />
-          </View>
-
-          <TouchableOpacity
-            style={styles.googleBtn}
-            activeOpacity={0.85}
-            disabled={googleLoading}
-            onPress={handleGoogleSignIn}
-          >
-            <Icon name="logo-google" size={18} color="#4285F4" />
-            <Text style={styles.googleBtnText}>
-              {googleLoading ? 'Connecting to Google...' : AUTH_STRINGS.googleSignIn}
-            </Text>
-          </TouchableOpacity>
         </View>
       </ScrollView>
     </View>
@@ -178,38 +146,6 @@ const styles = StyleSheet.create({
   secondaryBtnText: {
     color: COLORS.brand,
     fontSize: 15,
-    fontWeight: '700',
-  },
-  dividerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 4,
-    gap: 12,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: COLORS.line,
-  },
-  dividerText: {
-    color: COLORS.muted,
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  googleBtn: {
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.line,
-    minHeight: 52,
-    borderRadius: SIZES.radiusMd,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
-  },
-  googleBtnText: {
-    color: COLORS.ink,
-    fontSize: 14.5,
     fontWeight: '700',
   },
 });

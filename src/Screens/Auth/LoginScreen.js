@@ -15,7 +15,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { COLORS, SIZES } from '../../constants/theme';
 import { AUTH_STRINGS } from '../../constants/authStrings';
-import { signInWithEmail, signInWithGoogle } from '../../services/authService';
+import { signInWithEmail } from '../../services/authService';
 
 export default function LoginScreen({ navigation }) {
   const insets = useSafeAreaInsets();
@@ -23,7 +23,6 @@ export default function LoginScreen({ navigation }) {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
   const handleLogin = async () => {
@@ -46,18 +45,6 @@ export default function LoginScreen({ navigation }) {
       setErrorMsg(err.message || AUTH_STRINGS.errGeneric);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleGoogleSignIn = async () => {
-    setErrorMsg('');
-    setGoogleLoading(true);
-    try {
-      await signInWithGoogle();
-    } catch (err) {
-      setErrorMsg(err.message || AUTH_STRINGS.errGeneric);
-    } finally {
-      setGoogleLoading(false);
     }
   };
 
@@ -154,26 +141,6 @@ export default function LoginScreen({ navigation }) {
             ) : (
               <Text style={styles.submitBtnText}>{AUTH_STRINGS.login}</Text>
             )}
-          </TouchableOpacity>
-
-          {/* Divider */}
-          <View style={styles.dividerRow}>
-            <View style={styles.dividerLine} />
-            <Text style={styles.dividerText}>{AUTH_STRINGS.or}</Text>
-            <View style={styles.dividerLine} />
-          </View>
-
-          {/* Google Button */}
-          <TouchableOpacity
-            style={styles.googleBtn}
-            activeOpacity={0.85}
-            disabled={googleLoading}
-            onPress={handleGoogleSignIn}
-          >
-            <Icon name="logo-google" size={18} color="#4285F4" />
-            <Text style={styles.googleBtnText}>
-              {googleLoading ? 'Connecting...' : AUTH_STRINGS.googleSignIn}
-            </Text>
           </TouchableOpacity>
 
           {/* Sign Up Prompt */}
@@ -297,38 +264,6 @@ const styles = StyleSheet.create({
   submitBtnText: {
     color: '#FFFFFF',
     fontSize: 15,
-    fontWeight: '700',
-  },
-  dividerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 20,
-    gap: 12,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: COLORS.line,
-  },
-  dividerText: {
-    color: COLORS.muted,
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  googleBtn: {
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.line,
-    minHeight: 52,
-    borderRadius: SIZES.radiusMd,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
-  },
-  googleBtnText: {
-    color: COLORS.ink,
-    fontSize: 14.5,
     fontWeight: '700',
   },
   footerRow: {

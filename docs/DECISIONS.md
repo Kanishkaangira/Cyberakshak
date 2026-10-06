@@ -12,7 +12,7 @@ CyberAkshak requires a unified, scalable, secure, and free-tier friendly backend
 2. A future **Admin Web Dashboard** (React / Next.js) for content moderation, event management, user management, audit logging, and push notification dispatch.
 
 Key System Capabilities Needed:
-- **Authentication**: Email + password with 6-digit OTP verification, in-app password reset via OTP, Google Sign-In (native ID token), persistent session handling with token auto-refresh.
+- **Authentication**: Email + password with email OTP verification, in-app password reset via OTP, persistent session handling with token auto-refresh.
 - **Relational Data Storage**: User profiles, events calendar, targetable push notifications, user device tokens, and admin audit logs.
 - **Role-Based Security**: Strict server-enforced role access (`user`, `admin`, `moderator`) with zero trust in client-side claims.
 - **Push Notifications**: FCM (Firebase Cloud Messaging) for broadcast and segment-targeted mobile push notifications.
@@ -36,9 +36,8 @@ We recommend **Supabase** as the single primary backend database and authenticat
    - Admin access is validated via a database helper function `is_admin()`, which checks `profiles.role` directly inside Postgres.
    - Client-side code cannot forge admin rights or mutate non-permitted fields (such as promoting oneself to `admin`).
 
-3. **Native Email OTP & Google Auth**:
+3. **Native Email OTP**:
    - Supabase Auth natively supports 6-digit email OTP signup and verification out-of-the-box.
-   - Native Google Sign-In integration using ID tokens (`@react-native-google-signin/google-signin` + `supabase.auth.signInWithIdToken`).
 
 4. **Zero-API-Layer Admin Web Panel Integration**:
    - Supabase automatically exposes auto-generated, type-safe REST APIs (PostgREST) over HTTP.
@@ -95,4 +94,3 @@ To execute Phase 2 (Auth + Database), the following packages are proposed:
 
 1. `@supabase/supabase-js`: Official JavaScript client for Supabase (DB + Auth).
 2. `@react-native-async-storage/async-storage`: Standard React Native persistent key-value storage for session persistence across app restarts.
-3. `@react-native-google-signin/google-signin`: Native Google Sign-In module for Android/iOS OAuth credential retrieval.
