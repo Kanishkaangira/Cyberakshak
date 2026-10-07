@@ -1,0 +1,245 @@
+{
+  "common": {
+    "cancel": "Cancel",
+    "ok": "OK",
+    "retry": "Retry",
+    "loading": "Loading...",
+    "sending": "Sending...",
+    "readMore": "Read more",
+    "showLess": "Show less",
+    "all": "All",
+    "live": "LIVE"
+  },
+  "auth": {
+    "appName": "Cyberakshak",
+    "appTagline": "Indian Cyber Fraud Safety & Defense",
+    "login": "Log in",
+    "signUp": "Create an Account",
+    "logout": "Log out",
+    "confirmLogout": "Are you sure you want to log out?",
+    "deleteAccount": "Delete My Account",
+    "confirmDeleteAccount": "Are you sure you want to delete your account? This will permanently remove all your profile data and cannot be undone.",
+    "continue": "Continue",
+    "submit": "Submit",
+    "verify": "Verify OTP",
+    "resendCode": "Resend Code",
+    "resendCooldown": "Resend code in {{seconds}}s",
+    "welcomeTitle": "Protect Yourself from Digital Scams",
+    "welcomeSubtitle": "Real-time threat intelligence, scam reporting, and cyber fraud guidance across India.",
+    "loginTitle": "Welcome Back",
+    "loginSubtitle": "Sign in to access your cyber safety account",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "name@example.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "forgotPasswordLink": "Forgot password?",
+    "noAccountPrompt": "Don't have an account?",
+    "signUpTitle": "Create Account",
+    "signUpSubtitle": "Join Cyberakshak to stay safe from online fraud",
+    "fullNameLabel": "Full Name",
+    "fullNamePlaceholder": "Enter your full name",
+    "phoneLabel": "Phone Number (Optional)",
+    "phonePlaceholder": "10-digit mobile number",
+    "cityLabel": "City (Optional)",
+    "cityPlaceholder": "Enter your city",
+    "confirmPasswordLabel": "Confirm Password",
+    "confirmPasswordPlaceholder": "Re-enter your password",
+    "alreadyHaveAccount": "Already have an account?",
+    "otpTitle": "Verify Your Email",
+    "otpSubtitle": "We have sent a 6-digit verification code to {{email}}",
+    "enterOtpLabel": "Enter 6-Digit Code",
+    "otpPlaceholder": "123456",
+    "otpExpired": "Verification code expired or invalid. Please request a new code.",
+    "otpSentSuccess": "A fresh 6-digit OTP code has been sent to your email.",
+    "forgotTitle": "Forgot Password",
+    "forgotSubtitle": "Enter your registered email address to receive a password reset code.",
+    "resetTitle": "Set New Password",
+    "resetSubtitle": "Enter the 6-digit code sent to your email and choose a new password.",
+    "newPasswordLabel": "New Password",
+    "newPasswordPlaceholder": "Minimum 8 characters",
+    "errEmailRequired": "Please enter a valid email address.",
+    "errPasswordRequired": "Please enter your password.",
+    "errPasswordMinLength": "Password must be at least 8 characters long.",
+    "errPasswordMismatch": "Passwords do not match.",
+    "errFullNameRequired": "Please enter your full name.",
+    "errOtpLength": "Please enter the complete 6-digit OTP code.",
+    "errGeneric": "An unexpected error occurred. Please try again.",
+    "accountCreationUnavailable": "Account creation is temporarily unavailable. Please try again shortly.",
+    "passwordResetSuccess": "Password Reset Successful",
+    "passwordResetSuccessMessage": "Your password has been updated. Please sign in with your new password."
+  },
+  "tabs": {
+    "home": "Home",
+    "news": "News",
+    "events": "Events",
+    "profile": "Profile"
+  },
+  "profile": {
+    "title": "Profile",
+    "edit": "Edit",
+    "loading": "Loading Profile...",
+    "saving": "Saving profile changes...",
+    "defaultName": "CyberAkshak User",
+    "preferences": "Preferences",
+    "language": "Language",
+    "english": "English",
+    "hindi": "Hindi",
+    "chooseLanguage": "Choose your app language",
+    "darkTheme": "Dark theme",
+    "more": "More",
+    "aboutApp": "About app",
+    "aboutTitle": "About Cyberakshak",
+    "aboutMessage": "Cyberakshak helps people recognize online fraud and stay safer. Version 1.0.0.",
+    "logout": "Log out",
+    "deleteAccount": "Delete My Account",
+    "deletePermanently": "Delete Permanently",
+    "version": "Cyberakshak · Version 1.0.0",
+    "loadError": "Could not load profile. Pull to refresh.",
+    "updateFailed": "Update Failed",
+    "updateNameFailed": "Could not update name.",
+    "signOutError": "Sign Out Error",
+    "deleteFailed": "Account Deletion Failed",
+    "nameTitle": "Edit name",
+    "nameSubtitle": "This is how your name appears in CyberAkshak.",
+    "fullName": "FULL NAME",
+    "yourName": "Your name",
+    "save": "Save"
+  },
+  "home": {
+    "welcomeBack": "Welcome back",
+    "hello": "Hi, {{name}}",
+    "user": "User",
+    "assistant": "AI safety assistant",
+    "checkLink": "Check link",
+    "reportFraud": "Report fraud",
+    "helpline": "Helpline 1930",
+    "reportTitle": "Report Cyber Fraud",
+    "reportMessage": "If you suspect or suffered a financial fraud, report immediately to the National Cyber Crime Helpline:\n\n• Dial: 1930\n• Portal: cybercrime.gov.in\n\nReporting within 2 to 24 hours increases the chance to freeze lost funds.",
+    "call1930": "Call 1930",
+    "askChatbot": "Ask AI Chatbot",
+    "checkLinkQuestion": "Is this link safe?",
+    "lostMoney": "I lost money in a scam",
+    "helplineTitle": "National Cyber Helpline (1930)",
+    "helplineMessage": "1930 is the official citizen financial cyber fraud reporting helpline managed by the Ministry of Home Affairs (I4C).\n\nWould you like to dial now?",
+    "dial1930": "Dial 1930",
+    "alertsTitle": "Cyber Alerts",
+    "alertsMessage": "You have 2 new security alerts:\n• New courier SMS phishing detected\n• National UPI advisory issued",
+    "gotSuspicious": "Got a suspicious call or message?",
+    "askCyberakshak": "Ask Cyberakshak and find out if it is a scam.",
+    "messagePlaceholder": "Type or paste a message",
+    "learnFrauds": "Learn about frauds",
+    "seeAll": "See all",
+    "readGuide": "Read guide",
+    "tipTitle": "Tip of the day",
+    "tipMessage": "Your bank never asks for your OTP or UPI PIN to credit funds."
+  },
+  "news": {
+    "title": "Cyber News",
+    "subtitle": "Real-time threat intelligence & scam prevention",
+    "fetching": "Fetching cybersecurity news...",
+    "fetchError": "Could not fetch latest cyber news. Displaying verified alerts.",
+    "noAlerts": "No Cyber Alerts",
+    "empty": "Pull down to refresh and fetch the latest cybersecurity intelligence.",
+    "readMore": "Read More",
+    "fullArticle": "Read full article on source website"
+  },
+  "events": {
+    "title": "Upcoming events",
+    "liveFeed": "Live Feed",
+    "subtitle": "Verified cyber safety seminars, webinars & expert workshops",
+    "loading": "Loading events...",
+    "connecting": "Connecting to Firestore events collection",
+    "loadFailed": "Failed to load events from Firebase",
+    "refreshFailed": "Failed to refresh events",
+    "couldNotLoad": "Could not load events",
+    "securityRules": "Firebase Security Rules Notice:",
+    "securityRulesHelp": "Ensure your Cloud Firestore Security Rules allow read access to the 'events' collection (e.g., allow read: if true; in test mode).",
+    "retry": "Retry connection",
+    "noneFound": "No events found",
+    "noneMatch": "There are currently no events matching your criteria in Firestore. Pull down to refresh or check back soon!",
+    "showAll": "Show All Events"
+  },
+  "fraud": {
+    "guide": "Fraud guide",
+    "awareness": "Fraud awareness",
+    "commonScams": "{{count}} common scams and how to stay safe",
+    "risk": "{{severity}} risk",
+    "lostMoney": "Lost money to a fraud?",
+    "reportHour": "Report within the first hour to improve the chance of freezing the funds.",
+    "call": "Call {{number}}",
+    "howWorks": "How it works",
+    "messageLooks": "What the message looks like",
+    "warningSigns": "Warning signs",
+    "protect": "How to protect yourself",
+    "ifHappened": "If this has happened to you",
+    "reportOnline": "Report online",
+    "gotMessage": "Got a message like this?",
+    "pasteToCheck": "Paste it into Cyberakshak to check it",
+    "awarenessNote": "This guide is for awareness. In an emergency, call {{number}}.",
+    "allGroups": "All",
+    "banking": "Banking & payments",
+    "impersonation": "Impersonation",
+    "money": "Jobs & investment",
+    "social": "Personal & social",
+    "shopping": "Shopping & delivery",
+    "severity": {
+      "critical": "Critical",
+      "high": "High",
+      "medium": "Medium"
+    },
+    "categories": {
+      "phishing": {
+        "title": "Phishing & smishing",
+        "summary": "Fake emails, SMS and websites that imitate banks or government bodies to steal your login details."
+      },
+      "upi": {
+        "title": "UPI & QR code fraud",
+        "summary": "Tricks that make you approve a payment or scan a code while believing you are receiving money."
+      },
+      "sim_swap": {
+        "title": "SIM swap & SIM-block calls",
+        "summary": "Attackers take over your mobile number to intercept OTPs and reset your banking access."
+      },
+      "remote_access": {
+        "title": "Fake customer care & remote access",
+        "summary": "Fraudsters posing as support staff persuade you to install screen-sharing apps."
+      },
+      "digital_arrest": {
+        "title": "Digital arrest scam",
+        "summary": "Fraudsters pose as police, CBI, customs or courts on a video call and claim you are under arrest."
+      },
+      "deepfake": {
+        "title": "Deepfake & voice-clone scams",
+        "summary": "AI-generated voices and videos imitate relatives, colleagues or officials to demand urgent money."
+      },
+      "investment": {
+        "title": "Investment & trading scams",
+        "summary": "Fake stock, IPO and crypto platforms that show made-up profits until you deposit large sums."
+      },
+      "jobs": {
+        "title": "Fake job & task scams",
+        "summary": "Part-time offers that pay small amounts at first, then demand deposits to continue."
+      },
+      "loan_apps": {
+        "title": "Instant loan app harassment",
+        "summary": "Unregulated lending apps that access your contacts and threaten you to force repayment."
+      },
+      "sextortion": {
+        "title": "Sextortion & blackmail",
+        "summary": "Fraudsters use intimate or morphed content to threaten you into paying."
+      },
+      "account_takeover": {
+        "title": "WhatsApp & social account takeover",
+        "summary": "Attackers hijack your account with a verification code, then ask your contacts for money."
+      },
+      "shopping": {
+        "title": "Online shopping & marketplace fraud",
+        "summary": "Fake stores, and fake buyers or sellers on classifieds who take your money and disappear."
+      },
+      "courier": {
+        "title": "Courier & parcel scams",
+        "summary": "Fake delivery notices that push you to pay a small fee or install a malicious app."
+      }
+    }
+  }
+}
