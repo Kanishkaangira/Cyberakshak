@@ -1,6 +1,7 @@
 ﻿import React, { useState, useRef, useEffect } from 'react';
 import {
   StyleSheet,
+  StatusBar,
   Text,
   View,
   TextInput,
@@ -14,7 +15,9 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { COLORS, SIZES } from '../constants/theme';
+import { SIZES } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
+import useThemeStyles from '../hooks/useThemeStyles';
 import {
   INITIAL_CHAT_MESSAGES,
   SUGGESTIONS,
@@ -26,6 +29,8 @@ import { sendMessage, warmUp, resetChat, toBotMessage } from '../services/chatSe
 const WELCOME_MESSAGES = INITIAL_CHAT_MESSAGES.slice(0, 1);
 
 export default function ChatbotScreen({ navigation, route }) {
+  const { theme: COLORS, isDark } = useTheme();
+  const styles = useThemeStyles(createStyles);
   const insets = useSafeAreaInsets();
   const scrollViewRef = useRef(null);
 
@@ -159,6 +164,10 @@ export default function ChatbotScreen({ navigation, route }) {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
+      <StatusBar
+        barStyle={isDark ? 'light-content' : 'dark-content'}
+        backgroundColor={COLORS.surface}
+      />
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
@@ -260,7 +269,7 @@ export default function ChatbotScreen({ navigation, route }) {
                       Linking.openURL(`tel:${item.helpline}`).catch(() => {})
                     }
                   >
-                    <Icon name="call-outline" size={16} color="#FFFFFF" />
+                    <Icon name="call-outline" size={16} color={COLORS.onRed} />
                     <Text style={styles.helplineBtnText}>
                       Call National Helpline 1930
                     </Text>
@@ -317,13 +326,19 @@ export default function ChatbotScreen({ navigation, route }) {
           <TouchableOpacity
             style={[
               styles.sendButton,
-              { backgroundColor: inputText.trim() ? COLORS.brand : '#A2A5E4' },
+              {
+                backgroundColor: inputText.trim() ? COLORS.brand : COLORS.brandSoft,
+              },
             ]}
             activeOpacity={0.8}
             onPress={() => handleSend()}
             disabled={!inputText.trim()}
           >
-            <Icon name="arrow-up" size={20} color="#FFFFFF" />
+            <Icon
+              name="arrow-up"
+              size={20}
+              color={inputText.trim() ? COLORS.onBrand : COLORS.brand}
+            />
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -331,7 +346,7 @@ export default function ChatbotScreen({ navigation, route }) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (COLORS) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.bg,
@@ -424,7 +439,7 @@ const styles = StyleSheet.create({
     maxWidth: '82%',
   },
   userText: {
-    color: '#FFFFFF',
+    color: COLORS.onBrand,
     fontSize: 14,
     lineHeight: 20,
     fontWeight: '500',
@@ -569,7 +584,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   sendButtonText: {
-    color: '#FFFFFF',
+    color: COLORS.onBrand,
     fontSize: 19,
     fontWeight: '700',
     lineHeight: 22,
