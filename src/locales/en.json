@@ -143,6 +143,24 @@
     "readMore": "Read More",
     "fullArticle": "Read full article on source website"
   },
+  "chatbot": {
+    "title": "Cyberakshak assistant",
+    "subtitle": "Trained on cyber frauds & safety",
+    "clear": "Clear",
+    "welcome": "Hi! Paste a message or tell me what happened. I will help you check if it is a scam.",
+    "helpline": "Call National Helpline {{number}}",
+    "analyzing": "Cyberakshak is analyzing...",
+    "suggestedQueries": "Suggested queries:",
+    "quickReplies": "Quick replies:",
+    "inputPlaceholder": "Type your question or paste message...",
+    "suggestions": {
+      "1": "Is this link safe?",
+      "2": "I lost money in a scam",
+      "3": "Check a suspicious call",
+      "4": "Got a job offer on Telegram",
+      "5": "Fake courier text with APK"
+    }
+  },
   "events": {
     "title": "Upcoming events",
     "liveFeed": "Live Feed",
