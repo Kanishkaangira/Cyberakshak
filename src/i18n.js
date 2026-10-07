@@ -1,10 +1,18 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import { getLocales } from 'react-native-localize';
 import en from './locales/en.json';
 import hi from './locales/hi.json';
 
-const deviceLanguage = getLocales()[0]?.languageCode;
+// Use the JS runtime locale so app startup does not depend on a native locale
+// module being present in the installed Android binary.
+const deviceLocale = (() => {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().locale;
+  } catch {
+    return 'en';
+  }
+})();
+const deviceLanguage = deviceLocale?.split(/[-_]/)[0]?.toLowerCase();
 const initialLanguage = deviceLanguage === 'hi' ? 'hi' : 'en';
 
 i18n.use(initReactI18next).init({

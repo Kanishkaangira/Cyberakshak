@@ -3,7 +3,35 @@ import { UPCOMING_EVENTS } from '../constants/data';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const CACHE_KEY = 'CYBERAKSHAK_EVENTS_CACHE';
+const EVENTS_STORAGE_BUCKET = 'Events';
 let cachedEvents = null;
+
+/** Resolve a direct image URL or an object path from the Events storage bucket. */
+export function resolveEventImageUrl(value) {
+  if (typeof value !== 'string' || !value.trim()) return '';
+
+  let imageUrl = value.trim();
+  imageUrl = imageUrl.replace(
+    /^https?:\/\/github\.com\/([^/]+\/[^/]+)\/blob\/([^/]+)\/(.+)$/i,
+    'https://raw.githubusercontent.com/$1/$2/$3'
+  );
+
+  // Keep existing external URLs working. Plain values are treated as Storage paths.
+  if (/^https?:\/\//i.test(imageUrl)) return imageUrl;
+  if (!isSupabaseConfigured()) return '';
+
+  let objectPath = imageUrl.replace(/^\/+/, '');
+  const bucketPrefix = `${EVENTS_STORAGE_BUCKET}/`;
+  if (objectPath.toLowerCase().startsWith(bucketPrefix.toLowerCase())) {
+    objectPath = objectPath.slice(bucketPrefix.length);
+  }
+  if (!objectPath) return '';
+
+  const { data } = supabase.storage
+    .from(EVENTS_STORAGE_BUCKET)
+    .getPublicUrl(objectPath);
+  return data?.publicUrl || '';
+}
 
 /** Convert a Supabase event row or Firestore object into normalized event shape. */
 export function normalizeEventDoc(row) {
@@ -17,11 +45,7 @@ export function normalizeEventDoc(row) {
   const dateValue = startsAt ? new Date(startsAt) : null;
   const validDate = dateValue && !Number.isNaN(dateValue.getTime());
 
-  let normalizedImageUrl = typeof imageUrl === 'string' ? imageUrl.trim() : '';
-  normalizedImageUrl = normalizedImageUrl.replace(
-    /^https?:\/\/github\.com\/([^/]+\/[^/]+)\/blob\/([^/]+)\/(.+)$/i,
-    'https://raw.githubusercontent.com/$1/$2/$3'
-  );
+  const normalizedImageUrl = resolveEventImageUrl(imageUrl);
 
   return {
     id: String(row.id || Math.random()),

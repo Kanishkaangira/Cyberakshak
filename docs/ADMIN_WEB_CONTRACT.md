@@ -58,6 +58,42 @@ export async function getAdminEvents() {
 }
 ```
 
+### Upload Event Image and Create Event:
+
+Upload the image to the public `Events` Storage bucket first, then save the
+returned object path (not a temporary signed URL) in `events.image_url`. The
+mobile app turns that path into a public URL when it displays the event. Keep
+the `Events` bucket public so published event images can load without an expiring
+URL. In the Supabase Dashboard, open Storage → Events → Edit bucket and enable
+public access. Public buckets allow URL-based downloads without a public
+`storage.objects` SELECT policy; configure policies only for listing and writes.
+
+In Storage → Policies, add policies on `storage.objects` for the `Events` bucket
+with the `authenticated` role and these expressions:
+
+- SELECT (so the future admin panel can list its images): `bucket_id = 'Events' AND public.is_admin(auth.uid())`
+- INSERT (upload): use the same expression as `WITH CHECK`.
+- UPDATE (replace): use the expression as both `USING` and `WITH CHECK`.
+- DELETE: use the expression as `USING`.
+
+The SQL Editor role in this project does not own Supabase's managed
+`storage.objects` table, so create these policies in the Dashboard instead of
+running `CREATE POLICY` statements there.
+
+For the image already uploaded at the bucket root, put the exact object name
+`Screenshot 2026-10-08 010806.png` in that event row's `image_url` field.
+
+```javascript
+const imagePath = `events/${crypto.randomUUID()}-${file.name}`;
+const { error: uploadError } = await supabase.storage
+  .from('Events')
+  .upload(imagePath, file, { contentType: file.type, upsert: false });
+
+if (uploadError) throw uploadError;
+
+// Pass imagePath as eventData.image_url to createAdminEvent below.
+```
+
 ### Create New Event:
 ```javascript
 export async function createAdminEvent(eventData) {
