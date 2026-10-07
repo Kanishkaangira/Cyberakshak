@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -14,9 +14,23 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { COLORS, SIZES } from '../constants/theme';
 import { FRAUD_CATEGORIES, QUICK_ACTIONS } from '../constants/data';
 import { SeverityPill } from '../components/fraud/FraudUI';
+import { getCurrentUserProfile } from '../services/authService';
 
 export default function HomeScreen({ navigation }) {
   const insets = useSafeAreaInsets();
+  const [userName, setUserName] = useState('User');
+
+  useEffect(() => {
+    let isMounted = true;
+    getCurrentUserProfile().then((profile) => {
+      if (isMounted && profile?.full_name) {
+        setUserName(profile.full_name);
+      }
+    }).catch(() => {});
+    return () => { isMounted = false; };
+  }, []);
+
+  const firstLetter = userName.trim() ? userName.trim()[0].toUpperCase() : 'U';
 
   const handleQuickAction = (action) => {
     if (action === 'check_link') {
@@ -86,7 +100,7 @@ export default function HomeScreen({ navigation }) {
               activeOpacity={0.8}
               onPress={() => navigation.navigate('Profile')}
             >
-              <Text style={styles.avatarLetter}>K</Text>
+              <Text style={styles.avatarLetter}>{firstLetter}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -94,7 +108,7 @@ export default function HomeScreen({ navigation }) {
         {/* Greeting Section */}
         <View style={styles.greetingSection}>
           <Text style={styles.welcomeText}>Welcome back</Text>
-          <Text style={styles.userName}>Hi, Kanishka</Text>
+          <Text style={styles.userName}>Hi, {userName}</Text>
         </View>
 
         {/* Hero Card: AI Safety Assistant */}

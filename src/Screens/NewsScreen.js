@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   StyleSheet,
   Text,
@@ -261,21 +261,6 @@ export default function NewsScreen({ navigation }) {
                     <View style={styles.openWebBtnContent}><Icon name="globe-outline" size={16} color="#1E293B" /><Text style={styles.openWebBtnText}>Read full article on source website</Text></View>
                   </TouchableOpacity>
                 ) : null}
-
-                {/* Ask AI About This Threat */}
-                <TouchableOpacity
-                  style={styles.askAiBtn}
-                  activeOpacity={0.8}
-                  onPress={() => {
-                    const title = activeArticle.title;
-                    setActiveArticle(null);
-                    navigation.navigate('Chatbot', {
-                      initialQuery: `Can you explain more about this cybersecurity event and how to stay safe: "${title}"?`,
-                    });
-                  }}
-                >
-                  <View style={styles.askAiBtnContent}><Icon name="shield-checkmark-outline" size={18} color="#FFFFFF" /><Text style={styles.askAiBtnText}>Ask AI about this threat</Text></View>
-                </TouchableOpacity>
               </ScrollView>
             )}
           </View>
@@ -588,23 +573,6 @@ const styles = StyleSheet.create({
     fontSize: 13.5,
   },
   openWebBtnContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 7,
-  },
-  askAiBtn: {
-    backgroundColor: '#2563EB',
-    borderRadius: 10,
-    paddingVertical: 14,
-    alignItems: 'center',
-  },
-  askAiBtnText: {
-    color: '#FFFFFF',
-    fontWeight: '700',
-    fontSize: 14,
-  },
-  askAiBtnContent: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

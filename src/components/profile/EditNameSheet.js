@@ -6,77 +6,84 @@ import {
   KeyboardAvoidingView,
   Modal,
   Platform,
-  Pressable,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLORS, SIZES } from '../../constants/theme';
 
 /**
  * Bottom sheet for editing the user's name.
- * The parent only controls `visible`; the slide animation is handled here.
+ * Stays floating cleanly above soft keyboard.
  */
 export default function EditNameSheet({ visible, initialName, onSave, onClose }) {
   const insets = useSafeAreaInsets();
-  const [mounted, setMounted] = useState(false);
-  const [draft, setDraft] = useState(initialName);
+  const [draft, setDraft] = useState(initialName || '');
   const slide = useRef(new Animated.Value(0)).current;
   const inputRef = useRef(null);
 
   useEffect(() => {
     if (visible) {
-      setDraft(initialName);
-      setMounted(true);
+      setDraft(initialName || '');
       Animated.timing(slide, {
         toValue: 1,
-        duration: 260,
+        duration: 250,
         easing: Easing.out(Easing.cubic),
         useNativeDriver: true,
-      }).start(() => inputRef.current?.focus());
-    } else if (mounted) {
+      }).start();
+    } else {
       Keyboard.dismiss();
-      Animated.timing(slide, {
-        toValue: 0,
-        duration: 200,
-        easing: Easing.in(Easing.cubic),
-        useNativeDriver: true,
-      }).start(({ finished }) => finished && setMounted(false));
+      slide.setValue(0);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [visible]);
+  }, [visible, initialName, slide]);
 
   const trimmed = draft.trim();
   const canSave = trimmed.length > 0 && trimmed !== initialName;
   const save = () => canSave && onSave(trimmed);
 
   return (
-    <Modal transparent visible={mounted} animationType="none" onRequestClose={onClose}>
+    <Modal
+      transparent
+      visible={!!visible}
+      animationType="none"
+      onRequestClose={onClose}
+    >
       <KeyboardAvoidingView
         style={styles.root}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}
+        keyboardVerticalOffset={Platform.OS === 'android' ? -20 : 0}
       >
-        <Animated.View style={[styles.backdrop, { opacity: slide }]}>
-          <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
-        </Animated.View>
+        {/* Backdrop (dismisses keyboard/modal when explicitly tapped) */}
+        <TouchableWithoutFeedback onPress={onClose}>
+          <Animated.View style={[styles.backdrop, { opacity: slide }]} />
+        </TouchableWithoutFeedback>
 
+        {/* Sheet Content */}
         <Animated.View
           style={[
             styles.sheet,
             {
-              paddingBottom: insets.bottom + 20,
+              paddingBottom: Math.max(insets.bottom + 20, 24),
               transform: [
-                { translateY: slide.interpolate({ inputRange: [0, 1], outputRange: [340, 0] }) },
+                {
+                  translateY: slide.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [360, 0],
+                  }),
+                },
               ],
             },
           ]}
         >
           <View style={styles.handle} />
           <Text style={styles.title}>Edit name</Text>
-          <Text style={styles.subtitle}>This is how your name appears in the app.</Text>
+          <Text style={styles.subtitle}>
+            This is how your name appears in CyberAkshak.
+          </Text>
 
           <Text style={styles.label}>FULL NAME</Text>
           <TextInput
@@ -124,6 +131,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 28,
     paddingHorizontal: 20,
     paddingTop: 10,
+    elevation: 24,
   },
   handle: {
     alignSelf: 'center',
