@@ -11,6 +11,7 @@ import {
   RefreshControl,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { SIZES } from '../constants/theme';
 import { subscribeToEvents, fetchEventsOnce } from '../services/eventsService';
@@ -21,6 +22,7 @@ const FALLBACK_EVENT_IMAGE =
   'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80';
 
 export default function EventsScreen() {
+  const { t } = useTranslation();
   const { theme: COLORS, isDark } = useTheme();
   const styles = useThemeStyles(createStyles);
   const insets = useSafeAreaInsets();
@@ -45,7 +47,7 @@ export default function EventsScreen() {
       .catch((err) => {
         console.error('Error fetching Firestore events:', err);
         if (isActive) {
-          setError(err?.message || 'Failed to load events from Firebase');
+          setError(err?.message || t('events.loadFailed'));
         }
       })
       .finally(() => {
@@ -62,7 +64,7 @@ export default function EventsScreen() {
       (err) => {
         console.error('Error fetching Firestore events:', err);
         if (!isActive) return;
-        setError(err?.message || 'Failed to load events from Firebase');
+        setError(err?.message || t('events.loadFailed'));
         setLoading(false);
       }
     );
@@ -73,7 +75,7 @@ export default function EventsScreen() {
         unsubscribe();
       }
     };
-  }, []);
+  }, [t]);
 
   // Manual pull-to-refresh
   const onRefresh = useCallback(async () => {
@@ -84,11 +86,11 @@ export default function EventsScreen() {
       setEvents(refreshedEvents);
     } catch (err) {
       console.error('Pull-to-refresh failed:', err);
-      setError(err?.message || 'Failed to refresh events');
+      setError(err?.message || t('events.refreshFailed'));
     } finally {
       setRefreshing(false);
     }
-  }, []);
+  }, [t]);
 
   // Toggle description expand/collapse
   const toggleExpand = (eventId) => {
@@ -117,14 +119,14 @@ export default function EventsScreen() {
       {/* Screen Header */}
       <View style={styles.header}>
         <View style={styles.headerTitleRow}>
-          <Text style={styles.screenTitle}>Upcoming events</Text>
+          <Text style={styles.screenTitle}>{t('events.title')}</Text>
           <View style={styles.liveIndicatorBadge}>
             <View style={styles.liveDot} />
-            <Text style={styles.liveIndicatorText}>Live Feed</Text>
+            <Text style={styles.liveIndicatorText}>{t('events.liveFeed')}</Text>
           </View>
         </View>
         <Text style={styles.screenSubtitle}>
-          Verified cyber safety seminars, webinars & expert workshops
+          {t('events.subtitle')}
         </Text>
       </View>
 
@@ -151,7 +153,7 @@ export default function EventsScreen() {
                       isSelected && styles.pillTextActive,
                     ]}
                   >
-                    {filter}
+                    {filter === 'All' ? t('common.all') : filter}
                   </Text>
                 </TouchableOpacity>
               );
@@ -177,9 +179,9 @@ export default function EventsScreen() {
         {loading && (
           <View style={styles.stateContainer}>
             <ActivityIndicator size="large" color={COLORS.brand} />
-            <Text style={styles.stateTitle}>Loading events...</Text>
+            <Text style={styles.stateTitle}>{t('events.loading')}</Text>
             <Text style={styles.stateSubtitle}>
-              Connecting to Firestore events collection
+              {t('events.connecting')}
             </Text>
           </View>
         )}
@@ -188,13 +190,13 @@ export default function EventsScreen() {
         {!loading && error && (
           <View style={styles.errorCard}>
             <Icon name="warning-outline" size={30} color={COLORS.red} />
-            <Text style={styles.errorTitle}>Could not load events</Text>
+            <Text style={styles.errorTitle}>{t('events.couldNotLoad')}</Text>
             <Text style={styles.errorMsg}>{error}</Text>
             {error.includes('permissions') && (
               <View style={styles.permissionTipBox}>
-                <Text style={styles.permissionTipTitle}>Firebase Security Rules Notice:</Text>
+                <Text style={styles.permissionTipTitle}>{t('events.securityRules')}</Text>
                 <Text style={styles.permissionTipText}>
-                  Ensure your Cloud Firestore Security Rules allow read access to the 'events' collection (e.g., allow read: if true; in test mode).
+                  {t('events.securityRulesHelp')}
                 </Text>
               </View>
             )}
@@ -203,7 +205,7 @@ export default function EventsScreen() {
               activeOpacity={0.8}
               onPress={onRefresh}
             >
-              <Text style={styles.retryBtnText}>Retry connection</Text>
+              <Text style={styles.retryBtnText}>{t('events.retry')}</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -213,10 +215,10 @@ export default function EventsScreen() {
           <View style={styles.stateContainer}>
             <Icon name="calendar-outline" size={42} color={COLORS.brand} />
             <Text style={styles.stateTitle}>
-              No events found
+              {t('events.noneFound')}
             </Text>
             <Text style={styles.stateSubtitle}>
-              There are currently no events matching your criteria in Firestore. Pull down to refresh or check back soon!
+              {t('events.noneMatch')}
             </Text>
             {selectedFilter !== 'All' && (
               <TouchableOpacity
@@ -224,7 +226,7 @@ export default function EventsScreen() {
                 activeOpacity={0.8}
                 onPress={() => setSelectedFilter('All')}
               >
-                <Text style={styles.resetFilterText}>Show All Events</Text>
+                <Text style={styles.resetFilterText}>{t('events.showAll')}</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -312,7 +314,7 @@ export default function EventsScreen() {
                           style={styles.expandBtn}
                         >
                           <Text style={styles.expandBtnText}>
-                            {isExpanded ? 'Show less' : 'Read more'}
+                            {isExpanded ? t('common.showLess') : t('common.readMore')}
                           </Text>
                         </TouchableOpacity>
                       )}

@@ -13,12 +13,14 @@ import {
   RefreshControl,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { fetchCyberSecurityNews } from '../services/newsApi';
 import { useTheme } from '../context/ThemeContext';
 import useThemeStyles from '../hooks/useThemeStyles';
 
 function NewsCard({ article, onOpenModal, onReadMore }) {
+  const { t } = useTranslation();
   const styles = useThemeStyles(createStyles);
   const [imageError, setImageError] = useState(false);
   const fallbackImg =
@@ -72,7 +74,7 @@ function NewsCard({ article, onOpenModal, onReadMore }) {
           activeOpacity={0.8}
           onPress={() => onReadMore(article)}
         >
-          <Text style={styles.readMoreBtnText}>Read More</Text>
+          <Text style={styles.readMoreBtnText}>{t('news.readMore')}</Text>
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
@@ -80,6 +82,7 @@ function NewsCard({ article, onOpenModal, onReadMore }) {
 }
 
 export default function NewsScreen({ navigation }) {
+  const { t } = useTranslation();
   const { theme: COLORS, isDark } = useTheme();
   const styles = useThemeStyles(createStyles);
   const insets = useSafeAreaInsets();
@@ -103,12 +106,12 @@ export default function NewsScreen({ navigation }) {
       setArticles(data);
     } catch (err) {
       console.warn('Error fetching cyber news:', err);
-      setErrorMsg('Could not fetch latest cyber news. Displaying verified alerts.');
+      setErrorMsg(t('news.fetchError'));
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     loadNews();
@@ -140,14 +143,14 @@ export default function NewsScreen({ navigation }) {
       {/* Screen Header */}
       <View style={styles.header}>
         <View style={styles.headerTitleRow}>
-          <Text style={styles.screenTitle}>Cyber News</Text>
+          <Text style={styles.screenTitle}>{t('news.title')}</Text>
           <View style={styles.liveIndicator}>
             <View style={styles.liveDot} />
-            <Text style={styles.liveText}>LIVE</Text>
+            <Text style={styles.liveText}>{t('common.live')}</Text>
           </View>
         </View>
         <Text style={styles.screenSubtitle}>
-          Real-time threat intelligence & scam prevention
+          {t('news.subtitle')}
         </Text>
       </View>
 
@@ -155,7 +158,7 @@ export default function NewsScreen({ navigation }) {
       {loading ? (
         <View style={styles.centerContainer}>
           <ActivityIndicator size="large" color={COLORS.brand} />
-          <Text style={styles.loadingText}>Fetching cybersecurity news...</Text>
+          <Text style={styles.loadingText}>{t('news.fetching')}</Text>
         </View>
       ) : (
         <ScrollView
@@ -189,9 +192,9 @@ export default function NewsScreen({ navigation }) {
           {articles.length === 0 && !loading && (
             <View style={styles.emptyContainer}>
               <Icon name="shield-checkmark-outline" size={42} color={COLORS.brand} />
-              <Text style={styles.emptyTitle}>No Cyber Alerts</Text>
+              <Text style={styles.emptyTitle}>{t('news.noAlerts')}</Text>
               <Text style={styles.emptySubtitle}>
-                Pull down to refresh and fetch the latest cybersecurity intelligence.
+                {t('news.empty')}
               </Text>
             </View>
           )}
@@ -262,7 +265,7 @@ export default function NewsScreen({ navigation }) {
                       Linking.openURL(activeArticle.url).catch(() => {});
                     }}
                   >
-                    <View style={styles.openWebBtnContent}><Icon name="globe-outline" size={16} color={isDark ? COLORS.ink : '#1E293B'} /><Text style={styles.openWebBtnText}>Read full article on source website</Text></View>
+                    <View style={styles.openWebBtnContent}><Icon name="globe-outline" size={16} color={isDark ? COLORS.ink : '#1E293B'} /><Text style={styles.openWebBtnText}>{t('news.fullArticle')}</Text></View>
                   </TouchableOpacity>
                 ) : null}
               </ScrollView>
