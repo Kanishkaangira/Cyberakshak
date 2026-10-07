@@ -1,10 +1,13 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { COLORS } from '../../constants/theme';
+import { useTheme } from '../../context/ThemeContext';
+import useThemeStyles from '../../hooks/useThemeStyles';
 
 /** One row inside a settings card. Pass `onPress` for a tappable row, or `right` for a custom control (e.g. Switch). */
 export default function SettingRow({ icon, title, value, onPress, right, last }) {
+  const { theme: COLORS } = useTheme();
+  const styles = useThemeStyles(createStyles);
   const Wrapper = onPress ? TouchableOpacity : View;
   return (
     <Wrapper
@@ -21,7 +24,7 @@ export default function SettingRow({ icon, title, value, onPress, right, last })
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (COLORS) => StyleSheet.create({
   row: {
     minHeight: 58,
     flexDirection: 'row',

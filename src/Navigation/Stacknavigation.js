@@ -7,11 +7,14 @@ import ChatbotScreen from '../Screens/ChatbotScreen';
 import FraudEducationScreen from '../Screens/FraudEducationScreen';
 import { supabase, isSupabaseConfigured } from '../services/supabaseClient';
 import { REQUIRE_AUTH } from '../config/secrets';
-import { COLORS } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
+import useThemeStyles from '../hooks/useThemeStyles';
 
 const Stack = createNativeStackNavigator();
 
 export default function Stacknavigation() {
+  const { theme: COLORS } = useTheme();
+  const styles = useThemeStyles(createStyles);
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -85,7 +88,7 @@ export default function Stacknavigation() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (COLORS) => StyleSheet.create({
   loadingContainer: {
     flex: 1,
     backgroundColor: COLORS.bg,

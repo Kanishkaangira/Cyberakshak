@@ -7,11 +7,12 @@ import HomeScreen from '../Screens/HomeScreen';
 import NewsScreen from '../Screens/NewsScreen';
 import EventsScreen from '../Screens/EventsScreen';
 import ProfileScreen from '../Screens/ProfileScreen';
-import { COLORS } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
+import useThemeStyles from '../hooks/useThemeStyles';
 
 const Tab = createBottomTabNavigator();
 
-function TabIcon({ focused, name }) {
+function renderTabIcon({ focused, name, theme, styles }) {
   const icons = {
     Home: 'home-outline',
     News: 'newspaper-outline',
@@ -24,7 +25,7 @@ function TabIcon({ focused, name }) {
       <Icon
         name={icons[name] || 'ellipse-outline'}
         size={19}
-        color={focused ? COLORS.brand : COLORS.muted}
+        color={focused ? theme.brand : theme.muted}
       />
     </View>
   );
@@ -32,18 +33,19 @@ function TabIcon({ focused, name }) {
 
 export default function HomeBottomNav() {
   const insets = useSafeAreaInsets();
+  const { theme } = useTheme();
+  const styles = useThemeStyles(createStyles);
 
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarActiveTintColor: COLORS.brand,
-        tabBarInactiveTintColor: COLORS.muted,
+        tabBarActiveTintColor: theme.brand,
+        tabBarInactiveTintColor: theme.muted,
         tabBarLabelStyle: styles.tabLabel,
         tabBarStyle: [styles.tabBar, { bottom: insets.bottom + 8 }],
-        tabBarIcon: ({ focused }) => (
-          <TabIcon focused={focused} name={route.name} />
-        ),
+        tabBarIcon: ({ focused }) =>
+          renderTabIcon({ focused, name: route.name, theme, styles }),
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
@@ -54,7 +56,7 @@ export default function HomeBottomNav() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (COLORS) => StyleSheet.create({
   tabBar: {
     position: 'absolute',
     left: 16,
