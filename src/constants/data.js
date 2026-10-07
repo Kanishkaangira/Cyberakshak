@@ -17,6 +17,12 @@ export const SEVERITY = {
   Medium: { fg: COLORS.brand, bg: COLORS.brandSoft },
 };
 
+export const getSeverityColors = (theme) => ({
+  Critical: { fg: theme.red, bg: theme.redSoft },
+  High: { fg: theme.orange, bg: theme.orangeSoft },
+  Medium: { fg: theme.brand, bg: theme.brandSoft },
+});
+
 export const FRAUD_GROUPS = [
   { id: 'banking', label: 'Banking & payments' },
   { id: 'impersonation', label: 'Impersonation' },

@@ -14,10 +14,12 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { COLORS } from '../constants/theme';
 import { fetchCyberSecurityNews } from '../services/newsApi';
+import { useTheme } from '../context/ThemeContext';
+import useThemeStyles from '../hooks/useThemeStyles';
 
 function NewsCard({ article, onOpenModal, onReadMore }) {
+  const styles = useThemeStyles(createStyles);
   const [imageError, setImageError] = useState(false);
   const fallbackImg =
     'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80';
@@ -78,6 +80,8 @@ function NewsCard({ article, onOpenModal, onReadMore }) {
 }
 
 export default function NewsScreen({ navigation }) {
+  const { theme: COLORS, isDark } = useTheme();
+  const styles = useThemeStyles(createStyles);
   const insets = useSafeAreaInsets();
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -131,7 +135,7 @@ export default function NewsScreen({ navigation }) {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <StatusBar barStyle="dark-content" backgroundColor={COLORS.bg} />
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={COLORS.bg} />
 
       {/* Screen Header */}
       <View style={styles.header}>
@@ -150,7 +154,7 @@ export default function NewsScreen({ navigation }) {
       {/* Main Content Area */}
       {loading ? (
         <View style={styles.centerContainer}>
-          <ActivityIndicator size="large" color="#2563EB" />
+          <ActivityIndicator size="large" color={COLORS.brand} />
           <Text style={styles.loadingText}>Fetching cybersecurity news...</Text>
         </View>
       ) : (
@@ -161,8 +165,8 @@ export default function NewsScreen({ navigation }) {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              colors={['#2563EB']}
-              tintColor="#2563EB"
+              colors={[COLORS.brand]}
+              tintColor={COLORS.brand}
             />
           }
         >
@@ -258,7 +262,7 @@ export default function NewsScreen({ navigation }) {
                       Linking.openURL(activeArticle.url).catch(() => {});
                     }}
                   >
-                    <View style={styles.openWebBtnContent}><Icon name="globe-outline" size={16} color="#1E293B" /><Text style={styles.openWebBtnText}>Read full article on source website</Text></View>
+                    <View style={styles.openWebBtnContent}><Icon name="globe-outline" size={16} color={isDark ? COLORS.ink : '#1E293B'} /><Text style={styles.openWebBtnText}>Read full article on source website</Text></View>
                   </TouchableOpacity>
                 ) : null}
               </ScrollView>
@@ -270,7 +274,7 @@ export default function NewsScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (COLORS) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.bg,
@@ -294,7 +298,8 @@ const styles = StyleSheet.create({
   liveIndicator: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FEE2E2',
+    backgroundColor:
+      COLORS.mode === 'dark' ? COLORS.redSoft : '#FEE2E2',
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 12,
@@ -304,10 +309,10 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#DC2626',
+    backgroundColor: COLORS.mode === 'dark' ? COLORS.red : '#DC2626',
   },
   liveText: {
-    color: '#DC2626',
+    color: COLORS.mode === 'dark' ? COLORS.red : '#DC2626',
     fontSize: 10,
     fontWeight: '800',
     letterSpacing: 0.5,
@@ -338,25 +343,26 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: '#FEF3C7',
+    backgroundColor:
+      COLORS.mode === 'dark' ? COLORS.orangeSoft : '#FEF3C7',
     padding: 10,
     borderRadius: 8,
     marginBottom: 12,
   },
   errorText: {
-    color: '#92400E',
+    color: COLORS.mode === 'dark' ? COLORS.orange : '#92400E',
     fontSize: 12,
     fontWeight: '500',
   },
 
   /* Card Styles - Exact Match to User Screenshot */
   card: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.surface,
     borderRadius: 16,
     padding: 12,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#E8EDF2',
+    borderColor: COLORS.mode === 'dark' ? COLORS.line : '#E8EDF2',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
@@ -369,7 +375,8 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     overflow: 'hidden',
     position: 'relative',
-    backgroundColor: '#F1F5F9',
+    backgroundColor:
+      COLORS.mode === 'dark' ? COLORS.brandSoft : '#F1F5F9',
   },
   cardImage: {
     width: '100%',
@@ -379,13 +386,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 10,
     right: 10,
-    backgroundColor: '#DE4343', // Reddish badge matching screenshot
+    backgroundColor: COLORS.mode === 'dark' ? COLORS.red : '#DE4343',
     paddingVertical: 3.5,
     paddingHorizontal: 9,
     borderRadius: 6,
   },
   sourceBadgeText: {
-    color: '#FFFFFF',
+    color: COLORS.mode === 'dark' ? COLORS.onRed : '#FFFFFF',
     fontSize: 11.5,
     fontWeight: '700',
     letterSpacing: 0.2,
@@ -396,13 +403,13 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#111827',
+    color: COLORS.mode === 'dark' ? COLORS.ink : '#111827',
     lineHeight: 22,
     marginBottom: 6,
   },
   cardDescription: {
     fontSize: 13,
-    color: '#6B7280',
+    color: COLORS.mode === 'dark' ? COLORS.muted : '#6B7280',
     lineHeight: 18,
     marginBottom: 10,
   },
@@ -415,24 +422,24 @@ const styles = StyleSheet.create({
   authorText: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#374151',
+    color: COLORS.mode === 'dark' ? COLORS.ink : '#374151',
     flex: 1,
     marginRight: 8,
   },
   dateText: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#374151',
+    color: COLORS.mode === 'dark' ? COLORS.ink : '#374151',
   },
   readMoreBtn: {
     alignSelf: 'flex-start',
-    backgroundColor: '#2563EB', // Blue matching screenshot
+    backgroundColor: COLORS.mode === 'dark' ? COLORS.brand : '#2563EB',
     paddingVertical: 7,
     paddingHorizontal: 16,
     borderRadius: 8,
   },
   readMoreBtnText: {
-    color: '#FFFFFF',
+    color: COLORS.mode === 'dark' ? COLORS.onBrand : '#FFFFFF',
     fontSize: 13,
     fontWeight: '700',
   },
@@ -489,13 +496,13 @@ const styles = StyleSheet.create({
     paddingBottom: 4,
   },
   modalSourceBadge: {
-    backgroundColor: '#DE4343',
+    backgroundColor: COLORS.mode === 'dark' ? COLORS.red : '#DE4343',
     paddingVertical: 4,
     paddingHorizontal: 10,
     borderRadius: 6,
   },
   modalSourceText: {
-    color: '#FFFFFF',
+    color: COLORS.mode === 'dark' ? COLORS.onRed : '#FFFFFF',
     fontSize: 12,
     fontWeight: '700',
   },
@@ -521,7 +528,8 @@ const styles = StyleSheet.create({
     height: 190,
     borderRadius: 12,
     overflow: 'hidden',
-    backgroundColor: '#F1F5F9',
+    backgroundColor:
+      COLORS.mode === 'dark' ? COLORS.brandSoft : '#F1F5F9',
     marginVertical: 12,
   },
   modalImage: {
@@ -536,14 +544,14 @@ const styles = StyleSheet.create({
   modalAuthorText: {
     fontSize: 12.5,
     fontWeight: '600',
-    color: '#374151',
+    color: COLORS.mode === 'dark' ? COLORS.ink : '#374151',
     flex: 1,
     marginRight: 8,
   },
   modalDateText: {
     fontSize: 12.5,
     fontWeight: '600',
-    color: '#374151',
+    color: COLORS.mode === 'dark' ? COLORS.ink : '#374151',
   },
   modalTitle: {
     fontSize: 19,
@@ -554,21 +562,22 @@ const styles = StyleSheet.create({
   },
   modalContentText: {
     fontSize: 14,
-    color: '#334155',
+    color: COLORS.mode === 'dark' ? COLORS.ink : '#334155',
     lineHeight: 22,
     marginBottom: 16,
   },
   openWebBtn: {
-    backgroundColor: '#F1F5F9',
+    backgroundColor:
+      COLORS.mode === 'dark' ? COLORS.brandSoft : '#F1F5F9',
     borderRadius: 10,
     paddingVertical: 12,
     alignItems: 'center',
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: COLORS.mode === 'dark' ? COLORS.line : '#E2E8F0',
   },
   openWebBtnText: {
-    color: '#1E293B',
+    color: COLORS.mode === 'dark' ? COLORS.ink : '#1E293B',
     fontWeight: '700',
     fontSize: 13.5,
   },

@@ -12,12 +12,13 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { COLORS, SIZES } from '../constants/theme';
+import { SIZES } from '../constants/theme';
 import ProfileHeader from '../components/profile/ProfileHeader';
 import SettingRow from '../components/profile/SettingRow';
 import EditNameSheet from '../components/profile/EditNameSheet';
 import { AUTH_STRINGS } from '../constants/authStrings';
+import { useTheme } from '../context/ThemeContext';
+import useThemeStyles from '../hooks/useThemeStyles';
 import {
   getCurrentUserProfile,
   updateUserProfile,
@@ -25,29 +26,16 @@ import {
   deleteUserAccount,
 } from '../services/authService';
 
-const THEME_KEY = 'CYBERAKSHAK_DARK_THEME';
-
 export default function ProfileScreen() {
+  const { theme: COLORS, isDark, isThemeReady, toggleTheme } = useTheme();
+  const styles = useThemeStyles(createStyles);
   const insets = useSafeAreaInsets();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [language, setLanguage] = useState('English');
-  const [darkTheme, setDarkTheme] = useState(false);
   const [editingName, setEditingName] = useState(false);
-
-  // Restore dark theme state
-  useEffect(() => {
-    AsyncStorage.getItem(THEME_KEY).then((val) => {
-      if (val !== null) setDarkTheme(val === 'true');
-    }).catch(() => {});
-  }, []);
-
-  const toggleDarkTheme = (val) => {
-    setDarkTheme(val);
-    AsyncStorage.setItem(THEME_KEY, String(val)).catch(() => {});
-  };
 
   const loadProfile = useCallback(async () => {
     setLoading(true);
@@ -141,7 +129,7 @@ export default function ProfileScreen() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={COLORS.brand} />
+      <StatusBar barStyle={isDark ? 'dark-content' : 'light-content'} backgroundColor={COLORS.brand} />
 
       <ScrollView
         bounces={false}
@@ -151,7 +139,7 @@ export default function ProfileScreen() {
       >
         {loading ? (
           <View style={[styles.loadingHeader, { paddingTop: insets.top + 30 }]}>
-            <ActivityIndicator color="#FFFFFF" size="large" />
+            <ActivityIndicator color={COLORS.onBrand} size="large" />
             <Text style={styles.loadingText}>Loading Profile...</Text>
           </View>
         ) : (
@@ -186,14 +174,15 @@ export default function ProfileScreen() {
               onPress={chooseLanguage}
             />
             <SettingRow
-              icon={darkTheme ? 'moon-outline' : 'sunny-outline'}
+              icon={isDark ? 'moon-outline' : 'sunny-outline'}
               title="Dark theme"
               last
-              onPress={() => toggleDarkTheme(!darkTheme)}
+              onPress={toggleTheme}
               right={
                 <Switch
-                  value={darkTheme}
-                  onValueChange={toggleDarkTheme}
+                  value={isDark}
+                  onValueChange={toggleTheme}
+                  disabled={!isThemeReady}
                   trackColor={{ false: COLORS.line, true: COLORS.brand }}
                   thumbColor="#FFFFFF"
                 />
@@ -250,7 +239,7 @@ export default function ProfileScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (COLORS) => StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.bg },
   loadingHeader: {
     backgroundColor: COLORS.brand,
@@ -260,7 +249,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 32,
   },
   loadingText: {
-    color: '#FFFFFF',
+    color: COLORS.onBrand,
     fontSize: 14,
     marginTop: 12,
     fontWeight: '600',

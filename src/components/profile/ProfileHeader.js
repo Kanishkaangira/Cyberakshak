@@ -2,7 +2,9 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { COLORS, SIZES } from '../../constants/theme';
+import { SIZES } from '../../constants/theme';
+import { useTheme } from '../../context/ThemeContext';
+import useThemeStyles from '../../hooks/useThemeStyles';
 
 const getInitials = (fullName) => {
   const parts = fullName.trim().split(/\s+/).filter(Boolean);
@@ -12,6 +14,8 @@ const getInitials = (fullName) => {
 
 /** Purple header: initials avatar, name + Edit button, read-only email. */
 export default function ProfileHeader({ name, email, onEdit }) {
+  const { theme: COLORS } = useTheme();
+  const styles = useThemeStyles(createStyles);
   const insets = useSafeAreaInsets();
 
   return (
@@ -29,20 +33,24 @@ export default function ProfileHeader({ name, email, onEdit }) {
           {name}
         </Text>
         <TouchableOpacity style={styles.editPill} activeOpacity={0.8} onPress={onEdit}>
-          <Icon name="create-outline" size={14} color="#FFFFFF" />
+          <Icon name="create-outline" size={14} color={COLORS.onBrand} />
           <Text style={styles.editPillText}>Edit</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.emailRow}>
-        <Icon name="mail-outline" size={14} color="rgba(255,255,255,0.8)" />
+        <Icon
+          name="mail-outline"
+          size={14}
+          color={COLORS.mode === 'dark' ? COLORS.onBrand : 'rgba(255,255,255,0.8)'}
+        />
         <Text style={styles.email}>{email}</Text>
       </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (COLORS) => StyleSheet.create({
   hero: {
     backgroundColor: COLORS.brand,
     alignItems: 'center',
@@ -50,7 +58,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 32,
     borderBottomRightRadius: 32,
   },
-  title: { color: '#FFFFFF', fontSize: 17, fontWeight: '700', marginBottom: 20 },
+  title: { color: COLORS.onBrand, fontSize: 17, fontWeight: '700', marginBottom: 20 },
   avatarRing: {
     width: 104,
     height: 104,
@@ -63,7 +71,7 @@ const styles = StyleSheet.create({
     width: 88,
     height: 88,
     borderRadius: 44,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.surface,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -76,7 +84,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
     paddingHorizontal: 24,
   },
-  name: { flexShrink: 1, color: '#FFFFFF', fontSize: 24, fontWeight: '800' },
+  name: { flexShrink: 1, color: COLORS.onBrand, fontSize: 24, fontWeight: '800' },
   editPill: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -86,7 +94,10 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: SIZES.radiusPill,
   },
-  editPillText: { color: '#FFFFFF', fontSize: 12.5, fontWeight: '700' },
+  editPillText: { color: COLORS.onBrand, fontSize: 12.5, fontWeight: '700' },
   emailRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 8 },
-  email: { color: 'rgba(255,255,255,0.85)', fontSize: 13.5 },
+  email: {
+    color: COLORS.mode === 'dark' ? COLORS.onBrand : 'rgba(255,255,255,0.85)',
+    fontSize: 13.5,
+  },
 });

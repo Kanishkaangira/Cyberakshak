@@ -14,13 +14,17 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { COLORS, SIZES } from '../../constants/theme';
+import { SIZES } from '../../constants/theme';
+import { useTheme } from '../../context/ThemeContext';
+import useThemeStyles from '../../hooks/useThemeStyles';
 
 /**
  * Bottom sheet for editing the user's name.
  * Stays floating cleanly above soft keyboard.
  */
 export default function EditNameSheet({ visible, initialName, onSave, onClose }) {
+  const { theme: COLORS } = useTheme();
+  const styles = useThemeStyles(createStyles);
   const insets = useSafeAreaInsets();
   const [draft, setDraft] = useState(initialName || '');
   const slide = useRef(new Animated.Value(0)).current;
@@ -122,7 +126,7 @@ export default function EditNameSheet({ visible, initialName, onSave, onClose })
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (COLORS) => StyleSheet.create({
   root: { flex: 1, justifyContent: 'flex-end' },
   backdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(29,33,64,0.45)' },
   sheet: {
@@ -166,5 +170,5 @@ const styles = StyleSheet.create({
   cancelText: { color: COLORS.ink, fontSize: 14.5, fontWeight: '700' },
   saveBtn: { backgroundColor: COLORS.brand },
   saveBtnOff: { opacity: 0.4 },
-  saveText: { color: '#FFFFFF', fontSize: 14.5, fontWeight: '700' },
+  saveText: { color: COLORS.onBrand, fontSize: 14.5, fontWeight: '700' },
 });

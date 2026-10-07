@@ -13,11 +13,15 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { COLORS, SIZES } from '../../constants/theme';
+import { SIZES } from '../../constants/theme';
 import { AUTH_STRINGS } from '../../constants/authStrings';
 import { sendPasswordReset } from '../../services/authService';
+import { useTheme } from '../../context/ThemeContext';
+import useThemeStyles from '../../hooks/useThemeStyles';
 
 export default function ForgotPasswordScreen({ route, navigation }) {
+  const { theme: COLORS, isDark } = useTheme();
+  const styles = useThemeStyles(createStyles);
   const insets = useSafeAreaInsets();
   const [email, setEmail] = useState(route.params?.email || '');
   const [loading, setLoading] = useState(false);
@@ -53,7 +57,7 @@ export default function ForgotPasswordScreen({ route, navigation }) {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <StatusBar barStyle="dark-content" backgroundColor={COLORS.bg} />
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={COLORS.bg} />
 
       <View style={styles.topNav}>
         <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
@@ -112,7 +116,7 @@ export default function ForgotPasswordScreen({ route, navigation }) {
             onPress={handleSendCode}
           >
             {loading ? (
-              <ActivityIndicator color="#FFFFFF" size="small" />
+              <ActivityIndicator color={COLORS.onBrand} size="small" />
             ) : (
               <Text style={styles.submitBtnText}>{AUTH_STRINGS.continue}</Text>
             )}
@@ -123,7 +127,7 @@ export default function ForgotPasswordScreen({ route, navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (COLORS) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.bg,
@@ -236,7 +240,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   submitBtnText: {
-    color: '#FFFFFF',
+    color: COLORS.onBrand,
     fontSize: 15,
     fontWeight: '700',
   },

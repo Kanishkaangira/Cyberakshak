@@ -10,7 +10,8 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
-import { COLORS } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
+import useThemeStyles from '../hooks/useThemeStyles';
 import { FRAUD_CATEGORIES, getFraudById } from '../constants/data';
 import { Chevron } from '../components/fraud/FraudUI';
 import FraudListHeader from '../components/fraud/FraudListHeader';
@@ -18,6 +19,8 @@ import FraudCard from '../components/fraud/FraudCard';
 import FraudDetail from '../components/fraud/FraudDetail';
 
 export default function FraudEducationScreen({ navigation, route }) {
+  const { theme: COLORS, isDark } = useTheme();
+  const styles = useThemeStyles(createStyles);
   const insets = useSafeAreaInsets();
   const scrollRef = useRef(null);
 
@@ -62,7 +65,7 @@ export default function FraudEducationScreen({ navigation, route }) {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <StatusBar barStyle="dark-content" backgroundColor={COLORS.surface} />
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={COLORS.surface} />
 
       <View style={styles.header}>
         <TouchableOpacity style={styles.backBtn} activeOpacity={0.7} onPress={goBack}>
@@ -105,7 +108,7 @@ export default function FraudEducationScreen({ navigation, route }) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (COLORS) => StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.bg },
   header: {
     flexDirection: 'row',

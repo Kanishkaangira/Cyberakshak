@@ -9,18 +9,22 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { COLORS, SIZES } from '../../constants/theme';
+import { SIZES } from '../../constants/theme';
 import { AUTH_STRINGS } from '../../constants/authStrings';
+import { useTheme } from '../../context/ThemeContext';
+import useThemeStyles from '../../hooks/useThemeStyles';
 
 export default function WelcomeScreen({ navigation }) {
+  const { theme: COLORS, isDark } = useTheme();
+  const styles = useThemeStyles(createStyles);
   const insets = useSafeAreaInsets();
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <StatusBar barStyle="light-content" backgroundColor={COLORS.brand} />
+      <StatusBar barStyle={isDark ? 'dark-content' : 'light-content'} backgroundColor={COLORS.brand} />
       
       <View style={styles.topHero}>
         <View style={styles.shieldBadge}>
-          <Icon name="shield-checkmark" size={48} color="#FFFFFF" />
+          <Icon name="shield-checkmark" size={48} color={COLORS.onBrand} />
         </View>
         <Text style={styles.brandTitle}>{AUTH_STRINGS.appName}</Text>
         <Text style={styles.brandTagline}>{AUTH_STRINGS.appTagline}</Text>
@@ -42,7 +46,7 @@ export default function WelcomeScreen({ navigation }) {
             activeOpacity={0.85}
             onPress={() => navigation.navigate('Login')}
           >
-            <Icon name="log-in-outline" size={20} color="#FFFFFF" />
+            <Icon name="log-in-outline" size={20} color={COLORS.onBrand} />
             <Text style={styles.primaryBtnText}>{AUTH_STRINGS.login}</Text>
           </TouchableOpacity>
 
@@ -61,7 +65,7 @@ export default function WelcomeScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (COLORS) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.brand,
@@ -84,12 +88,15 @@ const styles = StyleSheet.create({
   brandTitle: {
     fontSize: 32,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: COLORS.onBrand,
     letterSpacing: -0.5,
   },
   brandTagline: {
     fontSize: 13,
-    color: 'rgba(255,255,255,0.85)',
+    color:
+      COLORS.mode === 'dark'
+        ? COLORS.onBrand
+        : 'rgba(255,255,255,0.85)',
     fontWeight: '500',
     marginTop: 4,
   },
@@ -128,7 +135,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   primaryBtnText: {
-    color: '#FFFFFF',
+    color: COLORS.onBrand,
     fontSize: 15,
     fontWeight: '700',
   },

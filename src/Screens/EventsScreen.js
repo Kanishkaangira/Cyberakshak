@@ -12,13 +12,17 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { COLORS, SIZES } from '../constants/theme';
+import { SIZES } from '../constants/theme';
 import { subscribeToEvents, fetchEventsOnce } from '../services/eventsService';
+import { useTheme } from '../context/ThemeContext';
+import useThemeStyles from '../hooks/useThemeStyles';
 
 const FALLBACK_EVENT_IMAGE =
   'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80';
 
 export default function EventsScreen() {
+  const { theme: COLORS, isDark } = useTheme();
+  const styles = useThemeStyles(createStyles);
   const insets = useSafeAreaInsets();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -108,7 +112,7 @@ export default function EventsScreen() {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <StatusBar barStyle="dark-content" backgroundColor={COLORS.bg} />
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={COLORS.bg} />
 
       {/* Screen Header */}
       <View style={styles.header}>
@@ -324,7 +328,7 @@ export default function EventsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (COLORS) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.bg,
@@ -396,7 +400,7 @@ const styles = StyleSheet.create({
     color: COLORS.muted,
   },
   pillTextActive: {
-    color: '#FFFFFF',
+    color: COLORS.onBrand,
   },
   listContainer: {
     paddingHorizontal: 20,
@@ -429,7 +433,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 12,
     left: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.94)',
+    backgroundColor:
+      COLORS.mode === 'dark' ? COLORS.surface : 'rgba(255, 255, 255, 0.94)',
     paddingVertical: 4,
     paddingHorizontal: 12,
     borderRadius: SIZES.radiusPill,
@@ -441,7 +446,8 @@ const styles = StyleSheet.create({
   },
   categoryBadgeStatic: {
     alignSelf: 'flex-start',
-    backgroundColor: 'rgba(255, 255, 255, 0.94)',
+    backgroundColor:
+      COLORS.mode === 'dark' ? COLORS.surface : 'rgba(255, 255, 255, 0.94)',
     paddingVertical: 4,
     paddingHorizontal: 12,
     borderRadius: SIZES.radiusPill,
@@ -457,7 +463,10 @@ const styles = StyleSheet.create({
   fallbackBanner: {
     width: '100%',
     height: 110,
-    backgroundColor: COLORS.brandSoft,
+    backgroundColor:
+      COLORS.mode === 'dark'
+        ? COLORS.brandSoft
+        : 'rgba(75, 79, 224, 0.08)',
     padding: 16,
     justifyContent: 'space-between',
     position: 'relative',
@@ -470,7 +479,7 @@ const styles = StyleSheet.create({
     width: 140,
     height: 140,
     borderRadius: 70,
-    backgroundColor: 'rgba(75, 79, 224, 0.08)',
+    backgroundColor: COLORS.brandSoft,
   },
   fallbackIcon: {
     position: 'absolute',
@@ -581,11 +590,12 @@ const styles = StyleSheet.create({
     color: COLORS.brand,
   },
   errorCard: {
-    backgroundColor: '#FFF5F5',
+    backgroundColor:
+      COLORS.mode === 'dark' ? COLORS.redSoft : '#FFF5F5',
     borderRadius: SIZES.radiusMd,
     padding: 20,
     borderWidth: 1,
-    borderColor: '#FED7D7',
+    borderColor: COLORS.mode === 'dark' ? COLORS.red : '#FED7D7',
     alignItems: 'center',
     marginVertical: 12,
     gap: 8,
@@ -605,12 +615,12 @@ const styles = StyleSheet.create({
     lineHeight: 17,
   },
   permissionTipBox: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.surface,
     borderRadius: 8,
     padding: 10,
     marginTop: 6,
     borderWidth: 1,
-    borderColor: '#FEB2B2',
+    borderColor: COLORS.mode === 'dark' ? COLORS.red : '#FEB2B2',
   },
   permissionTipTitle: {
     fontSize: 11.5,
@@ -631,7 +641,7 @@ const styles = StyleSheet.create({
     borderRadius: SIZES.radiusPill,
   },
   retryBtnText: {
-    color: '#FFFFFF',
+    color: COLORS.onBrand,
     fontWeight: '700',
     fontSize: 12.5,
   },
