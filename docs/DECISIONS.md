@@ -94,3 +94,11 @@ To execute Phase 2 (Auth + Database), the following packages are proposed:
 
 1. `@supabase/supabase-js`: Official JavaScript client for Supabase (DB + Auth).
 2. `@react-native-async-storage/async-storage`: Standard React Native persistent key-value storage for session persistence across app restarts.
+
+## 6. Internationalization
+
+The mobile app uses `i18next` with `react-i18next` for translation and
+`react-native-localize` to select the initial language from the device locale.
+English (`en`) is the fallback; Hindi (`hi`) is the second supported language.
+Translation resources live in `src/locales/` so additional Indian languages can
+be added without changing the localization integration.

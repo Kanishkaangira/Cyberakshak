@@ -14,6 +14,7 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import { SIZES } from '../../constants/theme';
 import { useTheme } from '../../context/ThemeContext';
 import useThemeStyles from '../../hooks/useThemeStyles';
@@ -23,6 +24,7 @@ import useThemeStyles from '../../hooks/useThemeStyles';
  * Stays floating cleanly above soft keyboard.
  */
 export default function EditNameSheet({ visible, initialName, onSave, onClose }) {
+  const { t } = useTranslation();
   const { theme: COLORS } = useTheme();
   const styles = useThemeStyles(createStyles);
   const insets = useSafeAreaInsets();
@@ -84,17 +86,17 @@ export default function EditNameSheet({ visible, initialName, onSave, onClose })
           ]}
         >
           <View style={styles.handle} />
-          <Text style={styles.title}>Edit name</Text>
+          <Text style={styles.title}>{t('profile.nameTitle')}</Text>
           <Text style={styles.subtitle}>
-            This is how your name appears in CyberAkshak.
+            {t('profile.nameSubtitle')}
           </Text>
 
-          <Text style={styles.label}>FULL NAME</Text>
+          <Text style={styles.label}>{t('profile.fullName')}</Text>
           <TextInput
             ref={inputRef}
             value={draft}
             onChangeText={setDraft}
-            placeholder="Your name"
+            placeholder={t('profile.yourName')}
             placeholderTextColor={COLORS.muted}
             style={styles.input}
             maxLength={40}
@@ -109,7 +111,7 @@ export default function EditNameSheet({ visible, initialName, onSave, onClose })
               activeOpacity={0.8}
               onPress={onClose}
             >
-              <Text style={styles.cancelText}>Cancel</Text>
+              <Text style={styles.cancelText}>{t('common.cancel')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.btn, styles.saveBtn, !canSave && styles.saveBtnOff]}
@@ -117,7 +119,7 @@ export default function EditNameSheet({ visible, initialName, onSave, onClose })
               disabled={!canSave}
               onPress={save}
             >
-              <Text style={styles.saveText}>Save</Text>
+              <Text style={styles.saveText}>{t('profile.save')}</Text>
             </TouchableOpacity>
           </View>
         </Animated.View>

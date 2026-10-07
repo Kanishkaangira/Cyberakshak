@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import { SIZES } from '../../constants/theme';
 import { useTheme } from '../../context/ThemeContext';
 import useThemeStyles from '../../hooks/useThemeStyles';
@@ -14,13 +15,14 @@ const getInitials = (fullName) => {
 
 /** Purple header: initials avatar, name + Edit button, read-only email. */
 export default function ProfileHeader({ name, email, onEdit }) {
+  const { t } = useTranslation();
   const { theme: COLORS } = useTheme();
   const styles = useThemeStyles(createStyles);
   const insets = useSafeAreaInsets();
 
   return (
     <View style={[styles.hero, { paddingTop: insets.top + 14 }]}>
-      <Text style={styles.title}>Profile</Text>
+      <Text style={styles.title}>{t('profile.title')}</Text>
 
       <View style={styles.avatarRing}>
         <View style={styles.avatar}>
@@ -34,7 +36,7 @@ export default function ProfileHeader({ name, email, onEdit }) {
         </Text>
         <TouchableOpacity style={styles.editPill} activeOpacity={0.8} onPress={onEdit}>
           <Icon name="create-outline" size={14} color={COLORS.onBrand} />
-          <Text style={styles.editPillText}>Edit</Text>
+          <Text style={styles.editPillText}>{t('profile.edit')}</Text>
         </TouchableOpacity>
       </View>
 

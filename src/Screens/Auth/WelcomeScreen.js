@@ -8,13 +8,16 @@ import {
   ScrollView,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { SIZES } from '../../constants/theme';
-import { AUTH_STRINGS } from '../../constants/authStrings';
+import { getAuthStrings } from '../../constants/authStrings';
 import { useTheme } from '../../context/ThemeContext';
 import useThemeStyles from '../../hooks/useThemeStyles';
 
 export default function WelcomeScreen({ navigation }) {
+  const { t } = useTranslation();
+  const AUTH_STRINGS = getAuthStrings(t);
   const { theme: COLORS, isDark } = useTheme();
   const styles = useThemeStyles(createStyles);
   const insets = useSafeAreaInsets();

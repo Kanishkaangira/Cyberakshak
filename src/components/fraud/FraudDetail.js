@@ -1,17 +1,19 @@
 import React from 'react';
 import { Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SIZES } from '../../constants/theme';
-import { HELPLINE, getGroupLabel } from '../../constants/data';
+import { HELPLINE } from '../../constants/data';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { Chevron, SeverityPill } from './FraudUI';
 import { useTheme } from '../../context/ThemeContext';
 import useThemeStyles from '../../hooks/useThemeStyles';
+import { useTranslation } from 'react-i18next';
 
 function Section({ title, children }) {
+  const { t } = useTranslation();
   const styles = useThemeStyles(createStyles);
   return (
     <View style={styles.section}>
-      <Text style={styles.sectionLabel}>{title.toUpperCase()}</Text>
+      <Text style={styles.sectionLabel}>{t(title).toUpperCase()}</Text>
       {children}
     </View>
   );
@@ -43,6 +45,7 @@ function BulletList({ items, color }) {
 
 /** Full guide for one fraud type. */
 export default function FraudDetail({ fraud, onCheckMessage }) {
+  const { t } = useTranslation();
   const { theme: COLORS } = useTheme();
   const styles = useThemeStyles(createStyles);
   const call = () => Linking.openURL(`tel:${HELPLINE.number}`).catch(() => {});
@@ -51,37 +54,37 @@ export default function FraudDetail({ fraud, onCheckMessage }) {
   return (
     <View style={styles.wrap}>
       <View style={styles.hero}>
-        <Text style={styles.group}>{getGroupLabel(fraud.group).toUpperCase()}</Text>
-        <Text style={styles.title}>{fraud.title}</Text>
+        <Text style={styles.group}>{t(`fraud.${fraud.group}`).toUpperCase()}</Text>
+        <Text style={styles.title}>{t(`fraud.categories.${fraud.id}.title`, { defaultValue: fraud.title })}</Text>
         <SeverityPill severity={fraud.severity} />
-        <Text style={styles.overview}>{fraud.overview}</Text>
+        <Text style={styles.overview}>{t(`fraud.categories.${fraud.id}.overview`, { defaultValue: fraud.overview })}</Text>
       </View>
 
-      <Section title="How it works">
-        <NumberedList items={fraud.howItWorks} />
+      <Section title="fraud.howWorks">
+        <NumberedList items={t(`fraud.categories.${fraud.id}.howItWorks`, { returnObjects: true, defaultValue: fraud.howItWorks })} />
       </Section>
 
-      <Section title="What the message looks like">
+      <Section title="fraud.messageLooks">
         <View style={styles.quote}>
-          <Text style={styles.quoteText}>“{fraud.example}”</Text>
+          <Text style={styles.quoteText}>“{t(`fraud.categories.${fraud.id}.example`, { defaultValue: fraud.example })}”</Text>
         </View>
       </Section>
 
-      <Section title="Warning signs">
-        <BulletList items={fraud.redFlags} color={COLORS.red} />
+      <Section title="fraud.warningSigns">
+        <BulletList items={t(`fraud.categories.${fraud.id}.redFlags`, { returnObjects: true, defaultValue: fraud.redFlags })} color={COLORS.red} />
       </Section>
 
-      <Section title="How to protect yourself">
-        <BulletList items={fraud.protect} color={COLORS.green} />
+      <Section title="fraud.protect">
+        <BulletList items={t(`fraud.categories.${fraud.id}.protect`, { returnObjects: true, defaultValue: fraud.protect })} color={COLORS.green} />
       </Section>
 
       <View style={styles.victim}>
-        <Text style={styles.victimTitle}>If this has happened to you</Text>
-        <NumberedList items={fraud.ifVictim} tone={COLORS.red} />
+        <Text style={styles.victimTitle}>{t('fraud.ifHappened')}</Text>
+        <NumberedList items={t(`fraud.categories.${fraud.id}.ifVictim`, { returnObjects: true, defaultValue: fraud.ifVictim })} tone={COLORS.red} />
         <View style={styles.victimActions}>
           <TouchableOpacity style={[styles.btn, styles.btnRed]} activeOpacity={0.85} onPress={call}>
             <Icon name="call-outline" size={16} color={COLORS.onRed} />
-            <Text style={styles.btnRedText}>Call {HELPLINE.number}</Text>
+            <Text style={styles.btnRedText}>{t('fraud.call', { number: HELPLINE.number })}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.btn, styles.btnOutline]}
@@ -89,7 +92,7 @@ export default function FraudDetail({ fraud, onCheckMessage }) {
             onPress={report}
           >
             <Icon name="globe-outline" size={16} color={COLORS.red} />
-            <Text style={styles.btnOutlineText}>Report online</Text>
+            <Text style={styles.btnOutlineText}>{t('fraud.reportOnline')}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -97,14 +100,14 @@ export default function FraudDetail({ fraud, onCheckMessage }) {
       <TouchableOpacity style={styles.assistant} activeOpacity={0.9} onPress={onCheckMessage}>
         <Icon name="chatbubble-ellipses-outline" size={22} color={COLORS.onBrand} />
         <View style={styles.assistantText}>
-          <Text style={styles.assistantTitle}>Got a message like this?</Text>
-          <Text style={styles.assistantSub}>Paste it into Cyberakshak to check it</Text>
+          <Text style={styles.assistantTitle}>{t('fraud.gotMessage')}</Text>
+          <Text style={styles.assistantSub}>{t('fraud.pasteToCheck')}</Text>
         </View>
         <Chevron color={COLORS.onBrand} size={10} />
       </TouchableOpacity>
 
       <Text style={styles.note}>
-        This guide is for awareness. In an emergency, call {HELPLINE.number}.
+        {t('fraud.awarenessNote', { number: HELPLINE.number })}
       </Text>
     </View>
   );
