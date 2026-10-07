@@ -11,12 +11,16 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { COLORS, SIZES } from '../constants/theme';
+import { SIZES } from '../constants/theme';
 import { FRAUD_CATEGORIES, QUICK_ACTIONS } from '../constants/data';
 import { SeverityPill } from '../components/fraud/FraudUI';
 import { getCurrentUserProfile } from '../services/authService';
+import { useTheme } from '../context/ThemeContext';
+import useThemeStyles from '../hooks/useThemeStyles';
 
 export default function HomeScreen({ navigation }) {
+  const { theme: COLORS, isDark } = useTheme();
+  const styles = useThemeStyles(createStyles);
   const insets = useSafeAreaInsets();
   const [userName, setUserName] = useState('User');
 
@@ -65,7 +69,7 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <StatusBar barStyle="dark-content" backgroundColor={COLORS.bg} />
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={COLORS.bg} />
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}
@@ -75,7 +79,7 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.topBar}>
           <View style={styles.brandRow}>
             <View style={styles.logoBadge}>
-              <Icon name="shield-checkmark" size={20} color="#FFFFFF" />
+              <Icon name="shield-checkmark" size={20} color={COLORS.onBrand} />
             </View>
             <Text style={styles.brandTitle}>Cyberakshak</Text>
           </View>
@@ -122,7 +126,7 @@ export default function HomeScreen({ navigation }) {
               <Text style={styles.heroTagText}>AI safety assistant</Text>
             </View>
             <View style={styles.sparkleIcon}>
-              <Icon name="sparkles-outline" size={19} color="#FFFFFF" />
+              <Icon name="sparkles-outline" size={19} color={COLORS.onBrand} />
             </View>
           </View>
 
@@ -134,7 +138,7 @@ export default function HomeScreen({ navigation }) {
           <View style={styles.fakeInput}>
             <Text style={styles.fakeInputPlaceholder}>Type or paste a message</Text>
             <View style={styles.fakeInputArrow}>
-              <Icon name="arrow-forward" size={16} color="#FFFFFF" />
+              <Icon name="arrow-forward" size={16} color={COLORS.onBrand} />
             </View>
           </View>
         </TouchableOpacity>
@@ -148,7 +152,19 @@ export default function HomeScreen({ navigation }) {
               activeOpacity={0.75}
               onPress={() => handleQuickAction(item.action)}
             >
-              <View style={[styles.actionIconContainer, { backgroundColor: item.bg }]}>
+              <View
+                style={[
+                  styles.actionIconContainer,
+                  {
+                    backgroundColor:
+                      item.id === 'link'
+                        ? COLORS.orangeSoft
+                        : item.id === 'report'
+                          ? COLORS.redSoft
+                          : COLORS.greenSoft,
+                  },
+                ]}
+              >
                 <Icon name={item.icon} size={21} color={COLORS.ink} />
               </View>
               <Text style={styles.actionLabel}>{item.label}</Text>
@@ -208,7 +224,7 @@ export default function HomeScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (COLORS) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.bg,
@@ -286,7 +302,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   avatarLetter: {
-    color: '#FFFFFF',
+    color: COLORS.onBrand,
     fontWeight: '700',
     fontSize: 16,
   },
@@ -331,7 +347,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   heroTagText: {
-    color: '#FFFFFF',
+    color: COLORS.onBrand,
     fontSize: 11.5,
     fontWeight: '600',
   },
@@ -342,14 +358,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   heroTitle: {
-    color: '#FFFFFF',
+    color: COLORS.onBrand,
     fontSize: 19,
     fontWeight: '700',
     lineHeight: 24,
     marginBottom: 4,
   },
   heroSubtitle: {
-    color: 'rgba(255, 255, 255, 0.85)',
+    color: COLORS.onBrand,
     fontSize: 13,
     marginBottom: 16,
     lineHeight: 18,
@@ -358,7 +374,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.surface,
     borderRadius: SIZES.radiusPill,
     paddingVertical: 7,
     paddingLeft: 16,
@@ -383,7 +399,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   arrowText: {
-    color: '#FFFFFF',
+    color: COLORS.onBrand,
     fontWeight: '700',
     fontSize: 14,
     lineHeight: 16,
@@ -479,7 +495,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.surface,
     justifyContent: 'center',
     alignItems: 'center',
   },

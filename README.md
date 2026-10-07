@@ -41,7 +41,8 @@ Cyberakshak/
 │   ├── ARCHITECTURE.md          # Navigation tree, data flow & mermaid diagrams
 │   ├── DECISIONS.md             # Backend tech stack choices & free-tier analysis
 │   ├── DATABASE.md              # Database schema & RLS policy documentation
-│   └── ADMIN_WEB_CONTRACT.md    # API contract for future admin dashboard
+│   ├── ADMIN_WEB_CONTRACT.md    # API contract for future admin dashboard
+│   └── THEMES.md                # Theme tokens, dark mode, and preview instructions
 ├── supabase/                    # Supabase SQL migrations and seed data
 │   ├── migrations/              # Database migration SQL files
 │   └── seed.sql                 # Sample initial database data
@@ -114,6 +115,8 @@ npm start
 ```bash
 npm run android
 ```
+
+Theme customization and light/dark preview steps are documented in [docs/THEMES.md](./docs/THEMES.md).
 
 ---
 

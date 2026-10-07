@@ -1,13 +1,17 @@
 import React from 'react';
 import { Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { COLORS, SIZES } from '../../constants/theme';
+import { SIZES } from '../../constants/theme';
 import { FRAUD_GROUPS, HELPLINE } from '../../constants/data';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { useTheme } from '../../context/ThemeContext';
+import useThemeStyles from '../../hooks/useThemeStyles';
 
 const FILTERS = [{ id: 'all', label: 'All' }, ...FRAUD_GROUPS];
 
 /** Emergency banner (call 1930) + group filter chips shown above the fraud list. */
 export default function FraudListHeader({ filter, onFilterChange }) {
+  const { theme: COLORS } = useTheme();
+  const styles = useThemeStyles(createStyles);
   return (
     <>
       <View style={styles.banner}>
@@ -52,10 +56,10 @@ export default function FraudListHeader({ filter, onFilterChange }) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (COLORS) => StyleSheet.create({
   banner: {
     marginHorizontal: 16,
-    backgroundColor: COLORS.ink,
+    backgroundColor: COLORS.inverseSurface,
     borderRadius: SIZES.radiusMd,
     padding: 16,
     flexDirection: 'row',
@@ -63,10 +67,18 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   bannerText: { flex: 1 },
-  bannerTitle: { color: '#FFFFFF', fontSize: 15, fontWeight: '700' },
-  bannerSub: { color: 'rgba(255,255,255,0.75)', fontSize: 12.5, lineHeight: 17, marginTop: 3 },
+  bannerTitle: { color: COLORS.onInverseSurface, fontSize: 15, fontWeight: '700' },
+  bannerSub: {
+    color:
+      COLORS.mode === 'dark'
+        ? COLORS.onInverseSurface
+        : 'rgba(255,255,255,0.75)',
+    fontSize: 12.5,
+    lineHeight: 17,
+    marginTop: 3,
+  },
   bannerBtn: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.surface,
     borderRadius: SIZES.radiusPill,
     paddingHorizontal: 14,
     paddingVertical: 9,
@@ -82,7 +94,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.line,
   },
-  chipActive: { backgroundColor: COLORS.ink, borderColor: COLORS.ink },
+  chipActive: { backgroundColor: COLORS.inverseSurface, borderColor: COLORS.inverseSurface },
   chipText: { fontSize: 13, fontWeight: '600', color: COLORS.muted },
-  chipTextActive: { color: '#FFFFFF' },
+  chipTextActive: { color: COLORS.onInverseSurface },
 });

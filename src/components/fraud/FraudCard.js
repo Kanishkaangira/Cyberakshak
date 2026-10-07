@@ -1,14 +1,20 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { COLORS, SIZES } from '../../constants/theme';
-import { SEVERITY, getGroupLabel } from '../../constants/data';
+import { SIZES } from '../../constants/theme';
+import { getGroupLabel, getSeverityColors } from '../../constants/data';
 import { Chevron, SeverityPill } from './FraudUI';
+import { useTheme } from '../../context/ThemeContext';
+import useThemeStyles from '../../hooks/useThemeStyles';
 
 /** One row in the fraud list. */
 export default function FraudCard({ item, onPress }) {
+  const { theme: COLORS } = useTheme();
+  const styles = useThemeStyles(createStyles);
+  const severityColors = getSeverityColors(COLORS);
+  const tone = severityColors[item.severity] || severityColors.Medium;
   return (
     <TouchableOpacity style={styles.card} activeOpacity={0.85} onPress={onPress}>
-      <View style={[styles.accent, { backgroundColor: SEVERITY[item.severity].fg }]} />
+      <View style={[styles.accent, { backgroundColor: tone.fg }]} />
       <View style={styles.body}>
         <Text style={styles.group}>{getGroupLabel(item.group).toUpperCase()}</Text>
         <Text style={styles.title}>{item.title}</Text>
@@ -26,7 +32,7 @@ export default function FraudCard({ item, onPress }) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (COLORS) => StyleSheet.create({
   card: {
     flexDirection: 'row',
     alignItems: 'center',
