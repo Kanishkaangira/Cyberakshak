@@ -5,20 +5,22 @@ import { FRAUD_GROUPS, HELPLINE } from '../../constants/data';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../../context/ThemeContext';
 import useThemeStyles from '../../hooks/useThemeStyles';
+import { useTranslation } from 'react-i18next';
 
 const FILTERS = [{ id: 'all', label: 'All' }, ...FRAUD_GROUPS];
 
 /** Emergency banner (call 1930) + group filter chips shown above the fraud list. */
 export default function FraudListHeader({ filter, onFilterChange }) {
+  const { t } = useTranslation();
   const { theme: COLORS } = useTheme();
   const styles = useThemeStyles(createStyles);
   return (
     <>
       <View style={styles.banner}>
         <View style={styles.bannerText}>
-          <Text style={styles.bannerTitle}>Lost money to a fraud?</Text>
+          <Text style={styles.bannerTitle}>{t('fraud.lostMoney')}</Text>
           <Text style={styles.bannerSub}>
-            Report within the first hour to improve the chance of freezing the funds.
+            {t('fraud.reportHour')}
           </Text>
         </View>
         <TouchableOpacity
@@ -28,7 +30,7 @@ export default function FraudListHeader({ filter, onFilterChange }) {
         >
           <View style={styles.bannerBtnContent}>
             <Icon name="call-outline" size={15} color={COLORS.ink} />
-            <Text style={styles.bannerBtnText}>Call {HELPLINE.number}</Text>
+            <Text style={styles.bannerBtnText}>{t('fraud.call', { number: HELPLINE.number })}</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -47,7 +49,9 @@ export default function FraudListHeader({ filter, onFilterChange }) {
               onPress={() => onFilterChange(f.id)}
               style={[styles.chip, active && styles.chipActive]}
             >
-              <Text style={[styles.chipText, active && styles.chipTextActive]}>{f.label}</Text>
+              <Text style={[styles.chipText, active && styles.chipTextActive]}>
+                {f.id === 'all' ? t('common.all') : t(`fraud.${f.id}`)}
+              </Text>
             </TouchableOpacity>
           );
         })}

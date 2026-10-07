@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import HomeScreen from '../Screens/HomeScreen';
 import NewsScreen from '../Screens/NewsScreen';
 import EventsScreen from '../Screens/EventsScreen';
@@ -32,6 +33,7 @@ function renderTabIcon({ focused, name, theme, styles }) {
 }
 
 export default function HomeBottomNav() {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
   const styles = useThemeStyles(createStyles);
@@ -48,10 +50,10 @@ export default function HomeBottomNav() {
           renderTabIcon({ focused, name: route.name, theme, styles }),
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="News" component={NewsScreen} />
-      <Tab.Screen name="Events" component={EventsScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen name="Home" component={HomeScreen} options={{ tabBarLabel: t('tabs.home') }} />
+      <Tab.Screen name="News" component={NewsScreen} options={{ tabBarLabel: t('tabs.news') }} />
+      <Tab.Screen name="Events" component={EventsScreen} options={{ tabBarLabel: t('tabs.events') }} />
+      <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarLabel: t('tabs.profile') }} />
     </Tab.Navigator>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Alert,
   ScrollView,
@@ -12,11 +12,13 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import { SIZES } from '../constants/theme';
 import ProfileHeader from '../components/profile/ProfileHeader';
 import SettingRow from '../components/profile/SettingRow';
 import EditNameSheet from '../components/profile/EditNameSheet';
-import { AUTH_STRINGS } from '../constants/authStrings';
+import { getAuthStrings } from '../constants/authStrings';
+import i18n from '../i18n';
 import { useTheme } from '../context/ThemeContext';
 import useThemeStyles from '../hooks/useThemeStyles';
 import {
@@ -27,6 +29,8 @@ import {
 } from '../services/authService';
 
 export default function ProfileScreen() {
+  const { t } = useTranslation();
+  const AUTH_STRINGS = getAuthStrings(t);
   const { theme: COLORS, isDark, isThemeReady, toggleTheme } = useTheme();
   const styles = useThemeStyles(createStyles);
   const insets = useSafeAreaInsets();
@@ -34,8 +38,9 @@ export default function ProfileScreen() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-  const [language, setLanguage] = useState('English');
   const [editingName, setEditingName] = useState(false);
+  const hasLoadedProfile = useRef(false);
+  const language = i18n.resolvedLanguage === 'hi' ? t('profile.hindi') : t('profile.english');
 
   const loadProfile = useCallback(async () => {
     setLoading(true);
@@ -43,16 +48,23 @@ export default function ProfileScreen() {
     try {
       const data = await getCurrentUserProfile();
       setProfile(data);
-      if (data?.preferred_language) setLanguage(data.preferred_language);
+      if (data?.preferred_language) {
+        const savedLanguage = data.preferred_language.toLowerCase().startsWith('hi')
+          ? 'hi'
+          : 'en';
+        await i18n.changeLanguage(savedLanguage);
+      }
     } catch (err) {
       console.warn('[ProfileScreen] Error loading profile:', err);
-      setErrorMsg('Could not load profile. Pull to refresh.');
+      setErrorMsg(t('profile.loadError'));
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
+    if (hasLoadedProfile.current) return;
+    hasLoadedProfile.current = true;
     loadProfile();
   }, [loadProfile]);
 
@@ -63,34 +75,38 @@ export default function ProfileScreen() {
       const updated = await updateUserProfile({ full_name: newName });
       setProfile(updated || { ...profile, full_name: newName });
     } catch (err) {
-      Alert.alert('Update Failed', err.message || 'Could not update name.');
+      Alert.alert(t('profile.updateFailed'), err.message || t('profile.updateNameFailed'));
     } finally {
       setSaving(false);
     }
   };
 
   const chooseLanguage = () =>
-    Alert.alert('Language', 'Choose your app language', [
+    Alert.alert(t('profile.language'), t('profile.chooseLanguage'), [
       {
-        text: 'English',
+        text: t('profile.english'),
         onPress: () => {
-          setLanguage('English');
-          updateUserProfile({ preferred_language: 'English' }).catch(() => {});
+          i18n.changeLanguage('en');
+          updateUserProfile({ preferred_language: 'English' }).catch((error) => {
+            console.warn('[ProfileScreen] Could not save language preference:', error);
+          });
         },
       },
       {
-        text: 'Hindi',
+        text: t('profile.hindi'),
         onPress: () => {
-          setLanguage('Hindi');
-          updateUserProfile({ preferred_language: 'Hindi' }).catch(() => {});
+          i18n.changeLanguage('hi');
+          updateUserProfile({ preferred_language: 'Hindi' }).catch((error) => {
+            console.warn('[ProfileScreen] Could not save language preference:', error);
+          });
         },
       },
-      { text: 'Cancel', style: 'cancel' },
+      { text: t('common.cancel'), style: 'cancel' },
     ]);
 
   const confirmLogout = () =>
     Alert.alert(AUTH_STRINGS.logout, AUTH_STRINGS.confirmLogout, [
-      { text: 'Cancel', style: 'cancel' },
+      { text: t('common.cancel'), style: 'cancel' },
       {
         text: AUTH_STRINGS.logout,
         style: 'destructive',
@@ -98,7 +114,7 @@ export default function ProfileScreen() {
           try {
             await signOut();
           } catch (e) {
-            Alert.alert('Sign Out Error', e.message);
+            Alert.alert(t('profile.signOutError'), e.message);
           }
         },
       },
@@ -109,22 +125,22 @@ export default function ProfileScreen() {
       AUTH_STRINGS.deleteAccount,
       AUTH_STRINGS.confirmDeleteAccount,
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Delete Permanently',
+          text: t('profile.deletePermanently'),
           style: 'destructive',
           onPress: async () => {
             try {
               await deleteUserAccount();
             } catch (e) {
-              Alert.alert('Account Deletion Failed', e.message);
+              Alert.alert(t('profile.deleteFailed'), e.message);
             }
           },
         },
       ]
     );
 
-  const userName = profile?.full_name || 'CyberAkshak User';
+  const userName = profile?.full_name || t('profile.defaultName');
   const userEmail = profile?.email || 'user@cyberakshak.in';
 
   return (
@@ -140,7 +156,7 @@ export default function ProfileScreen() {
         {loading ? (
           <View style={[styles.loadingHeader, { paddingTop: insets.top + 30 }]}>
             <ActivityIndicator color={COLORS.onBrand} size="large" />
-            <Text style={styles.loadingText}>Loading Profile...</Text>
+            <Text style={styles.loadingText}>{t('profile.loading')}</Text>
           </View>
         ) : (
           <ProfileHeader
@@ -154,7 +170,7 @@ export default function ProfileScreen() {
           {saving && (
             <View style={styles.savingBanner}>
               <ActivityIndicator color={COLORS.brand} size="small" />
-              <Text style={styles.savingText}>Saving profile changes...</Text>
+              <Text style={styles.savingText}>{t('profile.saving')}</Text>
             </View>
           )}
 
@@ -165,17 +181,17 @@ export default function ProfileScreen() {
             </View>
           ) : null}
 
-          <Text style={styles.sectionTitle}>Preferences</Text>
+          <Text style={styles.sectionTitle}>{t('profile.preferences')}</Text>
           <View style={styles.card}>
             <SettingRow
               icon="globe-outline"
-              title="Language"
+              title={t('profile.language')}
               value={language}
               onPress={chooseLanguage}
             />
             <SettingRow
               icon={isDark ? 'moon-outline' : 'sunny-outline'}
-              title="Dark theme"
+              title={t('profile.darkTheme')}
               last
               onPress={toggleTheme}
               right={
@@ -190,16 +206,16 @@ export default function ProfileScreen() {
             />
           </View>
 
-          <Text style={styles.sectionTitle}>More</Text>
+          <Text style={styles.sectionTitle}>{t('profile.more')}</Text>
           <View style={styles.card}>
             <SettingRow
               icon="information-circle-outline"
-              title="About app"
+              title={t('profile.aboutApp')}
               last
               onPress={() =>
                 Alert.alert(
-                  'About Cyberakshak',
-                  'Cyberakshak helps people recognize online fraud and stay safer. Version 1.0.0.'
+                  t('profile.aboutTitle'),
+                  t('profile.aboutMessage')
                 )
               }
             />
@@ -225,7 +241,7 @@ export default function ProfileScreen() {
             <Text style={styles.deleteBtnText}>{AUTH_STRINGS.deleteAccount}</Text>
           </TouchableOpacity>
 
-          <Text style={styles.version}>Cyberakshak · Version 1.0.0</Text>
+          <Text style={styles.version}>{t('profile.version')}</Text>
         </View>
       </ScrollView>
 

@@ -14,6 +14,7 @@ import {
   Keyboard,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { SIZES } from '../constants/theme';
 import { useTheme } from '../context/ThemeContext';
@@ -31,6 +32,7 @@ const WELCOME_MESSAGES = INITIAL_CHAT_MESSAGES.slice(0, 1);
 export default function ChatbotScreen({ navigation, route }) {
   const { theme: COLORS, isDark } = useTheme();
   const styles = useThemeStyles(createStyles);
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const scrollViewRef = useRef(null);
 
@@ -183,10 +185,10 @@ export default function ChatbotScreen({ navigation, route }) {
         </View>
 
         <View style={styles.headerInfo}>
-          <Text style={styles.headerTitle}>Cyberakshak assistant</Text>
+          <Text style={styles.headerTitle}>{t('chatbot.title')}</Text>
           <View style={styles.statusRow}>
             <View style={styles.onlineDot} />
-            <Text style={styles.headerSubtitle}>Trained on cyber frauds & safety</Text>
+            <Text style={styles.headerSubtitle}>{t('chatbot.subtitle')}</Text>
           </View>
         </View>
 
@@ -199,7 +201,7 @@ export default function ChatbotScreen({ navigation, route }) {
             resetChat();
           }}
         >
-          <Text style={styles.resetBtnText}>Clear</Text>
+          <Text style={styles.resetBtnText}>{t('chatbot.clear')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -248,7 +250,9 @@ export default function ChatbotScreen({ navigation, route }) {
                   </View>
                 )}
 
-                <Text style={styles.botText}>{item.text}</Text>
+                <Text style={styles.botText}>
+                  {item.id === WELCOME_MESSAGES[0]?.id ? t('chatbot.welcome') : item.text}
+                </Text>
 
                 {item.steps && item.steps.length > 0 && (
                   <View style={styles.stepsList}>
@@ -271,7 +275,7 @@ export default function ChatbotScreen({ navigation, route }) {
                   >
                     <Icon name="call-outline" size={16} color={COLORS.onRed} />
                     <Text style={styles.helplineBtnText}>
-                      Call National Helpline 1930
+                      {t('chatbot.helpline', { number: item.helpline })}
                     </Text>
                   </TouchableOpacity>
                 )}
@@ -282,7 +286,7 @@ export default function ChatbotScreen({ navigation, route }) {
           {isTyping && (
             <View style={styles.typingContainer}>
               <ActivityIndicator size="small" color={COLORS.brand} />
-              <Text style={styles.typingText}>Cyberakshak is analyzing...</Text>
+              <Text style={styles.typingText}>{t('chatbot.analyzing')}</Text>
             </View>
           )}
 
@@ -290,7 +294,7 @@ export default function ChatbotScreen({ navigation, route }) {
           {!isTyping && chipsToShow.length > 0 && (
             <View style={styles.suggestionsContainer}>
               <Text style={styles.suggestionsLabel}>
-                {showStartChips ? 'Suggested queries:' : 'Quick replies:'}
+                {showStartChips ? t('chatbot.suggestedQueries') : t('chatbot.quickReplies')}
               </Text>
               <View style={styles.chipsWrap}>
                 {chipsToShow.map((chip, idx) => (
@@ -300,7 +304,11 @@ export default function ChatbotScreen({ navigation, route }) {
                     activeOpacity={0.7}
                     onPress={() => handleChipPress(chip)}
                   >
-                    <Text style={styles.chipText}>{chip}</Text>
+                    <Text style={styles.chipText}>
+                      {t(`chatbot.suggestions.${SUGGESTIONS.indexOf(chip) + 1}`, {
+                        defaultValue: chip,
+                      })}
+                    </Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -316,7 +324,7 @@ export default function ChatbotScreen({ navigation, route }) {
         >
           <TextInput
             style={styles.textInput}
-            placeholder="Type your question or paste message..."
+            placeholder={t('chatbot.inputPlaceholder')}
             placeholderTextColor={COLORS.muted}
             value={inputText}
             onChangeText={setInputText}

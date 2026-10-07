@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { SIZES } from '../../constants/theme';
 import { getSeverityColors } from '../../constants/data';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../context/ThemeContext';
 import useThemeStyles from '../../hooks/useThemeStyles';
 
@@ -19,6 +20,7 @@ export function Chevron({ direction = 'right', size = 9, color, thickness = 2 })
 
 /** Coloured pill: Critical / High / Medium risk. */
 export function SeverityPill({ severity }) {
+  const { t } = useTranslation();
   const { theme } = useTheme();
   const styles = useThemeStyles(createStyles);
   const tones = getSeverityColors(theme);
@@ -26,7 +28,7 @@ export function SeverityPill({ severity }) {
   return (
     <View style={[styles.pill, { backgroundColor: tone.bg }]}>
       <View style={[styles.dot, { backgroundColor: tone.fg }]} />
-      <Text style={[styles.text, { color: tone.fg }]}>{severity} risk</Text>
+      <Text style={[styles.text, { color: tone.fg }]}>{t('fraud.risk', { severity: t(`fraud.severity.${severity.toLowerCase()}`) })}</Text>
     </View>
   );
 }

@@ -1,13 +1,15 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SIZES } from '../../constants/theme';
-import { getGroupLabel, getSeverityColors } from '../../constants/data';
+import { getSeverityColors } from '../../constants/data';
 import { Chevron, SeverityPill } from './FraudUI';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../context/ThemeContext';
 import useThemeStyles from '../../hooks/useThemeStyles';
 
 /** One row in the fraud list. */
 export default function FraudCard({ item, onPress }) {
+  const { t } = useTranslation();
   const { theme: COLORS } = useTheme();
   const styles = useThemeStyles(createStyles);
   const severityColors = getSeverityColors(COLORS);
@@ -16,10 +18,10 @@ export default function FraudCard({ item, onPress }) {
     <TouchableOpacity style={styles.card} activeOpacity={0.85} onPress={onPress}>
       <View style={[styles.accent, { backgroundColor: tone.fg }]} />
       <View style={styles.body}>
-        <Text style={styles.group}>{getGroupLabel(item.group).toUpperCase()}</Text>
-        <Text style={styles.title}>{item.title}</Text>
+        <Text style={styles.group}>{t(`fraud.${item.group}`).toUpperCase()}</Text>
+        <Text style={styles.title}>{t(`fraud.categories.${item.id}.title`, { defaultValue: item.title })}</Text>
         <Text style={styles.summary} numberOfLines={2}>
-          {item.summary}
+          {t(`fraud.categories.${item.id}.summary`, { defaultValue: item.summary })}
         </Text>
         <View style={styles.footer}>
           <SeverityPill severity={item.severity} />

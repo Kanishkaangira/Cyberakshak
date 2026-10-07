@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../context/ThemeContext';
 import useThemeStyles from '../hooks/useThemeStyles';
 import { FRAUD_CATEGORIES, getFraudById } from '../constants/data';
@@ -19,6 +20,7 @@ import FraudCard from '../components/fraud/FraudCard';
 import FraudDetail from '../components/fraud/FraudDetail';
 
 export default function FraudEducationScreen({ navigation, route }) {
+  const { t } = useTranslation();
   const { theme: COLORS, isDark } = useTheme();
   const styles = useThemeStyles(createStyles);
   const insets = useSafeAreaInsets();
@@ -72,10 +74,10 @@ export default function FraudEducationScreen({ navigation, route }) {
           <Chevron direction="left" color={COLORS.ink} size={10} />
         </TouchableOpacity>
         <View style={styles.headerInfo}>
-          <Text style={styles.headerTitle}>{fraud ? 'Fraud guide' : 'Fraud awareness'}</Text>
+          <Text style={styles.headerTitle}>{fraud ? t('fraud.guide') : t('fraud.awareness')}</Text>
           {!fraud && (
             <Text style={styles.headerSubtitle}>
-              {FRAUD_CATEGORIES.length} common scams and how to stay safe
+              {t('fraud.commonScams', { count: FRAUD_CATEGORIES.length })}
             </Text>
           )}
         </View>

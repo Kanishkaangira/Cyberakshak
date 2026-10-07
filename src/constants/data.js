@@ -1,9 +1,9 @@
 import { COLORS } from './theme';
 
 export const QUICK_ACTIONS = [
-  { id: 'link', label: 'Check link', icon: 'link-outline', bg: '#FFF0D6', action: 'check_link' },
-  { id: 'report', label: 'Report fraud', icon: 'warning-outline', bg: '#FFE3E3', action: 'report_fraud' },
-  { id: 'helpline', label: 'Helpline 1930', icon: 'call-outline', bg: '#DFF5EC', action: 'call_helpline' },
+  { id: 'link', labelKey: 'home.checkLink', icon: 'link-outline', bg: '#FFF0D6', action: 'check_link' },
+  { id: 'report', labelKey: 'home.reportFraud', icon: 'warning-outline', bg: '#FFE3E3', action: 'report_fraud' },
+  { id: 'helpline', labelKey: 'home.helpline', icon: 'call-outline', bg: '#DFF5EC', action: 'call_helpline' },
 ];
 
 export const HELPLINE = {

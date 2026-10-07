@@ -12,14 +12,17 @@ import {
   StatusBar,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { SIZES } from '../../constants/theme';
-import { AUTH_STRINGS } from '../../constants/authStrings';
+import { getAuthStrings } from '../../constants/authStrings';
 import { signInWithEmail } from '../../services/authService';
 import { useTheme } from '../../context/ThemeContext';
 import useThemeStyles from '../../hooks/useThemeStyles';
 
 export default function LoginScreen({ navigation }) {
+  const { t } = useTranslation();
+  const AUTH_STRINGS = getAuthStrings(t);
   const { theme: COLORS, isDark } = useTheme();
   const styles = useThemeStyles(createStyles);
   const insets = useSafeAreaInsets();
@@ -38,7 +41,7 @@ export default function LoginScreen({ navigation }) {
       return;
     }
     if (!password) {
-      setErrorMsg('Please enter your password.');
+      setErrorMsg(t('auth.errPasswordRequired'));
       return;
     }
 

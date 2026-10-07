@@ -10,6 +10,7 @@ import {
   StatusBar,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { SIZES } from '../constants/theme';
 import { FRAUD_CATEGORIES, QUICK_ACTIONS } from '../constants/data';
@@ -19,10 +20,11 @@ import { useTheme } from '../context/ThemeContext';
 import useThemeStyles from '../hooks/useThemeStyles';
 
 export default function HomeScreen({ navigation }) {
+  const { t } = useTranslation();
   const { theme: COLORS, isDark } = useTheme();
   const styles = useThemeStyles(createStyles);
   const insets = useSafeAreaInsets();
-  const [userName, setUserName] = useState('User');
+  const [userName, setUserName] = useState('');
 
   useEffect(() => {
     let isMounted = true;
@@ -38,30 +40,30 @@ export default function HomeScreen({ navigation }) {
 
   const handleQuickAction = (action) => {
     if (action === 'check_link') {
-      navigation.navigate('Chatbot', { initialQuery: 'Is this link safe?' });
+      navigation.navigate('Chatbot', { initialQuery: t('home.checkLinkQuestion') });
     } else if (action === 'report_fraud') {
       Alert.alert(
-        'Report Cyber Fraud',
-        'If you suspect or suffered a financial fraud, report immediately to the National Cyber Crime Helpline:\n\n• Dial: 1930\n• Portal: cybercrime.gov.in\n\nReporting within 2 to 24 hours increases the chance to freeze lost funds.',
+        t('home.reportTitle'),
+        t('home.reportMessage'),
         [
-          { text: 'Cancel', style: 'cancel' },
+          { text: t('common.cancel'), style: 'cancel' },
           {
-            text: 'Call 1930',
+            text: t('home.call1930'),
             onPress: () => Linking.openURL('tel:1930').catch(() => {}),
           },
           {
-            text: 'Ask AI Chatbot',
-            onPress: () => navigation.navigate('Chatbot', { initialQuery: 'I lost money in a scam' }),
+            text: t('home.askChatbot'),
+            onPress: () => navigation.navigate('Chatbot', { initialQuery: t('home.lostMoney') }),
           },
         ]
       );
     } else if (action === 'call_helpline') {
       Alert.alert(
-        'National Cyber Helpline (1930)',
-        '1930 is the official citizen financial cyber fraud reporting helpline managed by the Ministry of Home Affairs (I4C).\n\nWould you like to dial now?',
+        t('home.helplineTitle'),
+        t('home.helplineMessage'),
         [
-          { text: 'Cancel', style: 'cancel' },
-          { text: 'Dial 1930', onPress: () => Linking.openURL('tel:1930').catch(() => {}) },
+          { text: t('common.cancel'), style: 'cancel' },
+          { text: t('home.dial1930'), onPress: () => Linking.openURL('tel:1930').catch(() => {}) },
         ]
       );
     }
@@ -90,8 +92,8 @@ export default function HomeScreen({ navigation }) {
               activeOpacity={0.7}
               onPress={() =>
                 Alert.alert(
-                  'Cyber Alerts',
-                  'You have 2 new security alerts:\n• New courier SMS phishing detected\n• National UPI advisory issued'
+                  t('home.alertsTitle'),
+                  t('home.alertsMessage')
                 )
               }
             >
@@ -111,8 +113,8 @@ export default function HomeScreen({ navigation }) {
 
         {/* Greeting Section */}
         <View style={styles.greetingSection}>
-          <Text style={styles.welcomeText}>Welcome back</Text>
-          <Text style={styles.userName}>Hi, {userName}</Text>
+          <Text style={styles.welcomeText}>{t('home.welcomeBack')}</Text>
+          <Text style={styles.userName}>{t('home.hello', { name: userName || t('home.user') })}</Text>
         </View>
 
         {/* Hero Card: AI Safety Assistant */}
@@ -123,20 +125,20 @@ export default function HomeScreen({ navigation }) {
         >
           <View style={styles.heroHeader}>
             <View style={styles.heroTag}>
-              <Text style={styles.heroTagText}>AI safety assistant</Text>
+              <Text style={styles.heroTagText}>{t('home.assistant')}</Text>
             </View>
             <View style={styles.sparkleIcon}>
               <Icon name="sparkles-outline" size={19} color={COLORS.onBrand} />
             </View>
           </View>
 
-          <Text style={styles.heroTitle}>Got a suspicious call or message?</Text>
+          <Text style={styles.heroTitle}>{t('home.gotSuspicious')}</Text>
           <Text style={styles.heroSubtitle}>
-            Ask Cyberakshak and find out if it is a scam.
+            {t('home.askCyberakshak')}
           </Text>
 
           <View style={styles.fakeInput}>
-            <Text style={styles.fakeInputPlaceholder}>Type or paste a message</Text>
+            <Text style={styles.fakeInputPlaceholder}>{t('home.messagePlaceholder')}</Text>
             <View style={styles.fakeInputArrow}>
               <Icon name="arrow-forward" size={16} color={COLORS.onBrand} />
             </View>
@@ -167,19 +169,19 @@ export default function HomeScreen({ navigation }) {
               >
                 <Icon name={item.icon} size={21} color={COLORS.ink} />
               </View>
-              <Text style={styles.actionLabel}>{item.label}</Text>
+              <Text style={styles.actionLabel}>{t(item.labelKey)}</Text>
             </TouchableOpacity>
           ))}
         </View>
 
         {/* Learn About Frauds Header */}
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Learn about frauds</Text>
+          <Text style={styles.sectionTitle}>{t('home.learnFrauds')}</Text>
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => navigation.navigate('FraudEducation')}
           >
-            <Text style={styles.seeAllText}>See all</Text>
+            <Text style={styles.seeAllText}>{t('home.seeAll')}</Text>
           </TouchableOpacity>
         </View>
 
@@ -200,9 +202,9 @@ export default function HomeScreen({ navigation }) {
             >
               <SeverityPill severity={item.severity} />
               <Text style={styles.fraudTitle} numberOfLines={2}>
-                {item.title}
+                {t(`fraud.categories.${item.id}.title`, item.title)}
               </Text>
-              <Text style={styles.fraudLessons}>Read guide</Text>
+              <Text style={styles.fraudLessons}>{t('home.readGuide')}</Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
@@ -213,9 +215,9 @@ export default function HomeScreen({ navigation }) {
             <Icon name="bulb-outline" size={20} color={COLORS.green} />
           </View>
           <View style={styles.tipContent}>
-            <Text style={styles.tipTitle}>Tip of the day</Text>
+            <Text style={styles.tipTitle}>{t('home.tipTitle')}</Text>
             <Text style={styles.tipText}>
-              Your bank never asks for your OTP or UPI PIN to credit funds.
+              {t('home.tipMessage')}
             </Text>
           </View>
         </View>
