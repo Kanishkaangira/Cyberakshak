@@ -12,6 +12,7 @@ import {
   Linking,
   ActivityIndicator,
   Keyboard,
+  ToastAndroid,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -25,6 +26,10 @@ import {
   analyzeUserQuery,
 } from '../constants/data';
 import { sendMessage, warmUp, resetChat, toBotMessage } from '../services/chatService';
+import { submitAnswerReport } from '../services/reportService';
+import ReportModal from '../components/ReportModal';
+
+const SUPPORT_EMAIL = 'krishanasharma7211@gmail.com';
 
 // Your INITIAL_CHAT_MESSAGES holds the greeting + 2 demo messages. Keep only the greeting.
 const WELCOME_MESSAGES = INITIAL_CHAT_MESSAGES.slice(0, 1);
@@ -37,6 +42,8 @@ export default function ChatbotScreen({ navigation, route }) {
   const scrollViewRef = useRef(null);
 
   const [messages, setMessages] = useState(WELCOME_MESSAGES);
+  const [reportTarget, setReportTarget] = useState(null);
+  const [reportedMessageIds, setReportedMessageIds] = useState(() => new Set());
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [chips, setChips] = useState([]);   // quick replies sent by the server
@@ -99,6 +106,52 @@ export default function ChatbotScreen({ navigation, route }) {
     setTimeout(() => {
       scrollViewRef.current?.scrollToEnd({ animated: true });
     }, 120);
+  };
+
+  const handleReportSubmit = async ({ reason, details }) => {
+    if (!reportTarget) return false;
+    try {
+      await submitAnswerReport({
+        messageId: reportTarget.message.id,
+        botMessage: reportTarget.message.text,
+        userPrompt: reportTarget.userPrompt,
+        reason,
+        details,
+      });
+      setReportedMessageIds(prev => new Set(prev).add(reportTarget.message.id));
+      setReportTarget(null);
+      ToastAndroid.show('Thanks, we will review this', ToastAndroid.SHORT);
+      return true;
+    } catch (error) {
+      console.warn('[ChatbotScreen] Could not submit answer report:', error);
+      return false;
+    }
+  };
+
+  const handleReportByEmail = async ({ reason, details }) => {
+    if (!reportTarget) return;
+    const subject = 'CyberAkshak answer report';
+    const body = [
+      `Reason: ${reason}`,
+      '',
+      'Reported answer:',
+      reportTarget.message.text,
+      '',
+      'Details:',
+      details,
+    ].join('\n');
+    await Linking.openURL(
+      `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`,
+    );
+  };
+
+  const openReportModal = message => {
+    const messageIndex = messages.findIndex(item => item.id === message.id);
+    const userPrompt = messages
+      .slice(0, messageIndex)
+      .reverse()
+      .find(item => item.sender === 'user')?.text;
+    setReportTarget({ message, userPrompt });
   };
 
     const handleSend = async (textToSend) => {
@@ -279,6 +332,36 @@ export default function ChatbotScreen({ navigation, route }) {
                     </Text>
                   </TouchableOpacity>
                 )}
+                {item.sender === 'bot' &&
+                  item.id !== WELCOME_MESSAGES[0]?.id && (
+                    <TouchableOpacity
+                      style={styles.reportButton}
+                      activeOpacity={0.7}
+                      disabled={reportedMessageIds.has(item.id)}
+                      onPress={() => openReportModal(item)}
+                      accessibilityRole="button"
+                      accessibilityLabel={
+                        reportedMessageIds.has(item.id)
+                          ? 'Answer reported'
+                          : 'Report this answer'
+                      }
+                    >
+                      <Icon
+                        name={
+                          reportedMessageIds.has(item.id)
+                            ? 'checkmark-circle-outline'
+                            : 'flag-outline'
+                        }
+                        size={13}
+                        color={COLORS.muted}
+                      />
+                      <Text style={styles.reportButtonText}>
+                        {reportedMessageIds.has(item.id)
+                          ? 'Reported'
+                          : 'Report'}
+                      </Text>
+                    </TouchableOpacity>
+                  )}
               </View>
             );
           })}
@@ -350,6 +433,12 @@ export default function ChatbotScreen({ navigation, route }) {
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
+      <ReportModal
+        visible={!!reportTarget}
+        onCancel={() => setReportTarget(null)}
+        onSubmit={handleReportSubmit}
+        onReportByEmail={handleReportByEmail}
+      />
     </View>
   );
 }
@@ -480,6 +569,19 @@ const createStyles = (COLORS) => StyleSheet.create({
     color: COLORS.ink,
     fontSize: 14,
     lineHeight: 20,
+  },
+  reportButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    gap: 5,
+    marginTop: 10,
+    paddingVertical: 2,
+  },
+  reportButtonText: {
+    color: COLORS.muted,
+    fontSize: 11,
+    fontWeight: '500',
   },
   stepsList: {
     marginTop: 8,
