@@ -18,7 +18,10 @@ import { SIZES } from '../../constants/theme';
 import { getAuthStrings } from '../../constants/authStrings';
 import {
   OTP_RESEND_COOLDOWN_SECONDS,
+  clearPendingPasswordReset,
+  getPendingPasswordReset,
   resendSignupOTP,
+  savePendingPasswordReset,
   verifyOTP,
   resendOTP,
 } from '../../services/authService';
@@ -43,6 +46,28 @@ export default function VerifyOTPScreen({ route, navigation }) {
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
 
+  useEffect(() => {
+    if (otpType !== 'recovery') return;
+
+    getPendingPasswordReset()
+      .then((pendingRequest) => {
+        if (pendingRequest?.email !== email) return;
+        const elapsedSeconds = Math.floor(
+          (Date.now() - pendingRequest.requestedAt) / 1000
+        );
+        setCooldown(
+          Math.min(
+            OTP_RESEND_COOLDOWN_SECONDS,
+            Math.max(0, OTP_RESEND_COOLDOWN_SECONDS - elapsedSeconds)
+          )
+        );
+      })
+      .catch((error) => {
+        console.warn('[VerifyOTPScreen] Could not restore the OTP request:', error);
+        setErrorMsg(AUTH_STRINGS.errGeneric);
+      });
+  }, [AUTH_STRINGS.errGeneric, email, otpType]);
+
   // Match the resend interval configured for Supabase Auth.
   useEffect(() => {
     let timer;
@@ -66,6 +91,9 @@ export default function VerifyOTPScreen({ route, navigation }) {
     try {
       if (otpType === 'recovery') {
         await verifyOTP({ email, token: cleanToken, type: 'recovery' });
+        clearPendingPasswordReset().catch((error) => {
+          console.warn('[VerifyOTPScreen] Could not clear the verified OTP request:', error);
+        });
         // Navigate to set new password
         navigation.navigate('ResetPassword', { email });
       } else if (otpType === 'email') {
@@ -99,6 +127,9 @@ export default function VerifyOTPScreen({ route, navigation }) {
         await resendSignupOTP({ email });
       } else {
         await resendOTP({ email, type: otpType });
+      }
+      if (otpType === 'recovery') {
+        await savePendingPasswordReset({ email });
       }
       setSuccessMsg(AUTH_STRINGS.otpSentSuccess);
       setCooldown(OTP_RESEND_COOLDOWN_SECONDS);

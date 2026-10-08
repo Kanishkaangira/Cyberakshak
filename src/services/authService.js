@@ -1,7 +1,45 @@
 import { supabase, isSupabaseConfigured } from './supabaseClient';
 import { removeCurrentDeviceToken } from './pushNotificationService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const OTP_RESEND_COOLDOWN_SECONDS = 80;
+const PENDING_PASSWORD_RESET_KEY = 'CYBERAKSHAK_PENDING_PASSWORD_RESET';
+
+export async function getPendingPasswordReset() {
+  const storedRequest = await AsyncStorage.getItem(PENDING_PASSWORD_RESET_KEY);
+  if (!storedRequest) return null;
+
+  try {
+    const pendingRequest = JSON.parse(storedRequest);
+    if (
+      typeof pendingRequest.email === 'string' &&
+      pendingRequest.type === 'recovery' &&
+      Number.isFinite(pendingRequest.requestedAt)
+    ) {
+      return pendingRequest;
+    }
+  } catch (error) {
+    console.warn('[AuthService] Could not read the pending password reset request:', error);
+  }
+
+  await AsyncStorage.removeItem(PENDING_PASSWORD_RESET_KEY);
+  return null;
+}
+
+export async function savePendingPasswordReset({ email }) {
+  await AsyncStorage.setItem(
+    PENDING_PASSWORD_RESET_KEY,
+    JSON.stringify({
+      email,
+      type: 'recovery',
+      requestedAt: Date.now(),
+    })
+  );
+}
+
+export async function clearPendingPasswordReset() {
+  await AsyncStorage.removeItem(PENDING_PASSWORD_RESET_KEY);
+}
 
 /**
  * Start email-only signup by sending a passwordless email OTP.
