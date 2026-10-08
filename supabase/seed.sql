@@ -22,7 +22,7 @@ VALUES
     'Online (Zoom)',
     'Webinar',
     'https://cyberakshak.in/events/deepfake-webinar',
-    'published'
+    'coming'
   ),
   (
     '22222222-2222-2222-2222-222222222222',
@@ -32,7 +32,7 @@ VALUES
     'Campus Auditorium & Live Stream',
     'Seminar',
     'https://cyberakshak.in/events/campus-hygiene',
-    'published'
+    'coming'
   ),
   (
     '33333333-3333-3333-3333-333333333333',
@@ -42,7 +42,7 @@ VALUES
     'Interactive Workshop',
     'Workshop',
     'https://cyberakshak.in/events/upi-security',
-    'published'
+    'coming'
   ),
   (
     '44444444-4444-4444-4444-444444444444',
@@ -52,6 +52,6 @@ VALUES
     'Online',
     'Webinar',
     'https://cyberakshak.in/events/phishing-masterclass',
-    'published'
+    'coming'
   )
 ON CONFLICT (id) DO NOTHING;

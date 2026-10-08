@@ -5,6 +5,7 @@ import HomeBottomNav from './HomeBottomNav';
 import AuthStack from './AuthStack';
 import ChatbotScreen from '../Screens/ChatbotScreen';
 import FraudEducationScreen from '../Screens/FraudEducationScreen';
+import NotificationsScreen from '../Screens/NotificationsScreen';
 import { supabase, isSupabaseConfigured } from '../services/supabaseClient';
 import { REQUIRE_AUTH } from '../config/secrets';
 import { useTheme } from '../context/ThemeContext';
@@ -78,6 +79,13 @@ export default function Stacknavigation() {
           <Stack.Screen
             name="FraudEducation"
             component={FraudEducationScreen}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen
+            name="Notifications"
+            component={NotificationsScreen}
             options={{
               animation: 'slide_from_right',
             }}

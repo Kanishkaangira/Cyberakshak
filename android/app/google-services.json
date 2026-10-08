@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "943821986123",
-    "project_id": "cyberakshak-c02c2",
-    "storage_bucket": "cyberakshak-c02c2.firebasestorage.app"
+    "project_number": "122273195929",
+    "project_id": "cyberakshak-d71e9",
+    "storage_bucket": "cyberakshak-d71e9.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:943821986123:android:c23fa43a73b758f14b70ce",
+        "mobilesdk_app_id": "1:122273195929:android:d0368c12fcff8ee6109508",
         "android_client_info": {
           "package_name": "com.cyberakshak"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBoHhnJX2j0foFUOA3GezZI2TbvPjTpkNs"
+          "current_key": "AIzaSyATKm4mVKOSepLc1TGfqkIQodOE6TVtcPc"
         }
       ],
       "services": {

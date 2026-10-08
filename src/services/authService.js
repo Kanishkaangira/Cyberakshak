@@ -1,4 +1,5 @@
 import { supabase, isSupabaseConfigured } from './supabaseClient';
+import { removeCurrentDeviceToken } from './pushNotificationService';
 
 /**
  * Email + Password Sign Up with 6-digit OTP
@@ -111,6 +112,15 @@ export async function updatePassword({ newPassword }) {
  */
 export async function signOut() {
   if (!isSupabaseConfigured()) return;
+  try {
+    await removeCurrentDeviceToken();
+  } catch (cleanupError) {
+    console.warn(
+      '[AuthService] Could not unregister the push token before sign out:',
+      cleanupError
+    );
+  }
+
   const { error } = await supabase.auth.signOut();
   if (error) throw error;
 }

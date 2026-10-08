@@ -241,6 +241,13 @@ export default function EventsScreen() {
             const imageUrl =
               imageStatus === 1 ? FALLBACK_EVENT_IMAGE : ev.imageUrl;
             const hasImage = Boolean(imageUrl) && imageStatus !== 2;
+            const statusColors =
+              ev.status === 'ongoing'
+                ? { backgroundColor: COLORS.orangeSoft, color: COLORS.orange }
+                : ev.status === 'archived'
+                  ? { backgroundColor: COLORS.brandSoft, color: COLORS.muted }
+                  : { backgroundColor: COLORS.greenSoft, color: COLORS.green };
+            const statusLabel = ev.status[0].toUpperCase() + ev.status.slice(1);
 
             return (
               <View key={ev.id} style={styles.eventCard}>
@@ -276,6 +283,9 @@ export default function EventsScreen() {
                 <View style={styles.cardContent}>
                   {/* Title */}
                   <Text style={styles.eventTitle}>{ev.title}</Text>
+                  <View style={[styles.eventStatusBadge, { backgroundColor: statusColors.backgroundColor }]}>
+                    <Text style={[styles.eventStatusText, { color: statusColors.color }]}>{statusLabel}</Text>
+                  </View>
 
                   {/* Date & Time Row */}
                   <View style={styles.metaRow}>
@@ -499,6 +509,18 @@ const createStyles = (COLORS) => StyleSheet.create({
     color: COLORS.ink,
     lineHeight: 23,
     marginBottom: 10,
+  },
+  eventStatusBadge: {
+    alignSelf: 'flex-start',
+    borderRadius: SIZES.radiusPill,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    marginBottom: 10,
+  },
+  eventStatusText: {
+    fontSize: 11,
+    fontWeight: '700',
+    textTransform: 'capitalize',
   },
   metaRow: {
     flexDirection: 'row',

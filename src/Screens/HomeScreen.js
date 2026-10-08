@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
+  Animated,
   StyleSheet,
   Text,
   View,
@@ -8,7 +9,9 @@ import {
   Alert,
   Linking,
   StatusBar,
+  DeviceEventEmitter,
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -18,6 +21,10 @@ import { SeverityPill } from '../components/fraud/FraudUI';
 import { getCurrentUserProfile } from '../services/authService';
 import { useTheme } from '../context/ThemeContext';
 import useThemeStyles from '../hooks/useThemeStyles';
+import {
+  getUnreadNotificationCount,
+  NOTIFICATIONS_UPDATED_EVENT,
+} from '../services/notificationsService';
 
 export default function HomeScreen({ navigation }) {
   const { t } = useTranslation();
@@ -25,6 +32,51 @@ export default function HomeScreen({ navigation }) {
   const styles = useThemeStyles(createStyles);
   const insets = useSafeAreaInsets();
   const [userName, setUserName] = useState('');
+  const [unreadNotificationCount, setUnreadNotificationCount] = useState(0);
+  const notificationDotOpacity = useRef(new Animated.Value(1)).current;
+
+  const refreshUnreadNotifications = useCallback(async () => {
+    try {
+      setUnreadNotificationCount(await getUnreadNotificationCount());
+    } catch (error) {
+      console.error('[HomeScreen] Could not refresh notification count:', error);
+    }
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      refreshUnreadNotifications();
+      const subscription = DeviceEventEmitter.addListener(
+        NOTIFICATIONS_UPDATED_EVENT,
+        refreshUnreadNotifications
+      );
+      return () => subscription.remove();
+    }, [refreshUnreadNotifications])
+  );
+
+  useEffect(() => {
+    if (unreadNotificationCount === 0) {
+      notificationDotOpacity.setValue(1);
+      return undefined;
+    }
+
+    const blinkAnimation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(notificationDotOpacity, {
+          toValue: 0.15,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(notificationDotOpacity, {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+    blinkAnimation.start();
+    return () => blinkAnimation.stop();
+  }, [notificationDotOpacity, unreadNotificationCount]);
 
   useEffect(() => {
     let isMounted = true;
@@ -90,15 +142,19 @@ export default function HomeScreen({ navigation }) {
             <TouchableOpacity
               style={styles.iconBtn}
               activeOpacity={0.7}
-              onPress={() =>
-                Alert.alert(
-                  t('home.alertsTitle'),
-                  t('home.alertsMessage')
-                )
-              }
+              accessibilityRole="button"
+              accessibilityLabel={t('notifications.title')}
+              onPress={() => navigation.navigate('Notifications')}
             >
               <Icon name="notifications-outline" size={19} color={COLORS.ink} />
-              <View style={styles.notificationDot} />
+              {unreadNotificationCount > 0 && (
+                <Animated.View
+                  style={[
+                    styles.notificationDot,
+                    { opacity: notificationDotOpacity },
+                  ]}
+                />
+              )}
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -283,17 +339,19 @@ const createStyles = (COLORS) => StyleSheet.create({
     elevation: 2,
     position: 'relative',
   },
-  iconText: {
-    fontSize: 16,
-  },
   notificationDot: {
     position: 'absolute',
-    top: 7,
-    right: 8,
-    width: 7,
-    height: 7,
-    borderRadius: 3.5,
+    top: 6,
+    right: 6,
+    width: 9,
+    height: 9,
+    borderRadius: 5,
     backgroundColor: COLORS.red,
+    borderWidth: 1,
+    borderColor: COLORS.surface,
+  },
+  iconText: {
+    fontSize: 16,
   },
   avatarBtn: {
     width: 36,

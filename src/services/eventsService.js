@@ -40,6 +40,7 @@ export function normalizeEventDoc(row) {
   const startsAt = row.starts_at ?? row.startsAt ?? row.date ?? row.Date;
   const location = row.location ?? row.venue ?? row.Venue ?? row.mode ?? '';
   const category = row.category ?? row.Category ?? row.type ?? 'Webinar';
+  const status = String(row.status ?? row.Status ?? 'coming').toLowerCase();
   const imageUrl = row.image_url ?? row.imageUrl ?? row.ImageUrl ?? '';
 
   const dateValue = startsAt ? new Date(startsAt) : null;
@@ -59,6 +60,7 @@ export function normalizeEventDoc(row) {
     time: row.time || (validDate ? dateValue.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''),
     venue: typeof location === 'string' ? location : '',
     category: typeof category === 'string' ? category : '',
+    status: ['coming', 'ongoing', 'archived'].includes(status) ? status : 'coming',
     imageUrl: normalizedImageUrl,
     registrationUrl: row.registration_url || '',
   };
@@ -77,12 +79,12 @@ export function subscribeToEvents(onEventsUpdate, onError) {
     return () => {};
   }
 
-  // Subscribe to real-time changes on published events
+  // Subscribe to event changes; fetchEventsOnce excludes drafts.
   const channel = supabase
     .channel('public:events')
     .on(
       'postgres_changes',
-      { event: '*', schema: 'public', table: 'events', filter: 'status=eq.published' },
+      { event: '*', schema: 'public', table: 'events' },
       () => {
         fetchEventsOnce().then(onEventsUpdate).catch(() => {});
       }
@@ -94,7 +96,7 @@ export function subscribeToEvents(onEventsUpdate, onError) {
   };
 }
 
-/** Fetch published events once from Supabase DB, with cache fallback. */
+/** Fetch events visible to users once from Supabase DB, with cache fallback. */
 export async function fetchEventsOnce() {
   if (!isSupabaseConfigured()) {
     return getFallbackEvents();
@@ -104,7 +106,7 @@ export async function fetchEventsOnce() {
     const { data, error } = await supabase
       .from('events')
       .select('*')
-      .eq('status', 'published')
+      .in('status', ['coming', 'ongoing', 'archived'])
       .order('starts_at', { ascending: true });
 
     if (error) throw error;

@@ -94,11 +94,22 @@ To execute Phase 2 (Auth + Database), the following packages are proposed:
 
 1. `@supabase/supabase-js`: Official JavaScript client for Supabase (DB + Auth).
 2. `@react-native-async-storage/async-storage`: Standard React Native persistent key-value storage for session persistence across app restarts.
+3. `@react-native-firebase/messaging`: Native FCM token registration and incoming push message handling on Android.
+4. `@notifee/react-native`: Android notification permission requests, channels, and foreground notification display.
+
+The mobile app stores each signed-in user's FCM token in the existing
+`public.device_tokens` table. Push messages shown while the app is open use
+Notifee; background messages are displayed by Android from the FCM notification
+payload. Event notifications should include a string `type: "event"` and
+`event_id` in their FCM data payload so tapping the notification opens Events.
+Successful event broadcasts are also stored in `public.notifications` for the
+in-app notification inbox. Android pushes use a dedicated branded high-
+visibility channel and display the event banner image when one is available.
 
 ## 6. Internationalization
 
-The mobile app uses `i18next` with `react-i18next` for translation and
-`react-native-localize` to select the initial language from the device locale.
-English (`en`) is the fallback; Hindi (`hi`) is the second supported language.
-Translation resources live in `src/locales/` so additional Indian languages can
-be added without changing the localization integration.
+The mobile app uses `i18next` with `react-i18next` for translation. English
+(`en`) is the fallback. Locale JSON resources in `src/locales/` are enabled
+when complete translations are available. Supported language codes and display
+names are maintained in `src/constants/languages.js`; the profile language
+preference stores the selected locale code.

@@ -114,6 +114,22 @@ CREATE TRIGGER trigger_prevent_role_change
 -- ------------------------------------------
 -- 5. EVENTS TABLE
 -- ------------------------------------------
+DO $$
+BEGIN
+  CREATE TYPE public.event_category AS ENUM ('Seminar', 'Workshop', 'Webinar');
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END;
+$$;
+
+DO $$
+BEGIN
+  CREATE TYPE public.event_status AS ENUM ('draft', 'coming', 'ongoing', 'archived');
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END;
+$$;
+
 CREATE TABLE IF NOT EXISTS public.events (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title TEXT NOT NULL,
@@ -122,9 +138,9 @@ CREATE TABLE IF NOT EXISTS public.events (
   ends_at TIMESTAMPTZ,
   location TEXT,
   image_url TEXT,
-  category TEXT NOT NULL DEFAULT 'Webinar',
+  category public.event_category NOT NULL DEFAULT 'Webinar'::public.event_category,
   registration_url TEXT,
-  status TEXT NOT NULL DEFAULT 'published' CHECK (status IN ('draft', 'published', 'archived')),
+  status public.event_status NOT NULL DEFAULT 'coming'::public.event_status,
   created_by UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -232,10 +248,10 @@ CREATE POLICY "Profiles update policy" ON public.profiles
   );
 
 -- --- EVENTS POLICIES ---
--- Anyone (authenticated or guest) can read published events
-CREATE POLICY "Events public read published" ON public.events
+-- Anyone can read non-draft events; drafts are admin-only.
+CREATE POLICY "Events public read non-drafts" ON public.events
   FOR SELECT USING (
-    status = 'published' OR public.is_admin(auth.uid())
+    status <> 'draft' OR public.is_admin(auth.uid())
   );
 
 -- Admins only can insert events

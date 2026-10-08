@@ -9,6 +9,8 @@ import {
   TouchableOpacity,
   View,
   ActivityIndicator,
+  FlatList,
+  Modal,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -18,6 +20,11 @@ import ProfileHeader from '../components/profile/ProfileHeader';
 import SettingRow from '../components/profile/SettingRow';
 import EditNameSheet from '../components/profile/EditNameSheet';
 import { getAuthStrings } from '../constants/authStrings';
+import {
+  APP_LANGUAGES,
+  getLanguageCode,
+  SUPPORTED_LANGUAGE_CODES,
+} from '../constants/languages';
 import i18n from '../i18n';
 import { useTheme } from '../context/ThemeContext';
 import useThemeStyles from '../hooks/useThemeStyles';
@@ -28,7 +35,7 @@ import {
   deleteUserAccount,
 } from '../services/authService';
 
-export default function ProfileScreen() {
+export default function ProfileScreen({ navigation }) {
   const { t } = useTranslation();
   const AUTH_STRINGS = getAuthStrings(t);
   const { theme: COLORS, isDark, isThemeReady, toggleTheme } = useTheme();
@@ -39,8 +46,22 @@ export default function ProfileScreen() {
   const [saving, setSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [editingName, setEditingName] = useState(false);
+  const [languagePickerVisible, setLanguagePickerVisible] = useState(false);
+  const [selectedLanguageCode, setSelectedLanguageCode] = useState(
+    getLanguageCode(i18n.resolvedLanguage || i18n.language)
+  );
+  const availableLanguages = APP_LANGUAGES.filter(({ code }) =>
+    SUPPORTED_LANGUAGE_CODES.includes(code)
+  );
   const hasLoadedProfile = useRef(false);
-  const language = i18n.resolvedLanguage === 'hi' ? t('profile.hindi') : t('profile.english');
+  const selectedLanguage = availableLanguages.find(
+    ({ code }) => code === selectedLanguageCode
+  ) || availableLanguages[0];
+  const language = selectedLanguageCode === 'hi'
+    ? t('profile.hindi')
+    : selectedLanguageCode === 'en'
+      ? t('profile.english')
+      : selectedLanguage.name;
 
   const loadProfile = useCallback(async () => {
     setLoading(true);
@@ -49,10 +70,9 @@ export default function ProfileScreen() {
       const data = await getCurrentUserProfile();
       setProfile(data);
       if (data?.preferred_language) {
-        const savedLanguage = data.preferred_language.toLowerCase().startsWith('hi')
-          ? 'hi'
-          : 'en';
-        await i18n.changeLanguage(savedLanguage);
+        const savedLanguageCode = getLanguageCode(data.preferred_language);
+        setSelectedLanguageCode(savedLanguageCode);
+        await i18n.changeLanguage(savedLanguageCode);
       }
     } catch (err) {
       console.warn('[ProfileScreen] Error loading profile:', err);
@@ -81,28 +101,25 @@ export default function ProfileScreen() {
     }
   };
 
-  const chooseLanguage = () =>
-    Alert.alert(t('profile.language'), t('profile.chooseLanguage'), [
-      {
-        text: t('profile.english'),
-        onPress: () => {
-          i18n.changeLanguage('en');
-          updateUserProfile({ preferred_language: 'English' }).catch((error) => {
-            console.warn('[ProfileScreen] Could not save language preference:', error);
-          });
-        },
-      },
-      {
-        text: t('profile.hindi'),
-        onPress: () => {
-          i18n.changeLanguage('hi');
-          updateUserProfile({ preferred_language: 'Hindi' }).catch((error) => {
-            console.warn('[ProfileScreen] Could not save language preference:', error);
-          });
-        },
-      },
-      { text: t('common.cancel'), style: 'cancel' },
-    ]);
+  const chooseLanguage = async (selectedLanguageOption) => {
+    setSelectedLanguageCode(selectedLanguageOption.code);
+    setLanguagePickerVisible(false);
+    await i18n.changeLanguage(selectedLanguageOption.code);
+
+    try {
+      const updatedProfile = await updateUserProfile({
+        preferred_language: selectedLanguageOption.code,
+      });
+      setProfile((currentProfile) => ({
+        ...currentProfile,
+        ...updatedProfile,
+        preferred_language: selectedLanguageOption.code,
+      }));
+    } catch (error) {
+      console.error('[ProfileScreen] Could not save language preference:', error);
+      Alert.alert(t('profile.updateFailed'), error.message);
+    }
+  };
 
   const confirmLogout = () =>
     Alert.alert(AUTH_STRINGS.logout, AUTH_STRINGS.confirmLogout, [
@@ -184,16 +201,21 @@ export default function ProfileScreen() {
           <Text style={styles.sectionTitle}>{t('profile.preferences')}</Text>
           <View style={styles.card}>
             <SettingRow
+              icon="notifications-outline"
+              title={t('notifications.title')}
+              onPress={() => navigation.navigate('Notifications')}
+            />
+            <SettingRow
               icon="globe-outline"
               title={t('profile.language')}
               value={language}
-              onPress={chooseLanguage}
+              onPress={() => setLanguagePickerVisible(true)}
             />
             <SettingRow
               icon={isDark ? 'moon-outline' : 'sunny-outline'}
               title={t('profile.darkTheme')}
-              last
               onPress={toggleTheme}
+              last
               right={
                 <Switch
                   value={isDark}
@@ -251,6 +273,62 @@ export default function ProfileScreen() {
         onClose={() => setEditingName(false)}
         onSave={handleSaveName}
       />
+      <Modal
+        visible={languagePickerVisible}
+        animationType="slide"
+        onRequestClose={() => setLanguagePickerVisible(false)}
+      >
+        <View style={[styles.languagePicker, { paddingTop: insets.top }]}>
+          <View style={styles.languagePickerHeader}>
+            <View style={styles.languagePickerHeading}>
+              <Text style={styles.languagePickerTitle}>{t('profile.language')}</Text>
+              <Text style={styles.languagePickerSubtitle}>{t('profile.chooseLanguage')}</Text>
+            </View>
+            <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityLabel={t('common.cancel')}
+              onPress={() => setLanguagePickerVisible(false)}
+              style={styles.languagePickerClose}
+            >
+              <Icon name="close" size={23} color={COLORS.ink} />
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.languageFallbackNotice}>
+            {t('profile.languageFallback')}
+          </Text>
+          <FlatList
+            data={availableLanguages}
+            keyExtractor={({ code }) => code}
+            renderItem={({ item }) => {
+              const isSelected = item.code === selectedLanguageCode;
+              return (
+                <TouchableOpacity
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: isSelected }}
+                  onPress={() => chooseLanguage(item)}
+                  style={styles.languageOption}
+                >
+                  <Text
+                    style={[
+                      styles.languageOptionText,
+                      isSelected && styles.languageOptionTextSelected,
+                    ]}
+                  >
+                    {item.name}
+                  </Text>
+                  {isSelected && (
+                    <Icon name="checkmark" size={21} color={COLORS.brand} />
+                  )}
+                </TouchableOpacity>
+              );
+            }}
+            contentContainerStyle={[
+              styles.languageOptions,
+              { paddingBottom: insets.bottom + 20 },
+            ]}
+          />
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -342,4 +420,69 @@ const createStyles = (COLORS) => StyleSheet.create({
   },
   deleteBtnText: { color: COLORS.red, fontSize: 14, fontWeight: '700' },
   version: { textAlign: 'center', color: COLORS.muted, fontSize: 12, marginTop: 18 },
+  languagePicker: {
+    flex: 1,
+    backgroundColor: COLORS.bg,
+  },
+  languagePickerHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.line,
+  },
+  languagePickerHeading: {
+    flex: 1,
+  },
+  languagePickerTitle: {
+    color: COLORS.ink,
+    fontSize: 21,
+    fontWeight: '800',
+  },
+  languagePickerSubtitle: {
+    color: COLORS.muted,
+    fontSize: 13,
+    marginTop: 4,
+  },
+  languagePickerClose: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: COLORS.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 12,
+  },
+  languageFallbackNotice: {
+    color: COLORS.muted,
+    fontSize: 13,
+    lineHeight: 19,
+    marginHorizontal: 20,
+    marginVertical: 14,
+  },
+  languageOptions: {
+    paddingHorizontal: 20,
+  },
+  languageOption: {
+    minHeight: 54,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 14,
+    marginBottom: 8,
+    borderRadius: SIZES.radiusMd,
+    backgroundColor: COLORS.surface,
+    borderWidth: 1,
+    borderColor: COLORS.line,
+  },
+  languageOptionText: {
+    color: COLORS.ink,
+    fontSize: 15,
+    fontWeight: '500',
+  },
+  languageOptionTextSelected: {
+    color: COLORS.brand,
+    fontWeight: '700',
+  },
 });

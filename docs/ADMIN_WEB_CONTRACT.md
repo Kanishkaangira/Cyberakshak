@@ -1,45 +1,62 @@
 # CyberAkshak Admin Web Panel Integration Contract
 
-This document defines the API contract, database queries, and role verification methods required to build a separate **Admin Web Panel** (React / Next.js) using the existing Supabase infrastructure without requiring database schema modifications.
+This document defines the API contract and database queries for a separate **Admin Web Panel** (React / Next.js) using the existing Supabase infrastructure.
 
 ---
 
 ## 🔐 1. Authentication & Role Verification
 
-The Admin Web Panel uses `@supabase/supabase-js` connected to the same Supabase project URL and Anon Key.
+The Admin Web Panel uses `@supabase/supabase-js` connected to the same Supabase project URL and publishable key. Admin eligibility is stored in `public.admins`; `profiles.role` and `admin_audit_log` are not used.
 
-### Login & Admin Role Check Workflow:
+### Login & Admin Access Check Workflow:
 ```javascript
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export async function adminLogin(email, password) {
-  // 1. Authenticate with Supabase Auth
+  const normalizedEmail = email.trim().toLowerCase();
+
+  // Check the allowlist before attempting password authentication.
+  const { data: allowed, error: allowlistError } = await supabase.rpc(
+    'can_login_admin',
+    { email: normalizedEmail },
+  );
+
+  if (allowlistError) throw allowlistError;
+  if (allowed !== true) throw new Error('Access denied');
+
+  // Authenticate the admin's existing Supabase Auth account.
   const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-    email,
+    email: normalizedEmail,
     password,
   });
 
   if (authError) throw authError;
 
-  // 2. Query user profile to verify admin role
-  const { data: profile, error: profileError } = await supabase
-    .from('profiles')
-    .select('id, full_name, email, role')
+  // Verify the authenticated UID against the admins allowlist as well.
+  const { data: admin, error: adminError } = await supabase
+    .from('admins')
+    .select('id, email')
     .eq('id', authData.user.id)
-    .single();
+    .maybeSingle();
 
-  if (profileError) throw profileError;
-
-  if (profile.role !== 'admin') {
+  if (adminError || !admin) {
     await supabase.auth.signOut();
-    throw new Error('Access denied: Administrator privileges required.');
+    if (adminError) throw adminError;
+    throw new Error('Access denied');
   }
 
-  return { user: authData.user, profile };
+  return { user: authData.user, admin };
 }
 ```
+
+Create the admin using Supabase Authentication (Dashboard or the Auth API),
+then copy that Auth user's UID and email into `public.admins`. Do not insert
+directly into the managed `auth.users` table. The `can_login_admin` RPC should
+return a boolean and accept the `email` argument shown above. The post-login
+`admins.id` lookup is a second check; allow authenticated admins to read only
+their own row through RLS.
 
 ---
 
@@ -120,9 +137,6 @@ export async function createAdminEvent(eventData) {
 
   if (error) throw error;
 
-  // Log admin action
-  await logAdminAction('CREATE_EVENT', `Event ID ${data.id}`, { title: data.title });
-
   return data;
 }
 ```
@@ -138,8 +152,6 @@ export async function updateAdminEvent(eventId, updates) {
     .single();
 
   if (error) throw error;
-
-  await logAdminAction('UPDATE_EVENT', `Event ID ${eventId}`, updates);
 
   return data;
 }
@@ -169,24 +181,6 @@ export async function getAdminUsers({ page = 1, limit = 20, searchQuery = '' }) 
   if (error) throw error;
 
   return { users: data, total: count };
-}
-```
-
-### Update User Role (Admin Only):
-```javascript
-export async function updateUserRole(userId, newRole) {
-  const { data, error } = await supabase
-    .from('profiles')
-    .update({ role: newRole })
-    .eq('id', userId)
-    .select()
-    .single();
-
-  if (error) throw error;
-
-  await logAdminAction('UPDATE_USER_ROLE', `User ID ${userId}`, { newRole });
-
-  return data;
 }
 ```
 
@@ -227,27 +221,14 @@ export async function dispatchNotification({ title, body, audience = 'all', targ
 
   if (edgeError) console.warn('Edge function warning:', edgeError);
 
-  await logAdminAction('DISPATCH_NOTIFICATION', `Notification ID ${notif.id}`, { title, audience });
-
   return notif;
 }
 ```
 
----
-
-## 📜 5. Audit Logging Helper
-
-```javascript
-export async function logAdminAction(action, targetResource, details = {}) {
-  const user = (await supabase.auth.getUser()).data.user;
-
-  await supabase.from('admin_audit_log').insert([
-    {
-      admin_id: user.id,
-      action,
-      target_resource: targetResource,
-      details,
-    },
-  ]);
-}
-```
+For an event broadcast, send an FCM notification payload with the event title
+and body, and include `type: "event"` and `event_id: "<event UUID>"` as string
+values in the FCM data payload. The Android app registers signed-in users'
+tokens in `public.device_tokens`, displays foreground pushes in the system
+notification tray, and opens the Events tab when the user taps an event push.
+The event create/update workflow should invoke the server-side push dispatcher
+only when `notify_app_users` is true; never send FCM credentials from the app.
