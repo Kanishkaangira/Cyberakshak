@@ -29,7 +29,8 @@ export default function PushNotificationManager({
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'PASSWORD_RECOVERY') return;
       setUserId(session?.user?.id || null);
     });
 

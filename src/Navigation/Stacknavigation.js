@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeBottomNav from './HomeBottomNav';
@@ -19,6 +19,7 @@ export default function Stacknavigation() {
   const styles = useThemeStyles(createStyles);
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
+  const isPasswordRecovery = useRef(false);
 
   useEffect(() => {
     if (!isSupabaseConfigured()) {
@@ -37,7 +38,14 @@ export default function Stacknavigation() {
 
     // Listen for auth changes (sign in, sign out, token refresh)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, currentSession) => {
+      (event, currentSession) => {
+        if (event === 'PASSWORD_RECOVERY') {
+          isPasswordRecovery.current = true;
+          return;
+        }
+        if (isPasswordRecovery.current && event !== 'SIGNED_OUT') return;
+        if (event === 'SIGNED_OUT') isPasswordRecovery.current = false;
+
         setSession(currentSession);
         setLoading(false);
       }

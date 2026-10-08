@@ -17,7 +17,11 @@ import { useTranslation } from 'react-i18next';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { SIZES } from '../../constants/theme';
 import { getAuthStrings } from '../../constants/authStrings';
-import { updatePassword } from '../../services/authService';
+import {
+  clearPendingPasswordReset,
+  signOut,
+  updatePassword,
+} from '../../services/authService';
 import { useTheme } from '../../context/ThemeContext';
 import useThemeStyles from '../../hooks/useThemeStyles';
 
@@ -48,10 +52,20 @@ export default function ResetPasswordScreen({ navigation }) {
     setLoading(true);
     try {
       await updatePassword({ newPassword });
+      await signOut();
+      clearPendingPasswordReset().catch((error) => {
+        console.warn('[ResetPasswordScreen] Could not clear the completed reset request:', error);
+      });
       Alert.alert(
         t('auth.passwordResetSuccess'),
         t('auth.passwordResetSuccessMessage'),
-        [{ text: t('common.ok'), onPress: () => navigation.navigate('Login') }]
+        [{
+          text: t('common.ok'),
+          onPress: () => navigation.reset({
+            index: 0,
+            routes: [{ name: 'Login' }],
+          }),
+        }]
       );
     } catch (err) {
       setErrorMsg(err.message || AUTH_STRINGS.errGeneric);
