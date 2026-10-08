@@ -2,6 +2,9 @@ export const getAuthStrings = (t) => ({
   appName: t('auth.appName'),
   appTagline: t('auth.appTagline'),
   login: t('auth.login'),
+  loginWithEmailCode: t('auth.loginWithEmailCode', {
+    defaultValue: 'Sign in with email code',
+  }),
   signUp: t('auth.signUp'),
   logout: t('auth.logout'),
   confirmLogout: t('auth.confirmLogout'),
@@ -47,6 +50,9 @@ export const getAuthStrings = (t) => ({
   newPasswordLabel: t('auth.newPasswordLabel'),
   newPasswordPlaceholder: t('auth.newPasswordPlaceholder'),
   errEmailRequired: t('auth.errEmailRequired'),
+  errInvalidCredentials: t('auth.errInvalidCredentials', {
+    defaultValue: 'Email or password is incorrect. If you have not set a password yet, use Forgot password to create one.',
+  }),
   errPasswordMinLength: t('auth.errPasswordMinLength'),
   errPasswordMismatch: t('auth.errPasswordMismatch'),
   errFullNameRequired: t('auth.errFullNameRequired'),

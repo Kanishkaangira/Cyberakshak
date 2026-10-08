@@ -1,0 +1,273 @@
+{
+  "common": {
+    "cancel": "ᱵᱟᱹᱛᱤᱞ",
+    "ok": "ᱴᱷᱤᱠ",
+    "retry": "ᱫᱚᱦᱲᱟ ᱪᱮᱥᱴᱟ",
+    "back": "ᱛᱟᱭᱚᱢ",
+    "loading": "ᱞᱟᱫᱮᱜ ᱠᱟᱱᱟ...",
+    "sending": "ᱠᱩᱞ ᱠᱟᱱᱟ...",
+    "readMore": "ᱟᱨᱦᱚᱸ ᱯᱟᱲᱦᱟᱣ",
+    "showLess": "ᱠᱚᱢ ᱩᱫᱩᱜ",
+    "all": "ᱡᱚᱛᱚ",
+    "live": "ᱡᱤᱭᱚᱱ"
+  },
+  "auth": {
+    "appName": "Cyberakshak",
+    "appTagline": "ᱵᱷᱟᱨᱚᱛ ᱨᱮ ᱥᱟᱭᱵᱚᱨ ᱯᱷᱨᱚᱰ ᱠᱷᱚᱱ ᱵᱟᱹᱪᱟᱣ ᱟᱨ ᱨᱟᱹᱠᱷᱤ",
+    "login": "ᱵᱷᱤᱛᱨᱤ ᱵᱚᱞᱚ",
+    "signUp": "ᱢᱤᱫ ᱮᱠᱟᱣᱩᱱᱴ ᱵᱮᱱᱟᱣ",
+    "logout": "ᱵᱟᱦᱨᱮ ᱚᱰᱚᱜ",
+    "confirmLogout": "ᱟᱢ ᱪᱮᱫ ᱵᱟᱦᱨᱮ ᱚᱰᱚᱜ ᱥᱟᱱᱟᱭᱮᱫ ᱢᱮᱭᱟ?",
+    "deleteAccount": "ᱤᱧᱟᱜ ᱮᱠᱟᱣᱩᱱᱴ ᱢᱮᱴᱟᱣ",
+    "confirmDeleteAccount": "ᱟᱢ ᱪᱮᱫ ᱟᱢᱟᱜ ᱮᱠᱟᱣᱩᱱᱴ ᱢᱮᱴᱟᱣ ᱥᱟᱱᱟᱭᱮᱫ ᱢᱮᱭᱟ? ᱱᱚᱶᱟ ᱥᱟᱶ ᱟᱢᱟᱜ ᱡᱚᱛᱚ ᱯᱨᱚᱯᱷᱟᱭᱤᱞ ᱰᱟᱴᱟ ᱥᱟᱫᱷᱮ ᱢᱮᱴᱟᱣᱚᱜᱼᱟ ᱟᱨ ᱱᱚᱶᱟ ᱯᱷᱮᱨ ᱵᱟᱹᱲᱛᱤ ᱦᱚᱸ ᱵᱟᱝ ᱦᱩᱭ ᱫᱟᱲᱟᱭᱟ᱾",
+    "continue": "ᱞᱮᱛᱟᱲ ᱦᱩᱭ",
+    "submit": "ᱡᱚᱢᱟ",
+    "verify": "OTP ᱴᱷᱤᱠ ᱠᱟᱜ",
+    "resendCode": "ᱠᱳᱰ ᱫᱚᱦᱲᱟ ᱠᱩᱞ",
+    "resendCooldown": "{{seconds}}s ᱨᱮ ᱠᱳᱰ ᱫᱚᱦᱲᱟ ᱠᱩᱞ",
+    "welcomeTitle": "ᱰᱤᱡᱤᱴᱟᱞ ᱴᱷᱚᱠᱟ ᱠᱷᱚᱱ ᱟᱢ ᱟᱢᱟᱜ ᱵᱟᱹᱪᱟᱣ ᱢᱮ",
+    "welcomeSubtitle": "ᱵᱷᱟᱨᱚᱛ ᱡᱚᱛᱚᱨᱮ ᱱᱤᱛᱟᱜ ᱫᱷᱚᱠᱟ ᱠᱷᱚᱵᱚᱨ, ᱴᱷᱚᱠᱟ ᱨᱤᱯᱚᱨᱴ ᱟᱨ ᱥᱟᱭᱵᱚᱨ ᱯᱷᱨᱚᱰ ᱵᱟᱵᱚᱛ ᱥᱚᱦᱟᱭᱛᱟ᱾",
+    "loginTitle": "ᱫᱚᱦᱲᱟ ᱥᱟᱹᱜᱩᱱ",
+    "loginSubtitle": "ᱟᱢᱟᱜ ᱥᱟᱭᱵᱚᱨ ᱥᱟᱹᱯᱷᱟ ᱮᱠᱟᱣᱩᱱᱴ ᱧᱟᱢ ᱞᱟᱹᱜᱤᱫ ᱵᱷᱤᱛᱨᱤ ᱵᱚᱞᱚ ᱢᱮ",
+    "emailLabel": "Email ᱴᱷᱤᱠᱬᱟ",
+    "emailPlaceholder": "name@example.com",
+    "passwordLabel": "ᱯᱟᱥᱣᱟᱨᱰ",
+    "passwordPlaceholder": "ᱟᱢᱟᱜ ᱯᱟᱥᱣᱟᱨᱰ ᱮᱢ ᱢᱮ",
+    "forgotPasswordLink": "ᱯᱟᱥᱣᱟᱨᱰ ᱵᱷᱩᱞᱟᱜ ᱟ?",
+    "noAccountPrompt": "ᱟᱢᱟᱜ ᱮᱠᱟᱣᱩᱱᱴ ᱵᱟᱹᱱᱩᱜᱼᱟ?",
+    "signUpTitle": "ᱮᱠᱟᱣᱩᱱᱴ ᱵᱮᱱᱟᱣ",
+    "signUpSubtitle": "ᱚᱱᱞᱟᱭᱤᱱ ᱴᱷᱚᱠᱟ ᱠᱷᱚᱱ ᱥᱟᱹᱯᱷᱟ ᱛᱟᱦᱮᱸ ᱞᱟᱹᱜᱤᱫ Cyberakshak ᱨᱮ ᱥᱟᱹᱢᱤᱞ ᱦᱩᱭ ᱢᱮ",
+    "fullNameLabel": "ᱯᱩᱨᱟᱹ ᱧᱩᱛᱩᱢ",
+    "fullNamePlaceholder": "ᱟᱢᱟᱜ ᱯᱩᱨᱟᱹ ᱧᱩᱛᱩᱢ ᱮᱢ ᱢᱮ",
+    "phoneLabel": "ᱯᱷᱳᱱ ᱮᱞ (ᱵᱟᱹᱫ)",
+    "phonePlaceholder": "10 ᱮᱞ ᱢᱳᱵᱟᱭᱤᱞ ᱮᱞ",
+    "cityLabel": "ᱥᱚᱦᱚᱨ (ᱵᱟᱹᱫ)",
+    "cityPlaceholder": "ᱟᱢᱟᱜ ᱥᱚᱦᱚᱨ ᱮᱢ ᱢᱮ",
+    "confirmPasswordLabel": "ᱯᱟᱥᱣᱟᱨᱰ ᱧᱮᱞ ᱯᱩᱥᱴᱟᱹᱣ",
+    "confirmPasswordPlaceholder": "ᱟᱢᱟᱜ ᱯᱟᱥᱣᱟᱨᱰ ᱫᱚᱦᱲᱟ ᱮᱢ ᱢᱮ",
+    "alreadyHaveAccount": "ᱟᱢᱟᱜ ᱢᱤᱫ ᱮᱠᱟᱣᱩᱱᱴ ᱢᱮᱱᱟᱜᱼᱟ?",
+    "otpTitle": "ᱟᱢᱟᱜ Email ᱴᱷᱤᱠ ᱠᱟᱜ",
+    "otpSubtitle": "{{email}} ᱴᱷᱤᱠᱬᱟ ᱨᱮ ᱞᱮ 6-ᱮᱞ ᱴᱷᱤᱠ ᱠᱳᱰ ᱠᱩᱞ ᱟᱠᱟᱫᱟᱞᱮ",
+    "enterOtpLabel": "6-ᱮᱞ ᱠᱳᱰ ᱮᱢ ᱢᱮ",
+    "otpPlaceholder": "123456",
+    "otpExpired": "ᱴᱷᱤᱠ ᱠᱳᱰ ᱚᱠᱟᱛᱮ ᱠᱟᱹᱴᱤ ᱟᱠᱟᱱᱟ ᱵᱟᱝᱠᱷᱟᱱ ᱵᱟᱝ ᱴᱷᱤᱠᱟ᱾ ᱱᱟᱶᱟ ᱠᱳᱰ ᱱᱟᱦᱟᱜ ᱢᱮ।",
+    "otpSentSuccess": "ᱟᱢᱟᱜ email ᱨᱮ ᱱᱟᱶᱟ 6-ᱮᱞ OTP ᱠᱳᱰ ᱠᱩᱞ ᱟᱠᱟᱱᱟ᱾",
+    "forgotTitle": "ᱯᱟᱥᱣᱟᱨᱰ ᱵᱷᱩᱞᱟᱜ",
+    "forgotSubtitle": "ᱯᱟᱥᱣᱟᱨᱰ ᱱᱟᱶᱟ ᱠᱟᱜ ᱠᱳᱰ ᱧᱟᱢ ᱞᱟᱹᱜᱤᱫ ᱟᱢᱟᱜ ᱨᱮᱡᱤᱥᱴᱟᱨ ᱠᱟᱱ email ᱴᱷᱤᱠᱬᱟ ᱮᱢ ᱢᱮ᱾",
+    "resetTitle": "ᱱᱟᱶᱟ ᱯᱟᱥᱣᱟᱨᱰ ᱵᱮᱱᱟᱣ",
+    "resetSubtitle": "ᱟᱢᱟᱜ email ᱨᱮ ᱠᱩᱞ 6-ᱮᱞ ᱠᱳᱰ ᱮᱢ ᱢᱮ ᱟᱨ ᱢᱤᱫ ᱱᱟᱶᱟ ᱯᱟᱥᱣᱟᱨᱰ ᱵᱟᱪᱷᱱᱟᱣ ᱢᱮ᱾",
+    "newPasswordLabel": "ᱱᱟᱶᱟ ᱯᱟᱥᱣᱟᱨᱰ",
+    "newPasswordPlaceholder": "ᱠᱚᱢ ᱠᱷᱚᱱ ᱠᱚᱢ 8 ᱪᱤᱠᱤ",
+    "errEmailRequired": "ᱢᱤᱫ ᱴᱷᱤᱠ email ᱴᱷᱤᱠᱬᱟ ᱮᱢ ᱢᱮ᱾",
+    "errPasswordRequired": "ᱟᱢᱟᱜ ᱯᱟᱥᱣᱟᱨᱰ ᱮᱢ ᱢᱮ᱾",
+    "errPasswordMinLength": "ᱯᱟᱥᱣᱟᱨᱰ ᱨᱮ ᱠᱚᱢ ᱠᱷᱚᱱ ᱠᱚᱢ 8 ᱪᱤᱠᱤ ᱛᱟᱦᱮᱸ ᱞᱟᱹᱠᱛᱤ᱾",
+    "errPasswordMismatch": "ᱯᱟᱥᱣᱟᱨᱰ ᱵᱟᱹᱭ ᱵᱟᱹᱭ ᱵᱟᱝ ᱢᱮᱞᱟᱜᱼᱟ᱾",
+    "errFullNameRequired": "ᱟᱢᱟᱜ ᱯᱩᱨᱟᱹ ᱧᱩᱛᱩᱢ ᱮᱢ ᱢᱮ᱾",
+    "errOtpLength": "ᱯᱩᱨᱟᱹ 6-ᱮᱞ OTP ᱠᱳᱰ ᱮᱢ ᱢᱮ᱾",
+    "errGeneric": "ᱢᱤᱫ ᱵᱟᱝ ᱟᱥᱨᱟ ᱠᱟᱱ ᱵᱷᱩᱞ ᱦᱩᱭ ᱮᱱᱟ᱾ ᱫᱚᱦᱲᱟ ᱪᱮᱥᱴᱟ ᱢᱮ᱾",
+    "accountCreationUnavailable": "ᱮᱠᱟᱣᱩᱱᱴ ᱵᱮᱱᱟᱣ ᱱᱤᱛ ᱛᱷᱚᱲᱟ ᱞᱟᱹᱜᱤᱫ ᱵᱟᱝ ᱧᱟᱢᱚᱜᱼᱟ᱾ ᱛᱷᱚᱲᱟ ᱛᱟᱭᱚᱢ ᱫᱚᱦᱲᱟ ᱪᱮᱥᱴᱟ ᱢᱮ᱾",
+    "passwordResetSuccess": "ᱯᱟᱥᱣᱟᱨᱰ ᱥᱟᱹᱯᱷᱟᱛᱮ ᱱᱟᱶᱟ ᱟᱠᱟᱱᱟ",
+    "passwordResetSuccessMessage": "ᱟᱢᱟᱜ ᱯᱟᱥᱣᱟᱨᱰ ᱟᱯᱰᱮᱴ ᱟᱠᱟᱱᱟ᱾ ᱱᱟᱶᱟ ᱯᱟᱥᱣᱟᱨᱰ ᱥᱟᱶ ᱵᱷᱤᱛᱨᱤ ᱵᱚᱞᱚ ᱢᱮ᱾"
+  },
+  "tabs": {
+    "home": "ᱚᱲᱟᱜ",
+    "news": "ᱠᱷᱚᱵᱚᱨ",
+    "events": "ᱚᱠᱛᱟ ᱜᱷᱚᱴᱱᱟ",
+    "profile": "ᱯᱨᱚᱯᱷᱟᱭᱤᱞ"
+  },
+  "profile": {
+    "title": "ᱯᱨᱚᱯᱷᱟᱭᱤᱞ",
+    "edit": "ᱥᱟᱯᱲᱟᱣ",
+    "loading": "ᱯᱨᱚᱯᱷᱟᱭᱤᱞ ᱞᱟᱫᱮᱜ ᱠᱟᱱᱟ...",
+    "saving": "ᱯᱨᱚᱯᱷᱟᱭᱤᱞ ᱵᱚᱫᱚᱞ ᱥᱟᱸᱪᱟᱣ ᱠᱟᱱᱟ...",
+    "defaultName": "CyberAkshak ᱵᱮᱵᱷᱚᱦᱟᱨᱤᱡ",
+    "preferences": "ᱵᱟᱪᱷᱟᱣ",
+    "language": "ᱯᱟᱹᱨᱥᱤ",
+    "english": "English",
+    "hindi": "Hindi",
+    "chooseLanguage": "ᱟᱢᱟᱜ app ᱯᱟᱹᱨᱥᱤ ᱵᱟᱪᱷᱱᱟᱣ ᱢᱮ",
+    "languageFallback": "ᱱᱚᱶᱟ ᱛᱚᱨᱡᱚᱢᱟ ᱠᱚ AI ᱥᱟᱶ ᱥᱟᱦᱟᱭ ᱧᱟᱢ ᱛᱮ ᱵᱮᱱᱟᱣ ᱟᱠᱟᱱᱟ, ᱟᱨ ᱥᱟᱱᱛᱟᱲ ᱵᱷᱟᱥᱤ ᱦᱚᱲ ᱠᱚ ᱧᱮᱞ ᱛᱮ ᱞᱟᱹᱠᱛᱤ᱾",
+    "darkTheme": "ᱧᱤᱫᱟᱹ ᱨᱚᱝ",
+    "more": "ᱟᱨᱦᱚᱸ",
+    "aboutApp": "App ᱵᱟᱵᱚᱛ",
+    "aboutTitle": "Cyberakshak ᱵᱟᱵᱚᱛ",
+    "aboutMessage": "Cyberakshak ᱦᱚᱲ ᱠᱚᱣᱟᱜ ᱚᱱᱞᱟᱭᱤᱱ ᱯᱷᱨᱚᱰ ᱵᱚᱵᱚᱛ ᱵᱩᱡᱷᱟᱹᱣ ᱟᱨ ᱟᱹᱨᱦᱚᱸ ᱥᱟᱹᱯᱷᱟ ᱛᱟᱦᱮᱸ ᱨᱮ ᱥᱚᱦᱟᱭᱟ᱾ Version 1.0.0.",
+    "logout": "ᱵᱟᱦᱨᱮ ᱚᱰᱚᱜ",
+    "deleteAccount": "ᱤᱧᱟᱜ ᱮᱠᱟᱣᱩᱱᱴ ᱢᱮᱴᱟᱣ",
+    "deletePermanently": "ᱥᱟᱫᱷᱮ ᱢᱮᱴᱟᱣ",
+    "version": "Cyberakshak · Version 1.0.0",
+    "loadError": "ᱯᱨᱚᱯᱷᱟᱭᱤᱞ ᱵᱟᱝ ᱞᱟᱫᱮ ᱫᱟᱲᱟᱭᱟ᱾ ᱱᱟᱶᱟ ᱧᱟᱢ ᱞᱟᱹᱜᱤᱫ ᱛᱟᱞᱟ ᱠᱟᱛᱮ ᱞᱟᱹᱛᱟᱨ ᱛᱟᱲᱟᱢ ᱢᱮ᱾",
+    "updateFailed": "ᱟᱯᱰᱮᱴ ᱵᱟᱝ ᱥᱟᱹᱯᱷᱟ",
+    "updateNameFailed": "ᱧᱩᱛᱩᱢ ᱵᱟᱝ ᱟᱯᱰᱮᱴ ᱫᱟᱲᱟᱭᱟ᱾",
+    "signOutError": "ᱵᱟᱦᱨᱮ ᱚᱰᱚᱜ ᱵᱷᱩᱞ",
+    "deleteFailed": "ᱮᱠᱟᱣᱩᱱᱴ ᱢᱮᱴᱟᱣ ᱵᱟᱝ ᱥᱟᱹᱯᱷᱟ",
+    "nameTitle": "ᱧᱩᱛᱩᱢ ᱥᱟᱯᱲᱟᱣ",
+    "nameSubtitle": "ᱱᱚᱶᱟ ᱞᱮᱠᱟ ᱟᱢᱟᱜ ᱧᱩᱛᱩᱢ CyberAkshak ᱨᱮ ᱧᱮᱞᱚᱜᱼᱟ᱾",
+    "fullName": "ᱯᱩᱨᱟᱹ ᱧᱩᱛᱩᱢ",
+    "yourName": "ᱟᱢᱟᱜ ᱧᱩᱛᱩᱢ",
+    "save": "ᱥᱟᱸᱪᱟᱣ"
+  },
+  "home": {
+    "welcomeBack": "ᱫᱚᱦᱲᱟ ᱥᱟᱹᱜᱩᱱ",
+    "hello": "ᱡᱚᱦᱟᱨ, {{name}}",
+    "user": "ᱵᱮᱵᱷᱚᱦᱟᱨᱤᱡ",
+    "assistant": "AI ᱥᱟᱹᱯᱷᱟ ᱥᱚᱦᱟᱭᱤᱡ",
+    "checkLink": "ᱞᱤᱝᱠ ᱧᱮᱞ",
+    "reportFraud": "ᱯᱷᱨᱚᱰ ᱨᱤᱯᱚᱨᱴ",
+    "helpline": "ᱥᱚᱦᱟᱭᱛᱟ ᱮᱞ 1930",
+    "reportTitle": "ᱥᱟᱭᱵᱚᱨ ᱯᱷᱨᱚᱰ ᱨᱤᱯᱚᱨᱴ",
+    "reportMessage": "ᱡᱩᱫᱤ ᱟᱢ ᱯᱟᱹᱭᱥᱟ ᱯᱷᱨᱚᱰ ᱥᱚᱸᱫᱮᱦ ᱠᱟᱜ ᱢᱮᱭᱟ ᱵᱟᱝᱠᱷᱟᱱ ᱟᱢᱟᱜ ᱥᱟᱶ ᱦᱩᱭ ᱟᱠᱟᱱᱟ, ᱱᱤᱛᱮ National Cyber Crime Helpline ᱨᱮ ᱨᱤᱯᱚᱨᱴ ᱢᱮ:\n\n• ᱰᱟᱭᱟᱞ: 1930\n• Portal: cybercrime.gov.in\n\n2 ᱠᱷᱚᱱ 24 ᱴᱟᱲᱟᱝ ᱵᱷᱤᱛᱨᱤ ᱨᱤᱯᱚᱨᱴ ᱠᱚᱜ ᱛᱮ ᱟᱢᱟᱜ ᱦᱟᱨᱟᱣ ᱯᱟᱹᱭᱥᱟ ᱵᱚᱸᱫ ᱠᱚᱜ ᱟᱥ ᱵᱟᱹᱲᱛᱤᱭᱟ᱾",
+    "call1930": "1930 ᱨᱮ ᱨᱚᱲ",
+    "askChatbot": "AI Chatbot ᱠᱩᱞᱤ",
+    "checkLinkQuestion": "ᱱᱚᱶᱟ ᱞᱤᱝᱠ ᱥᱟᱹᱯᱷᱟ ᱜᱮᱭᱟ?",
+    "lostMoney": "ᱤᱧ ᱴᱷᱚᱠᱟ ᱨᱮ ᱯᱟᱹᱭᱥᱟ ᱦᱟᱨᱟᱣ ᱟᱠᱟᱫᱟ",
+    "helplineTitle": "National Cyber Helpline (1930)",
+    "helplineMessage": "1930 ᱫᱚ Ministry of Home Affairs (I4C) ᱛᱮ ᱪᱟᱞᱟᱣᱟᱜ ᱱᱟᱜᱟᱢᱤ ᱯᱟᱹᱭᱥᱟ ᱥᱟᱭᱵᱚᱨ ᱯᱷᱨᱚᱰ ᱨᱤᱯᱚᱨᱴ ᱥᱚᱦᱟᱭᱛᱟ ᱮᱞ ᱠᱟᱱᱟ᱾\n\nᱱᱤᱛ ᱰᱟᱭᱟᱞ ᱠᱚᱜ ᱥᱟᱱᱟᱭᱮᱫ ᱢᱮᱭᱟ?",
+    "dial1930": "1930 ᱰᱟᱭᱟᱞ",
+    "alertsTitle": "ᱥᱟᱭᱵᱚᱨ ᱦᱩᱥᱤᱭᱟᱹᱨ",
+    "alertsMessage": "ᱟᱢᱟᱜ ᱱᱟᱶᱟ 2 ᱥᱩᱨᱠᱷᱤᱭᱟᱹ ᱦᱩᱥᱤᱭᱟᱹᱨ ᱢᱮᱱᱟᱜᱼᱟ:\n• ᱱᱟᱶᱟ Courier SMS ᱯᱷᱤᱥᱤᱝ ᱧᱮᱞᱟᱠᱟᱱᱟ\n• National UPI ᱥᱚᱞᱦᱟ ᱵᱟᱦᱨᱮ ᱮᱢᱟᱠᱟᱱᱟ",
+    "gotSuspicious": "ᱢᱤᱫ ᱥᱚᱸᱫᱮᱦ ᱯᱷᱳᱱ ᱵᱟᱝᱠᱷᱟᱱ ᱠᱷᱚᱵᱚᱨ ᱧᱟᱢ ᱟᱠᱟᱫᱟ?",
+    "askCyberakshak": "Cyberakshak ᱠᱩᱞᱤ ᱟᱨ ᱱᱚᱶᱟ ᱴᱷᱚᱠᱟ ᱜᱮᱭᱟ ᱥᱮ ᱵᱩᱡᱷᱟᱹᱣ ᱢᱮ᱾",
+    "messagePlaceholder": "ᱢᱤᱫ ᱠᱷᱚᱵᱚᱨ ᱚᱞ ᱵᱟᱝᱠᱷᱟᱱ ᱞᱮᱴᱷᱟ",
+    "learnFrauds": "ᱯᱷᱨᱚᱰ ᱵᱟᱵᱚᱛ ᱪᱮᱛᱟᱱ",
+    "seeAll": "ᱡᱚᱛᱚ ᱧᱮᱞ",
+    "readGuide": "ᱜᱟᱭᱤᱰ ᱯᱟᱲᱦᱟᱣ",
+    "tipTitle": "ᱢᱟᱦᱟᱸ ᱨᱮᱭᱟᱜ ᱥᱚᱞᱦᱟ",
+    "tipMessage": "ᱟᱢᱟᱜ ᱵᱮᱝᱠ ᱴᱟᱠᱟ ᱮᱢ ᱞᱟᱹᱜᱤᱫ ᱠᱚᱵᱷᱤᱭᱚᱸ OTP ᱵᱟᱝᱠᱷᱟᱱ UPI PIN ᱵᱟᱝ ᱠᱩᱞᱮᱫᱟ᱾"
+  },
+  "notifications": {
+    "title": "ᱠᱷᱚᱵᱚᱨ ᱠᱚ",
+    "subtitle": "Cyberakshak ᱠᱷᱚᱱ ᱜᱷᱚᱴᱱᱟ ᱟᱯᱰᱮᱴ",
+    "loading": "ᱠᱷᱚᱵᱚᱨ ᱞᱟᱫᱮᱜ ᱠᱟᱱᱟ...",
+    "loadFailed": "ᱠᱷᱚᱵᱚᱨ ᱵᱟᱝ ᱞᱟᱫᱮ ᱫᱟᱲᱟᱭᱟ",
+    "emptyTitle": "ᱱᱤᱛ ᱫᱷᱟᱹᱵᱤᱡ ᱡᱟᱦᱟᱸ ᱠᱷᱚᱵᱚᱨ ᱵᱟᱹᱱᱩᱜᱼᱟ",
+    "emptyMessage": "ᱮᱰᱢᱤᱱ ᱛᱮ ᱜᱷᱚᱴᱱᱟ ᱵᱟᱵᱚᱛ ᱮᱢ ᱛᱟᱭᱚᱢ ᱱᱚᱰᱮ ᱧᱮᱞᱚᱜᱼᱟ᱾"
+  },
+  "news": {
+    "title": "ᱥᱟᱭᱵᱚᱨ ᱠᱷᱚᱵᱚᱨ",
+    "subtitle": "ᱱᱤᱛᱟᱜ ᱫᱷᱚᱠᱟ ᱠᱷᱚᱵᱚᱨ ᱟᱨ ᱴᱷᱚᱠᱟ ᱵᱟᱹᱲᱤ ᱠᱷᱚᱱ ᱵᱟᱹᱪᱟᱣ",
+    "fetching": "ᱥᱟᱭᱵᱚᱨ ᱥᱩᱨᱠᱷᱤᱭᱟᱹ ᱠᱷᱚᱵᱚᱨ ᱟᱹᱜᱩ ᱠᱟᱱᱟ...",
+    "fetchError": "ᱱᱟᱶᱟ ᱥᱟᱭᱵᱚᱨ ᱠᱷᱚᱵᱚᱨ ᱵᱟᱝ ᱟᱹᱜᱩ ᱫᱟᱲᱟᱭᱟ᱾ ᱧᱮᱞ ᱛᱮ ᱴᱷᱤᱠ ᱦᱩᱥᱤᱭᱟᱹᱨ ᱠᱚ ᱧᱮᱞᱚᱜᱼᱟ᱾",
+    "noAlerts": "ᱡᱟᱦᱟᱸ ᱥᱟᱭᱵᱚᱨ ᱦᱩᱥᱤᱭᱟᱹᱨ ᱵᱟᱹᱱᱩᱜᱼᱟ",
+    "empty": "ᱱᱟᱶᱟ ᱥᱟᱭᱵᱚᱨ ᱠᱷᱚᱵᱚᱨ ᱟᱹᱜᱩ ᱞᱟᱹᱜᱤᱫ ᱞᱟᱹᱛᱟᱨ ᱛᱟᱲᱟᱢ ᱢᱮ᱾",
+    "readMore": "ᱟᱨᱦᱚᱸ ᱯᱟᱲᱦᱟᱣ",
+    "fullArticle": "ᱢᱩᱬ ᱣᱮᱵᱽᱥᱟᱭᱤᱴ ᱨᱮ ᱯᱩᱨᱟᱹ ᱞᱮᱠᱷᱟ ᱯᱟᱲᱦᱟᱣ"
+  },
+  "chatbot": {
+    "title": "Cyberakshak ᱥᱚᱦᱟᱭᱤᱡ",
+    "subtitle": "ᱥᱟᱭᱵᱚᱨ ᱯᱷᱨᱚᱰ ᱟᱨ ᱥᱟᱹᱯᱷᱟ ᱵᱟᱵᱚᱛ ᱛᱟᱞᱤᱢ ᱧᱟᱢ",
+    "clear": "ᱥᱟᱯᱷᱟ",
+    "welcome": "ᱡᱚᱦᱟᱨ! ᱢᱤᱫ ᱠᱷᱚᱵᱚᱨ ᱞᱮᱴᱷᱟ ᱢᱮ ᱵᱟᱝᱠᱷᱟᱱ ᱪᱮᱫ ᱦᱩᱭ ᱟᱠᱟᱱᱟ ᱚᱞ ᱢᱮ᱾ ᱱᱚᱶᱟ ᱴᱷᱚᱠᱟ ᱜᱮᱭᱟ ᱥᱮ ᱧᱮᱞ ᱨᱮ ᱤᱧ ᱟᱢᱟᱜ ᱥᱚᱦᱟᱭᱤᱧᱟ᱾",
+    "helpline": "National Helpline {{number}} ᱨᱮ ᱨᱚᱲ",
+    "analyzing": "Cyberakshak ᱧᱮᱞ ᱠᱟᱱᱟ...",
+    "suggestedQueries": "ᱥᱚᱞᱦᱟᱜ ᱠᱩᱠᱞᱤ ᱠᱚ:",
+    "quickReplies": "ᱞᱟᱵᱚᱜ ᱡᱚᱵᱟᱵ ᱠᱚ:",
+    "inputPlaceholder": "ᱟᱢᱟᱜ ᱠᱩᱠᱞᱤ ᱚᱞ ᱵᱟᱝᱠᱷᱟᱱ ᱠᱷᱚᱵᱚᱨ ᱞᱮᱴᱷᱟ ᱢᱮ...",
+    "suggestions": {
+      "1": "ᱱᱚᱶᱟ ᱞᱤᱝᱠ ᱥᱟᱹᱯᱷᱟ ᱜᱮᱭᱟ?",
+      "2": "ᱤᱧ ᱴᱷᱚᱠᱟ ᱨᱮ ᱯᱟᱹᱭᱥᱟ ᱦᱟᱨᱟᱣ ᱟᱠᱟᱫᱟ",
+      "3": "ᱢᱤᱫ ᱥᱚᱸᱫᱮᱦ ᱯᱷᱳᱱ ᱧᱮᱞ ᱢᱮ",
+      "4": "Telegram ᱨᱮ ᱢᱤᱫ ᱱᱚᱠᱨᱤ ᱠᱟᱹᱢᱤ ᱠᱩᱞ ᱧᱟᱢ ᱟᱠᱟᱫᱟ",
+      "5": "APK ᱥᱟᱶ ᱡᱟᱹᱞ Courier ᱠᱷᱚᱵᱚᱨ"
+    }
+  },
+  "events": {
+    "title": "ᱞᱟᱦᱟᱨᱮ ᱦᱩᱭᱚᱜ ᱜᱷᱚᱴᱱᱟ ᱠᱚ",
+    "liveFeed": "ᱡᱤᱭᱚᱱ ᱠᱷᱚᱵᱚᱨ",
+    "subtitle": "ᱧᱮᱞ ᱛᱮ ᱴᱷᱤᱠ ᱥᱟᱭᱵᱚᱨ ᱥᱩᱨᱠᱷᱤᱭᱟᱹ ᱥᱮᱢᱤᱱᱟᱨ, ᱣᱮᱵᱤᱱᱟᱨ ᱟᱨ ᱵᱤᱥᱮᱥᱚᱜᱭᱟ ᱠᱟᱹᱢᱤᱭᱟᱹ",
+    "loading": "ᱜᱷᱚᱴᱱᱟ ᱞᱟᱫᱮᱜ ᱠᱟᱱᱟ...",
+    "connecting": "Firestore ᱜᱷᱚᱴᱱᱟ ᱠᱚᱞᱮᱠᱥᱚᱱ ᱥᱟᱶ ᱡᱚᱲᱟᱣ ᱠᱟᱱᱟ",
+    "loadFailed": "Firebase ᱠᱷᱚᱱ ᱜᱷᱚᱴᱱᱟ ᱞᱟᱫᱮ ᱵᱷᱩᱞ ᱮᱱᱟ",
+    "refreshFailed": "ᱜᱷᱚᱴᱱᱟ ᱱᱟᱶᱟ ᱧᱟᱢ ᱵᱷᱩᱞ ᱮᱱᱟ",
+    "couldNotLoad": "ᱜᱷᱚᱴᱱᱟ ᱵᱟᱝ ᱞᱟᱫᱮ ᱫᱟᱲᱟᱭᱟ",
+    "securityRules": "Firebase Security Rules ᱵᱟᱵᱚᱛ ᱱᱳᱴ:",
+    "securityRulesHelp": "Cloud Firestore Security Rules ᱨᱮ 'events' ᱠᱚᱞᱮᱠᱥᱚᱱ ᱯᱟᱲᱦᱟᱣ ᱟᱹᱜᱩ ᱦᱚᱠ ᱮᱢ ᱟᱠᱟᱫ ᱠᱟᱱᱟ ᱥᱮ ᱧᱮᱞ ᱢᱮ (ᱡᱮᱞᱮᱠᱟ, ᱴᱮᱥᱴ ᱢᱳᱰ ᱨᱮ allow read: if true;)᱾",
+    "retry": "ᱡᱚᱲᱟᱣ ᱫᱚᱦᱲᱟ ᱪᱮᱥᱴᱟ",
+    "noneFound": "ᱡᱟᱦᱟᱸ ᱜᱷᱚᱴᱱᱟ ᱵᱟᱝ ᱧᱟᱢᱮᱱᱟ",
+    "noneMatch": "Firestore ᱨᱮ ᱟᱢᱟᱜ ᱥᱟᱹᱨᱤ ᱥᱟᱶ ᱢᱮᱞ ᱜᱷᱚᱴᱱᱟ ᱱᱤᱛ ᱵᱟᱹᱱᱩᱜᱼᱟ᱾ ᱱᱟᱶᱟ ᱧᱟᱢ ᱞᱟᱹᱜᱤᱫ ᱞᱟᱹᱛᱟᱨ ᱛᱟᱲᱟᱢ ᱢᱮ ᱵᱟᱝᱠᱷᱟᱱ ᱛᱷᱚᱲᱟ ᱛᱟᱭᱚᱢ ᱧᱮᱞ ᱢᱮ!",
+    "showAll": "ᱡᱚᱛᱚ ᱜᱷᱚᱴᱱᱟ ᱩᱫᱩᱜ"
+  },
+  "fraud": {
+    "guide": "ᱯᱷᱨᱚᱰ ᱜᱟᱭᱤᱰ",
+    "awareness": "ᱯᱷᱨᱚᱰ ᱵᱟᱵᱚᱛ ᱜᱮᱭᱟᱱ",
+    "commonScams": "{{count}} ᱥᱟᱫᱷᱟᱨᱚᱱ ᱴᱷᱚᱠᱟ ᱟᱨ ᱥᱟᱹᱯᱷᱟ ᱛᱟᱦᱮᱸ ᱩᱯᱟᱹᱭ",
+    "risk": "{{severity}} ᱡᱚᱠᱷᱚᱢ",
+    "lostMoney": "ᱯᱷᱨᱚᱰ ᱨᱮ ᱯᱟᱹᱭᱥᱟ ᱦᱟᱨᱟᱣ ᱟᱠᱟᱫᱟ?",
+    "reportHour": "ᱯᱟᱹᱭᱥᱟ ᱵᱚᱸᱫ ᱠᱚᱜ ᱟᱥ ᱵᱟᱹᱲᱛᱤ ᱞᱟᱹᱜᱤᱫ ᱢᱤᱫ ᱴᱟᱲᱟᱝ ᱵᱷᱤᱛᱨᱤ ᱨᱤᱯᱚᱨᱴ ᱢᱮ᱾",
+    "call": "{{number}} ᱨᱮ ᱨᱚᱲ",
+    "howWorks": "ᱪᱮᱞᱮᱠᱟ ᱠᱟᱹᱢᱤᱭᱟ",
+    "messageLooks": "ᱠᱷᱚᱵᱚᱨ ᱪᱮᱞᱮᱠᱟ ᱧᱮᱞᱚᱜᱼᱟ",
+    "warningSigns": "ᱦᱩᱥᱤᱭᱟᱹᱨ ᱪᱤᱱᱦᱟᱹ",
+    "protect": "ᱟᱢ ᱟᱢᱟᱜ ᱪᱮᱞᱮᱠᱟ ᱵᱟᱹᱪᱟᱣ ᱢᱮ",
+    "ifHappened": "ᱡᱩᱫᱤ ᱱᱚᱶᱟ ᱟᱢᱟᱜ ᱥᱟᱶ ᱦᱩᱭ ᱟᱠᱟᱱᱟ",
+    "reportOnline": "ᱚᱱᱞᱟᱭᱤᱱ ᱨᱤᱯᱚᱨᱴ",
+    "gotMessage": "ᱱᱚᱶᱟ ᱞᱮᱠᱟ ᱠᱷᱚᱵᱚᱨ ᱧᱟᱢ ᱟᱠᱟᱫᱟ?",
+    "pasteToCheck": "ᱧᱮᱞ ᱞᱟᱹᱜᱤᱫ ᱱᱚᱶᱟ Cyberakshak ᱨᱮ ᱞᱮᱴᱷᱟ ᱢᱮ",
+    "awarenessNote": "ᱱᱚᱶᱟ ᱜᱟᱭᱤᱰ ᱫᱚ ᱜᱮᱭᱟᱱ ᱞᱟᱹᱜᱤᱫ ᱜᱮᱭᱟ᱾ ᱟᱯᱟᱛ ᱨᱮ, {{number}} ᱨᱮ ᱨᱚᱲ ᱢᱮ᱾",
+    "allGroups": "ᱡᱚᱛᱚ",
+    "banking": "ᱵᱮᱝᱠ ᱟᱨ ᱴᱟᱠᱟ ᱡᱚᱢᱟ",
+    "impersonation": "ᱮᱴᱟᱜ ᱦᱚᱲ ᱵᱚᱱᱚᱣ",
+    "money": "ᱱᱚᱠᱨᱤ ᱟᱨ ᱯᱟᱹᱭᱥᱟ ᱵᱮᱥᱟᱹ",
+    "social": "ᱱᱤᱡᱮᱨ ᱟᱨ ᱥᱟᱶᱛᱟ",
+    "shopping": "ᱡᱤᱱᱤᱥ ᱠᱤᱱᱟᱹ ᱟᱨ ᱰᱤᱞᱤᱵᱷᱟᱨᱤ",
+    "severity": {
+      "critical": "ᱟᱹᱲᱤ ᱜᱟᱹᱵᱷᱤᱨ",
+      "high": "ᱢᱟᱨᱟᱝ",
+      "medium": "ᱛᱟᱞᱟ"
+    },
+    "categories": {
+      "phishing": {
+        "title": "ᱯᱷᱤᱥᱤᱝ ᱟᱨ smishing",
+        "summary": "ᱵᱮᱝᱠ ᱵᱟᱝᱠᱷᱟᱱ ᱥᱚᱨᱠᱟᱨᱤ ᱥᱚᱝᱥᱛᱷᱟ ᱞᱮᱠᱟ ᱧᱮᱞᱚᱜ ᱡᱟᱹᱞ email, SMS ᱟᱨ website ᱠᱚ ᱟᱢᱟᱜ ᱵᱷᱤᱛᱨᱤ ᱵᱚᱞᱚ ᱵᱤᱵᱨᱚᱬ ᱪᱤᱱᱟᱹᱵᱟᱲ ᱞᱟᱹᱜᱤᱫ᱾"
+      },
+      "upi": {
+        "title": "UPI ᱟᱨ QR code ᱯᱷᱨᱚᱰ",
+        "summary": "ᱪᱷᱚᱞ ᱛᱮ ᱟᱢ ᱯᱟᱹᱭᱥᱟ ᱮᱢ ᱥᱮᱬᱟ ᱠᱚᱜ ᱟᱨ ᱵᱟᱝᱠᱷᱟᱱ ᱯᱟᱹᱭᱥᱟ ᱧᱟᱢ ᱠᱟᱱᱟ ᱢᱮᱱᱛᱮ ᱠᱳᱰ ᱥᱠᱮᱱ ᱠᱚᱜ ᱞᱟᱹᱜᱤᱫ ᱠᱚ ᱞᱮᱛᱟᱲᱟ᱾"
+      },
+      "sim_swap": {
+        "title": "SIM swap ᱟᱨ SIM-block ᱯᱷᱳᱱ ᱠᱚ",
+        "summary": "ᱟᱠᱨᱚᱢᱚᱱᱤᱡ ᱟᱢᱟᱜ ᱢᱳᱵᱟᱭᱤᱞ ᱮᱞ ᱟᱹᱛᱩ ᱛᱮ OTP ᱟᱹᱜᱩ ᱠᱚᱜ ᱟᱨ ᱵᱮᱝᱠ ᱵᱷᱤᱛᱨᱤ ᱦᱚᱠ ᱱᱟᱶᱟ ᱠᱚᱜᱼᱟ᱾"
+      },
+      "remote_access": {
+        "title": "ᱡᱟᱹᱞ customer care ᱟᱨ ᱫᱩᱨᱟᱹᱜ ᱦᱚᱠ",
+        "summary": "ᱯᱷᱨᱚᱰᱤᱭᱟ ᱥᱚᱦᱟᱭᱤᱡ ᱞᱮᱠᱟ ᱵᱚᱱᱚᱣ ᱛᱮ screen-sharing app ᱞᱟᱫᱮ ᱠᱚᱜ ᱞᱟᱹᱜᱤᱫ ᱟᱢ ᱞᱮᱛᱟᱲᱟ᱾"
+      },
+      "digital_arrest": {
+        "title": "ᱰᱤᱡᱤᱴᱟᱞ ᱜᱨᱮᱯᱛᱟᱨ ᱯᱷᱨᱚᱰ",
+        "summary": "ᱯᱷᱨᱚᱰᱤᱭᱟ ᱠᱚ police, CBI, customs ᱵᱟᱝᱠᱷᱟᱱ court ᱦᱚᱲ ᱞᱮᱠᱟ video call ᱨᱮ ᱵᱚᱱᱚᱣ ᱛᱮ ᱢᱮᱱᱟᱭ ᱟᱢ ᱜᱨᱮᱯᱛᱟᱨ ᱟᱠᱟᱱᱟ᱾"
+      },
+      "deepfake": {
+        "title": "Deepfake ᱟᱨ ᱥᱟᱰᱮ ᱵᱚᱱᱚᱣ ᱯᱷᱨᱚᱰ",
+        "summary": "AI ᱛᱮ ᱵᱮᱱᱟᱣ ᱥᱟᱰᱮ ᱟᱨ video ᱠᱚ ᱱᱟᱛᱮ, ᱥᱟᱶᱛᱟ ᱵᱟᱝᱠᱷᱟᱱ ᱠᱟᱹᱢᱤᱭᱟᱹ ᱦᱚᱲ ᱞᱮᱠᱟ ᱵᱚᱱᱚᱣ ᱛᱮ ᱞᱟᱵᱚᱜ ᱯᱟᱹᱭᱥᱟ ᱠᱩᱞᱮᱫᱟ᱾"
+      },
+      "investment": {
+        "title": "ᱯᱟᱹᱭᱥᱟ ᱵᱮᱥᱟᱹ ᱟᱨ trading ᱯᱷᱨᱚᱰ",
+        "summary": "ᱡᱟᱹᱞ stock, IPO ᱟᱨ crypto platform ᱠᱚ ᱵᱟᱹᱲᱛᱤ ᱯᱟᱹᱭᱥᱟ ᱡᱚᱢᱟ ᱫᱷᱟᱹᱵᱤᱡ ᱵᱟᱹᱲᱛᱤ ᱞᱟᱵᱷ ᱩᱫᱩᱜᱼᱟ᱾"
+      },
+      "jobs": {
+        "title": "ᱡᱟᱹᱞ ᱱᱚᱠᱨᱤ ᱟᱨ task ᱯᱷᱨᱚᱰ",
+        "summary": "ᱟᱹᱛᱩᱨᱤ ᱠᱟᱹᱢᱤ ᱨᱮ ᱞᱟᱦᱟᱨᱮ ᱛᱷᱚᱲᱟ ᱯᱟᱹᱭᱥᱟ ᱮᱢᱟᱭ, ᱛᱟᱭᱚᱢ ᱞᱮᱛᱟᱲ ᱞᱟᱹᱜᱤᱫ ᱡᱚᱢᱟ ᱯᱟᱹᱭᱥᱟ ᱠᱩᱞᱮᱫᱟ᱾"
+      },
+      "loan_apps": {
+        "title": "ᱞᱟᱵᱚᱜ loan app ᱛᱟᱲᱟᱢ",
+        "summary": "ᱵᱟᱝ ᱥᱚᱨᱠᱟᱨᱤ ᱛᱷᱚᱠᱟ app ᱠᱚ ᱟᱢᱟᱜ contact ᱠᱚ ᱧᱟᱢ ᱛᱮ ᱯᱟᱹᱭᱥᱟ ᱟᱫᱟᱭ ᱫᱚᱦᱚ ᱞᱟᱹᱜᱤᱫ ᱫᱚᱨ ᱮᱢᱟᱢ ᱟᱨ ᱰᱟᱹᱨᱟᱣᱟᱢ᱾"
+      },
+      "sextortion": {
+        "title": "ᱥᱮᱠᱥᱴᱚᱨᱥᱚᱱ ᱟᱨ ᱵᱷᱮᱫᱟ ᱛᱮ ᱰᱟᱹᱨ",
+        "summary": "ᱯᱷᱨᱚᱰᱤᱭᱟ ᱱᱤᱡᱮᱨ ᱪᱤᱛᱟᱹᱨ ᱵᱟᱝᱠᱷᱟᱱ ᱵᱚᱫᱚᱞ ᱪᱤᱛᱟᱹᱨ ᱧᱩᱢ ᱛᱮ ᱯᱟᱹᱭᱥᱟ ᱮᱢ ᱞᱟᱹᱜᱤᱫ ᱰᱟᱹᱨᱟᱣᱟᱢ᱾"
+      },
+      "account_takeover": {
+        "title": "WhatsApp ᱟᱨ social account ᱟᱹᱛᱩ",
+        "summary": "ᱟᱠᱨᱚᱢᱚᱱᱤᱡ ᱴᱷᱤᱠ ᱠᱳᱰ ᱛᱮ ᱟᱢᱟᱜ account ᱟᱹᱛᱩ ᱛᱟᱭᱚᱢ ᱟᱢᱟᱜ ᱡᱚᱲᱤᱫᱤᱭᱟᱹ ᱠᱚ ᱠᱷᱚᱱ ᱯᱟᱹᱭᱥᱟ ᱠᱩᱞᱮᱫᱟ᱾"
+      },
+      "shopping": {
+        "title": "ᱚᱱᱞᱟᱭᱤᱱ ᱡᱤᱱᱤᱥ ᱠᱤᱱᱟᱹ ᱟᱨ marketplace ᱯᱷᱨᱚᱰ",
+        "summary": "ᱡᱟᱹᱞ ᱫᱩᱠᱟᱱ, ᱟᱨ classifieds ᱨᱮ ᱡᱟᱹᱞ ᱠᱤᱱᱤᱡ ᱵᱟᱝᱠᱷᱟᱱ ᱵᱮᱪᱤᱡ ᱠᱚ ᱯᱟᱹᱭᱥᱟ ᱧᱟᱢ ᱛᱟᱭᱚᱢ ᱟᱫᱟᱜ ᱠᱟᱛᱮ ᱥᱮᱱᱚᱜᱼᱟ᱾"
+      },
+      "courier": {
+        "title": "Courier ᱟᱨ parcel ᱯᱷᱨᱚᱰ",
+        "summary": "ᱡᱟᱹᱞ ᱰᱤᱞᱤᱵᱷᱟᱨᱤ ᱠᱷᱚᱵᱚᱨ ᱛᱷᱚᱲᱟ ᱯᱟᱹᱭᱥᱟ ᱮᱢ ᱵᱟᱝᱠᱷᱟᱱ ᱦᱟᱨᱟᱥ ᱟᱯ ᱞᱟᱫᱮ ᱠᱚᱜ ᱞᱟᱹᱜᱤᱫ ᱫᱟᱹᱵᱤ ᱮᱫᱟ᱾"
+      }
+    }
+  }
+}

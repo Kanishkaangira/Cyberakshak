@@ -16,7 +16,11 @@ import { useTranslation } from 'react-i18next';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { SIZES } from '../../constants/theme';
 import { getAuthStrings } from '../../constants/authStrings';
-import { sendPasswordReset } from '../../services/authService';
+import {
+  getPendingPasswordReset,
+  savePendingPasswordReset,
+  sendPasswordReset,
+} from '../../services/authService';
 import { useTheme } from '../../context/ThemeContext';
 import useThemeStyles from '../../hooks/useThemeStyles';
 
@@ -41,18 +45,24 @@ export default function ForgotPasswordScreen({ route, navigation }) {
 
     setLoading(true);
     try {
+      const pendingRequest = await getPendingPasswordReset();
+      if (pendingRequest?.email === cleanEmail) {
+        navigation.navigate('VerifyOTP', {
+          email: cleanEmail,
+          type: 'recovery',
+        });
+        return;
+      }
+
       await sendPasswordReset({ email: cleanEmail });
+      await savePendingPasswordReset({ email: cleanEmail });
       // Always navigate to OTP screen without revealing email existence
       navigation.navigate('VerifyOTP', {
         email: cleanEmail,
         type: 'recovery',
       });
     } catch (err) {
-      // Security rule: Do not reveal whether email exists or not
-      navigation.navigate('VerifyOTP', {
-        email: cleanEmail,
-        type: 'recovery',
-      });
+      setErrorMsg(err.message || AUTH_STRINGS.errGeneric);
     } finally {
       setLoading(false);
     }

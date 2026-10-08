@@ -3,6 +3,7 @@
     "cancel": "Cancel",
     "ok": "OK",
     "retry": "Retry",
+    "back": "Back",
     "loading": "Loading...",
     "sending": "Sending...",
     "readMore": "Read more",
@@ -85,6 +86,7 @@
     "english": "English",
     "hindi": "Hindi",
     "chooseLanguage": "Choose your app language",
+    "languageFallback": "These translations were AI-assisted and should be reviewed by native speakers.",
     "darkTheme": "Dark theme",
     "more": "More",
     "aboutApp": "About app",
@@ -132,6 +134,14 @@
     "readGuide": "Read guide",
     "tipTitle": "Tip of the day",
     "tipMessage": "Your bank never asks for your OTP or UPI PIN to credit funds."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "subtitle": "Event updates from Cyberakshak",
+    "loading": "Loading notifications...",
+    "loadFailed": "Could not load notifications",
+    "emptyTitle": "No notifications yet",
+    "emptyMessage": "Event announcements will appear here when the admin sends them."
   },
   "news": {
     "title": "Cyber News",

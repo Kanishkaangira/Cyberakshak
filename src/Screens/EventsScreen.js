@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { SIZES } from '../constants/theme';
 import { subscribeToEvents, fetchEventsOnce } from '../services/eventsService';
+import BubbleBackground from '../components/BubbleBackground';
 import { useTheme } from '../context/ThemeContext';
 import useThemeStyles from '../hooks/useThemeStyles';
 
@@ -114,12 +115,18 @@ export default function EventsScreen() {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
+      <BubbleBackground theme={COLORS} />
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={COLORS.bg} />
 
       {/* Screen Header */}
       <View style={styles.header}>
         <View style={styles.headerTitleRow}>
-          <Text style={styles.screenTitle}>{t('events.title')}</Text>
+          <View style={styles.headerIcon}>
+            <Icon name="calendar-outline" size={18} color={COLORS.brand} />
+          </View>
+          <Text style={styles.screenTitle} numberOfLines={1}>
+            {t('events.title')}
+          </Text>
           <View style={styles.liveIndicatorBadge}>
             <View style={styles.liveDot} />
             <Text style={styles.liveIndicatorText}>{t('events.liveFeed')}</Text>
@@ -241,6 +248,13 @@ export default function EventsScreen() {
             const imageUrl =
               imageStatus === 1 ? FALLBACK_EVENT_IMAGE : ev.imageUrl;
             const hasImage = Boolean(imageUrl) && imageStatus !== 2;
+            const statusColors =
+              ev.status === 'ongoing'
+                ? { backgroundColor: COLORS.orangeSoft, color: COLORS.orange }
+                : ev.status === 'archived'
+                  ? { backgroundColor: COLORS.brandSoft, color: COLORS.muted }
+                  : { backgroundColor: COLORS.greenSoft, color: COLORS.green };
+            const statusLabel = ev.status[0].toUpperCase() + ev.status.slice(1);
 
             return (
               <View key={ev.id} style={styles.eventCard}>
@@ -276,6 +290,9 @@ export default function EventsScreen() {
                 <View style={styles.cardContent}>
                   {/* Title */}
                   <Text style={styles.eventTitle}>{ev.title}</Text>
+                  <View style={[styles.eventStatusBadge, { backgroundColor: statusColors.backgroundColor }]}>
+                    <Text style={[styles.eventStatusText, { color: statusColors.color }]}>{statusLabel}</Text>
+                  </View>
 
                   {/* Date & Time Row */}
                   <View style={styles.metaRow}>
@@ -336,17 +353,39 @@ const createStyles = (COLORS) => StyleSheet.create({
     backgroundColor: COLORS.bg,
   },
   header: {
-    paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 8,
+    marginHorizontal: 16,
+    marginTop: 8,
+    marginBottom: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    borderRadius: 20,
+    backgroundColor: COLORS.surface,
+    borderWidth: 1,
+    borderColor: COLORS.line,
+    borderLeftWidth: 3,
+    borderLeftColor: COLORS.brand,
+    shadowColor: COLORS.ink,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 2,
   },
   headerTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    gap: 10,
+  },
+  headerIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 13,
+    backgroundColor: COLORS.brandSoft,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   screenTitle: {
-    fontSize: 26,
+    flex: 1,
+    fontSize: 23,
     fontWeight: '800',
     color: COLORS.ink,
     letterSpacing: -0.4,
@@ -355,27 +394,28 @@ const createStyles = (COLORS) => StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: COLORS.greenSoft,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingHorizontal: 9,
+    paddingVertical: 5,
     borderRadius: SIZES.radiusPill,
-    gap: 6,
+    gap: 5,
   },
   liveDot: {
-    width: 7,
-    height: 7,
-    borderRadius: 3.5,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
     backgroundColor: COLORS.green,
   },
   liveIndicatorText: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '700',
     color: COLORS.green,
   },
   screenSubtitle: {
     fontSize: 13,
     color: COLORS.muted,
-    marginTop: 4,
-    lineHeight: 18,
+    marginTop: 8,
+    paddingLeft: 46,
+    lineHeight: 19,
   },
   pillsWrap: {
     paddingVertical: 10,
@@ -499,6 +539,18 @@ const createStyles = (COLORS) => StyleSheet.create({
     color: COLORS.ink,
     lineHeight: 23,
     marginBottom: 10,
+  },
+  eventStatusBadge: {
+    alignSelf: 'flex-start',
+    borderRadius: SIZES.radiusPill,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    marginBottom: 10,
+  },
+  eventStatusText: {
+    fontSize: 11,
+    fontWeight: '700',
+    textTransform: 'capitalize',
   },
   metaRow: {
     flexDirection: 'row',

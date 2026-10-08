@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { SIZES } from '../../constants/theme';
 import { getAuthStrings } from '../../constants/authStrings';
-import { signInWithEmail } from '../../services/authService';
+import { sendLoginOTP, signInWithEmail } from '../../services/authService';
 import { useTheme } from '../../context/ThemeContext';
 import useThemeStyles from '../../hooks/useThemeStyles';
 
@@ -30,7 +30,28 @@ export default function LoginScreen({ navigation }) {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [otpLoading, setOtpLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+
+  const handleEmailCodeLogin = async () => {
+    setErrorMsg('');
+    const cleanEmail = email.trim().toLowerCase();
+
+    if (!cleanEmail || !cleanEmail.includes('@')) {
+      setErrorMsg(AUTH_STRINGS.errEmailRequired);
+      return;
+    }
+
+    setOtpLoading(true);
+    try {
+      await sendLoginOTP({ email: cleanEmail });
+      navigation.navigate('VerifyOTP', { email: cleanEmail, type: 'email' });
+    } catch (err) {
+      setErrorMsg(err.message || AUTH_STRINGS.errGeneric);
+    } finally {
+      setOtpLoading(false);
+    }
+  };
 
   const handleLogin = async () => {
     setErrorMsg('');
@@ -49,7 +70,11 @@ export default function LoginScreen({ navigation }) {
     try {
       await signInWithEmail({ email: cleanEmail, password });
     } catch (err) {
-      setErrorMsg(err.message || AUTH_STRINGS.errGeneric);
+      setErrorMsg(
+        err.code === 'invalid_credentials'
+          ? AUTH_STRINGS.errInvalidCredentials
+          : err.message || AUTH_STRINGS.errGeneric
+      );
     } finally {
       setLoading(false);
     }
@@ -104,6 +129,7 @@ export default function LoginScreen({ navigation }) {
               autoCorrect={false}
               value={email}
               onChangeText={setEmail}
+              editable={!loading && !otpLoading}
             />
           </View>
 
@@ -118,6 +144,7 @@ export default function LoginScreen({ navigation }) {
               secureTextEntry={!showPassword}
               value={password}
               onChangeText={setPassword}
+              editable={!loading && !otpLoading}
             />
             <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
               <Icon
@@ -140,13 +167,29 @@ export default function LoginScreen({ navigation }) {
           <TouchableOpacity
             style={[styles.submitBtn, loading && styles.btnDisabled]}
             activeOpacity={0.85}
-            disabled={loading}
+            disabled={loading || otpLoading}
             onPress={handleLogin}
           >
             {loading ? (
               <ActivityIndicator color={COLORS.onBrand} size="small" />
             ) : (
               <Text style={styles.submitBtnText}>{AUTH_STRINGS.login}</Text>
+            )}
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.otpLoginBtn, otpLoading && styles.btnDisabled]}
+            activeOpacity={0.85}
+            disabled={loading || otpLoading}
+            onPress={handleEmailCodeLogin}
+          >
+            {otpLoading ? (
+              <ActivityIndicator color={COLORS.brand} size="small" />
+            ) : (
+              <>
+                <Icon name="mail-outline" size={18} color={COLORS.brand} />
+                <Text style={styles.otpLoginText}>{AUTH_STRINGS.loginWithEmailCode}</Text>
+              </>
             )}
           </TouchableOpacity>
 
@@ -271,6 +314,23 @@ const createStyles = (COLORS) => StyleSheet.create({
   submitBtnText: {
     color: COLORS.onBrand,
     fontSize: 15,
+    fontWeight: '700',
+  },
+  otpLoginBtn: {
+    minHeight: 50,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: COLORS.surface,
+    borderWidth: 1,
+    borderColor: COLORS.brand,
+    borderRadius: SIZES.radiusMd,
+    marginTop: 12,
+  },
+  otpLoginText: {
+    color: COLORS.brand,
+    fontSize: 14,
     fontWeight: '700',
   },
   footerRow: {

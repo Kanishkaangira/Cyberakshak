@@ -1,22 +1,60 @@
 import { supabase, isSupabaseConfigured } from './supabaseClient';
+import { removeCurrentDeviceToken } from './pushNotificationService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+export const OTP_RESEND_COOLDOWN_SECONDS = 80;
+const PENDING_PASSWORD_RESET_KEY = 'CYBERAKSHAK_PENDING_PASSWORD_RESET';
+
+export async function getPendingPasswordReset() {
+  const storedRequest = await AsyncStorage.getItem(PENDING_PASSWORD_RESET_KEY);
+  if (!storedRequest) return null;
+
+  try {
+    const pendingRequest = JSON.parse(storedRequest);
+    if (
+      typeof pendingRequest.email === 'string' &&
+      pendingRequest.type === 'recovery' &&
+      Number.isFinite(pendingRequest.requestedAt)
+    ) {
+      return pendingRequest;
+    }
+  } catch (error) {
+    console.warn('[AuthService] Could not read the pending password reset request:', error);
+  }
+
+  await AsyncStorage.removeItem(PENDING_PASSWORD_RESET_KEY);
+  return null;
+}
+
+export async function savePendingPasswordReset({ email }) {
+  await AsyncStorage.setItem(
+    PENDING_PASSWORD_RESET_KEY,
+    JSON.stringify({
+      email,
+      type: 'recovery',
+      requestedAt: Date.now(),
+    })
+  );
+}
+
+export async function clearPendingPasswordReset() {
+  await AsyncStorage.removeItem(PENDING_PASSWORD_RESET_KEY);
+}
 
 /**
- * Email + Password Sign Up with 6-digit OTP
+ * Start email-only signup by sending a passwordless email OTP.
  */
-export async function signUpWithEmail({ fullName, email, password, phone, city, state }) {
+export async function signUpWithEmail({ email }) {
   if (!isSupabaseConfigured()) {
     throw new Error('Supabase is not configured yet. Please set SUPABASE_URL and SUPABASE_ANON_KEY in src/config/secrets.js.');
   }
 
-  const { data, error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signInWithOtp({
     email,
-    password,
     options: {
+      shouldCreateUser: true,
       data: {
-        full_name: fullName,
-        phone: phone || null,
-        city: city || null,
-        state: state || null,
+        profile_setup_required: true,
       },
     },
   });
@@ -25,8 +63,28 @@ export async function signUpWithEmail({ fullName, email, password, phone, city, 
   return data;
 }
 
+export async function resendSignupOTP({ email }) {
+  return signUpWithEmail({ email });
+}
+
+export async function sendLoginOTP({ email }) {
+  if (!isSupabaseConfigured()) {
+    throw new Error('Supabase configuration missing.');
+  }
+
+  const { data, error } = await supabase.auth.signInWithOtp({
+    email,
+    options: {
+      shouldCreateUser: false,
+    },
+  });
+
+  if (error) throw error;
+  return data;
+}
+
 /**
- * Verify 6-digit OTP code for Email Verification (Signup or Recovery)
+ * Verify a six-digit email OTP for signup or password recovery.
  */
 export async function verifyOTP({ email, token, type = 'signup' }) {
   if (!isSupabaseConfigured()) {
@@ -36,7 +94,7 @@ export async function verifyOTP({ email, token, type = 'signup' }) {
   const { data, error } = await supabase.auth.verifyOtp({
     email,
     token,
-    type, // 'signup' | 'recovery' | 'email_change'
+    type, // 'email' | 'signup' | 'recovery' | 'email_change'
   });
 
   if (error) throw error;
@@ -106,11 +164,62 @@ export async function updatePassword({ newPassword }) {
   return data;
 }
 
+export async function completeProfileSetup({ fullName, phone, city, password }) {
+  if (!isSupabaseConfigured()) {
+    throw new Error('Supabase configuration missing.');
+  }
+
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  if (userError) throw userError;
+  if (!user?.email_confirmed_at) {
+    throw new Error('Verify your email before completing your profile.');
+  }
+
+  const { data: updatedProfile, error: profileError } = await supabase
+    .from('profiles')
+    .update({
+      full_name: fullName,
+      phone: phone || null,
+      city: city || null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', user.id)
+    .select('id')
+    .maybeSingle();
+
+  if (profileError) throw profileError;
+  if (!updatedProfile) {
+    throw new Error('Could not find your profile to complete setup.');
+  }
+
+  const { error } = await supabase.auth.updateUser({
+    password,
+    data: {
+      full_name: fullName,
+      phone: phone || null,
+      city: city || null,
+      profile_setup_required: false,
+      profile_setup_complete: true,
+    },
+  });
+
+  if (error) throw error;
+}
+
 /**
  * Sign Out
  */
 export async function signOut() {
   if (!isSupabaseConfigured()) return;
+  try {
+    await removeCurrentDeviceToken();
+  } catch (cleanupError) {
+    console.warn(
+      '[AuthService] Could not unregister the push token before sign out:',
+      cleanupError
+    );
+  }
+
   const { error } = await supabase.auth.signOut();
   if (error) throw error;
 }
@@ -176,8 +285,16 @@ export async function updateUserProfile(updates) {
 export async function deleteUserAccount() {
   if (!isSupabaseConfigured()) throw new Error('Supabase not configured.');
 
+  const {
+    data: { session },
+    error: sessionError,
+  } = await supabase.auth.getSession();
+  if (sessionError) throw sessionError;
+  if (!session?.access_token) throw new Error('You must be signed in to delete your account.');
+
   const { error } = await supabase.rpc('delete_user_account');
   if (error) throw error;
 
-  await signOut();
+  const { error: signOutError } = await supabase.auth.signOut({ scope: 'local' });
+  if (signOutError) throw signOutError;
 }

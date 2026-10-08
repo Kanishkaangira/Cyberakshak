@@ -54,9 +54,17 @@ export default function FraudDetail({ fraud, onCheckMessage }) {
   return (
     <View style={styles.wrap}>
       <View style={styles.hero}>
-        <Text style={styles.group}>{t(`fraud.${fraud.group}`).toUpperCase()}</Text>
-        <Text style={styles.title}>{t(`fraud.categories.${fraud.id}.title`, { defaultValue: fraud.title })}</Text>
-        <SeverityPill severity={fraud.severity} />
+        <View style={styles.heroTop}>
+          <Text style={styles.group}>
+            {t(`fraud.${fraud.group}`).toUpperCase()}
+          </Text>
+          <SeverityPill severity={fraud.severity} />
+        </View>
+        <Text style={styles.title}>
+          {t(`fraud.categories.${fraud.id}.title`, {
+            defaultValue: fraud.title,
+          })}
+        </Text>
         <Text style={styles.overview}>{t(`fraud.categories.${fraud.id}.overview`, { defaultValue: fraud.overview })}</Text>
       </View>
 
@@ -114,38 +122,104 @@ export default function FraudDetail({ fraud, onCheckMessage }) {
 }
 
 const createStyles = (COLORS) => StyleSheet.create({
-  wrap: { paddingHorizontal: 16, gap: 24 },
-  hero: { gap: 10 },
-  group: { fontSize: 11, fontWeight: '700', letterSpacing: 0.8, color: COLORS.brand },
-  title: { fontSize: 26, lineHeight: 32, fontWeight: '800', color: COLORS.ink },
-  overview: { fontSize: 15, lineHeight: 23, color: COLORS.muted, marginTop: 4 },
-  section: { gap: 12 },
-  sectionLabel: { fontSize: 11.5, fontWeight: '700', letterSpacing: 1, color: COLORS.muted },
-  row: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
-  rowText: { flex: 1, fontSize: 14.5, lineHeight: 21, color: COLORS.ink },
-  num: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    borderWidth: 1.5,
-    justifyContent: 'center',
+  wrap: { paddingHorizontal: 16, gap: 16 },
+  hero: {
+    backgroundColor: COLORS.brandSoft,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: COLORS.line,
+    padding: 20,
+    gap: 12,
+  },
+  heroTop: {
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  group: {
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 1,
+    color: COLORS.brand,
+  },
+  title: {
+    fontSize: 27,
+    lineHeight: 34,
+    fontWeight: '800',
+    color: COLORS.ink,
+  },
+  overview: {
+    fontSize: 15,
+    lineHeight: 23,
+    color: COLORS.ink,
+    opacity: 0.82,
     marginTop: 1,
   },
-  numText: { fontSize: 12, fontWeight: '700' },
-  bullet: { width: 7, height: 7, borderRadius: 4, marginTop: 8, marginLeft: 8 },
-  quote: {
+  section: {
+    gap: 14,
     backgroundColor: COLORS.surface,
-    borderLeftWidth: 4,
-    borderLeftColor: COLORS.orange,
-    borderRadius: SIZES.radiusSm,
-    padding: 14,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: COLORS.line,
+    padding: 16,
   },
-  quoteText: { fontSize: 14.5, lineHeight: 22, color: COLORS.ink, fontStyle: 'italic' },
-  victim: { backgroundColor: COLORS.redSoft, borderRadius: SIZES.radiusMd, padding: 16, gap: 12 },
-  victimTitle: { fontSize: 16, fontWeight: '700', color: COLORS.red },
-  victimActions: { flexDirection: 'row', gap: 10, marginTop: 4 },
-  btn: { flex: 1, flexDirection: 'row', gap: 6, alignItems: 'center', justifyContent: 'center', paddingVertical: 12, borderRadius: SIZES.radiusPill },
+  sectionLabel: {
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 1,
+    color: COLORS.brand,
+  },
+  row: { flexDirection: 'row', alignItems: 'flex-start', gap: 11 },
+  rowText: { flex: 1, fontSize: 14.5, lineHeight: 22, color: COLORS.ink },
+  num: {
+    width: 27,
+    height: 27,
+    borderRadius: 14,
+    borderWidth: 0,
+    backgroundColor: COLORS.brandSoft,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: -2,
+  },
+  numText: { fontSize: 12, fontWeight: '800' },
+  bullet: { width: 8, height: 8, borderRadius: 4, marginTop: 7, marginLeft: 5 },
+  quote: {
+    backgroundColor: COLORS.orangeSoft,
+    borderLeftWidth: 3,
+    borderLeftColor: COLORS.orange,
+    borderRadius: 14,
+    padding: 16,
+  },
+  quoteText: {
+    fontSize: 14.5,
+    lineHeight: 22,
+    color: COLORS.ink,
+    fontStyle: 'italic',
+  },
+  victim: {
+    backgroundColor: COLORS.redSoft,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: COLORS.line,
+    padding: 16,
+    gap: 14,
+  },
+  victimTitle: { fontSize: 17, fontWeight: '800', color: COLORS.red },
+  victimActions: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 2 },
+  btn: {
+    flexGrow: 1,
+    flexBasis: '45%',
+    flexDirection: 'row',
+    gap: 7,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 46,
+    paddingHorizontal: 10,
+    paddingVertical: 11,
+    borderRadius: SIZES.radiusPill,
+  },
   btnRed: { backgroundColor: COLORS.red },
   btnRedText: { color: COLORS.onRed, fontWeight: '700', fontSize: 14 },
   btnOutline: { borderWidth: 1.5, borderColor: COLORS.red },
@@ -154,9 +228,14 @@ const createStyles = (COLORS) => StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: COLORS.brand,
-    borderRadius: SIZES.radiusMd,
-    padding: 16,
+    borderRadius: 20,
+    padding: 18,
     gap: 12,
+    elevation: 3,
+    shadowColor: COLORS.brand,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.18,
+    shadowRadius: 8,
   },
   assistantText: { flex: 1 },
   assistantTitle: { color: COLORS.onBrand, fontSize: 15, fontWeight: '700' },
@@ -165,5 +244,12 @@ const createStyles = (COLORS) => StyleSheet.create({
     fontSize: 12.5,
     marginTop: 2,
   },
-  note: { fontSize: 12, color: COLORS.muted, textAlign: 'center' },
+  note: {
+    fontSize: 12,
+    lineHeight: 18,
+    color: COLORS.muted,
+    textAlign: 'center',
+    paddingHorizontal: 8,
+    paddingBottom: 4,
+  },
 });

@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeBottomNav from './HomeBottomNav';
 import AuthStack from './AuthStack';
 import ChatbotScreen from '../Screens/ChatbotScreen';
 import FraudEducationScreen from '../Screens/FraudEducationScreen';
+import NotificationsScreen from '../Screens/NotificationsScreen';
+import ProfileSetupScreen from '../Screens/Auth/ProfileSetupScreen';
 import { supabase, isSupabaseConfigured } from '../services/supabaseClient';
 import { REQUIRE_AUTH } from '../config/secrets';
 import { useTheme } from '../context/ThemeContext';
@@ -17,6 +19,7 @@ export default function Stacknavigation() {
   const styles = useThemeStyles(createStyles);
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
+  const isPasswordRecovery = useRef(false);
 
   useEffect(() => {
     if (!isSupabaseConfigured()) {
@@ -35,7 +38,14 @@ export default function Stacknavigation() {
 
     // Listen for auth changes (sign in, sign out, token refresh)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, currentSession) => {
+      (event, currentSession) => {
+        if (event === 'PASSWORD_RECOVERY') {
+          isPasswordRecovery.current = true;
+          return;
+        }
+        if (isPasswordRecovery.current && event !== 'SIGNED_OUT') return;
+        if (event === 'SIGNED_OUT') isPasswordRecovery.current = false;
+
         setSession(currentSession);
         setLoading(false);
       }
@@ -55,6 +65,8 @@ export default function Stacknavigation() {
   }
 
   const showAuth = REQUIRE_AUTH && !session;
+  const requiresProfileSetup =
+    !!session?.user?.user_metadata?.profile_setup_required;
 
   return (
     <Stack.Navigator
@@ -65,6 +77,8 @@ export default function Stacknavigation() {
     >
       {showAuth ? (
         <Stack.Screen name="Auth" component={AuthStack} />
+      ) : requiresProfileSetup ? (
+        <Stack.Screen name="ProfileSetup" component={ProfileSetupScreen} />
       ) : (
         <>
           <Stack.Screen name="MainTabs" component={HomeBottomNav} />
@@ -78,6 +92,13 @@ export default function Stacknavigation() {
           <Stack.Screen
             name="FraudEducation"
             component={FraudEducationScreen}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen
+            name="Notifications"
+            component={NotificationsScreen}
             options={{
               animation: 'slide_from_right',
             }}

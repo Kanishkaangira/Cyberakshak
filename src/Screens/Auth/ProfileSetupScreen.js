@@ -1,74 +1,81 @@
 import React, { useState } from 'react';
 import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
+  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
-  ActivityIndicator,
+  ScrollView,
   StatusBar,
-  Alert,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { SIZES } from '../../constants/theme';
 import { getAuthStrings } from '../../constants/authStrings';
-import {
-  clearPendingPasswordReset,
-  signOut,
-  updatePassword,
-} from '../../services/authService';
+import { completeProfileSetup } from '../../services/authService';
 import { useTheme } from '../../context/ThemeContext';
 import useThemeStyles from '../../hooks/useThemeStyles';
 
-export default function ResetPasswordScreen({ navigation }) {
+export default function ProfileSetupScreen() {
   const { t } = useTranslation();
   const AUTH_STRINGS = getAuthStrings(t);
   const { theme: COLORS, isDark } = useTheme();
   const styles = useThemeStyles(createStyles);
   const insets = useSafeAreaInsets();
-  const [newPassword, setNewPassword] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [city, setCity] = useState('');
+  const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
-  const handleResetPassword = async () => {
+  const handleCompleteProfile = async () => {
     setErrorMsg('');
+    const cleanName = fullName.trim();
 
-    if (newPassword.length < 8) {
+    if (!cleanName) {
+      setErrorMsg(AUTH_STRINGS.errFullNameRequired);
+      return;
+    }
+    if (password.length < 8) {
       setErrorMsg(AUTH_STRINGS.errPasswordMinLength);
       return;
     }
-    if (newPassword !== confirmPassword) {
+    if (password !== confirmPassword) {
       setErrorMsg(AUTH_STRINGS.errPasswordMismatch);
       return;
     }
 
     setLoading(true);
     try {
-      await updatePassword({ newPassword });
-      await signOut();
-      clearPendingPasswordReset().catch((error) => {
-        console.warn('[ResetPasswordScreen] Could not clear the completed reset request:', error);
+      await completeProfileSetup({
+        fullName: cleanName,
+        phone: phone.trim(),
+        city: city.trim(),
+        password,
       });
-      Alert.alert(
-        t('auth.passwordResetSuccess'),
-        t('auth.passwordResetSuccessMessage'),
-        [{
-          text: t('common.ok'),
-          onPress: () => navigation.reset({
-            index: 0,
-            routes: [{ name: 'Login' }],
-          }),
-        }]
-      );
     } catch (err) {
-      setErrorMsg(err.message || AUTH_STRINGS.errGeneric);
+      const errorMessage = String(err?.message || '');
+      const isServerFailure =
+        err?.status >= 500 ||
+        err?.code === 'unexpected_failure' ||
+        /"status"\s*:\s*5\d{2}/.test(errorMessage);
+
+      if (__DEV__) {
+        console.warn('[Auth] Profile setup failed', {
+          code: err?.code,
+          status: err?.status,
+        });
+      }
+      setErrorMsg(
+        isServerFailure ? AUTH_STRINGS.errGeneric : errorMessage || AUTH_STRINGS.errGeneric
+      );
     } finally {
       setLoading(false);
     }
@@ -76,11 +83,14 @@ export default function ResetPasswordScreen({ navigation }) {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={COLORS.bg} />
+      <StatusBar
+        barStyle={isDark ? 'light-content' : 'dark-content'}
+        backgroundColor={COLORS.bg}
+      />
 
       <View style={styles.topNav}>
         <View style={styles.navSpacer} />
-        <Text style={styles.topNavTitle}>{AUTH_STRINGS.resetTitle}</Text>
+        <Text style={styles.topNavTitle}>{AUTH_STRINGS.signUpTitle}</Text>
         <View style={styles.navSpacer} />
       </View>
 
@@ -89,14 +99,18 @@ export default function ResetPasswordScreen({ navigation }) {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <ScrollView
+          keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
           contentContainerStyle={[
             styles.scrollContent,
             { paddingBottom: Math.max(insets.bottom + 20, 36) },
           ]}
         >
-          <Text style={styles.title}>{AUTH_STRINGS.resetTitle}</Text>
-          <Text style={styles.subtitle}>{AUTH_STRINGS.resetSubtitle}</Text>
+          <View style={styles.iconRing}>
+            <Icon name="person-add-outline" size={30} color={COLORS.brand} />
+          </View>
+          <Text style={styles.title}>{AUTH_STRINGS.signUpTitle}</Text>
+          <Text style={styles.subtitle}>{AUTH_STRINGS.signUpSubtitle}</Text>
 
           {errorMsg ? (
             <View style={styles.errorBanner}>
@@ -105,8 +119,48 @@ export default function ResetPasswordScreen({ navigation }) {
             </View>
           ) : null}
 
-          {/* New Password */}
-          <Text style={styles.label}>{AUTH_STRINGS.newPasswordLabel}</Text>
+          <Text style={styles.label}>{AUTH_STRINGS.fullNameLabel} *</Text>
+          <View style={styles.inputWrapper}>
+            <Icon name="person-outline" size={18} color={COLORS.muted} />
+            <TextInput
+              style={styles.input}
+              placeholder={AUTH_STRINGS.fullNamePlaceholder}
+              placeholderTextColor={COLORS.muted}
+              autoCapitalize="words"
+              value={fullName}
+              onChangeText={setFullName}
+              editable={!loading}
+            />
+          </View>
+
+          <Text style={styles.label}>{AUTH_STRINGS.phoneLabel}</Text>
+          <View style={styles.inputWrapper}>
+            <Icon name="call-outline" size={18} color={COLORS.muted} />
+            <TextInput
+              style={styles.input}
+              placeholder={AUTH_STRINGS.phonePlaceholder}
+              placeholderTextColor={COLORS.muted}
+              keyboardType="phone-pad"
+              value={phone}
+              onChangeText={setPhone}
+              editable={!loading}
+            />
+          </View>
+
+          <Text style={styles.label}>{AUTH_STRINGS.cityLabel}</Text>
+          <View style={styles.inputWrapper}>
+            <Icon name="location-outline" size={18} color={COLORS.muted} />
+            <TextInput
+              style={styles.input}
+              placeholder={AUTH_STRINGS.cityPlaceholder}
+              placeholderTextColor={COLORS.muted}
+              value={city}
+              onChangeText={setCity}
+              editable={!loading}
+            />
+          </View>
+
+          <Text style={styles.label}>{AUTH_STRINGS.passwordLabel} *</Text>
           <View style={styles.inputWrapper}>
             <Icon name="lock-closed-outline" size={18} color={COLORS.muted} />
             <TextInput
@@ -114,10 +168,15 @@ export default function ResetPasswordScreen({ navigation }) {
               placeholder={AUTH_STRINGS.newPasswordPlaceholder}
               placeholderTextColor={COLORS.muted}
               secureTextEntry={!showPassword}
-              value={newPassword}
-              onChangeText={setNewPassword}
+              value={password}
+              onChangeText={setPassword}
+              editable={!loading}
             />
-            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+            <TouchableOpacity
+              onPress={() => setShowPassword((shown) => !shown)}
+              accessibilityRole="button"
+              accessibilityLabel={AUTH_STRINGS.passwordLabel}
+            >
               <Icon
                 name={showPassword ? 'eye-off-outline' : 'eye-outline'}
                 size={18}
@@ -126,8 +185,7 @@ export default function ResetPasswordScreen({ navigation }) {
             </TouchableOpacity>
           </View>
 
-          {/* Confirm Password */}
-          <Text style={styles.label}>{AUTH_STRINGS.confirmPasswordLabel}</Text>
+          <Text style={styles.label}>{AUTH_STRINGS.confirmPasswordLabel} *</Text>
           <View style={styles.inputWrapper}>
             <Icon name="shield-checkmark-outline" size={18} color={COLORS.muted} />
             <TextInput
@@ -137,20 +195,20 @@ export default function ResetPasswordScreen({ navigation }) {
               secureTextEntry={!showPassword}
               value={confirmPassword}
               onChangeText={setConfirmPassword}
+              editable={!loading}
             />
           </View>
 
-          {/* Submit Button */}
           <TouchableOpacity
             style={[styles.submitBtn, loading && styles.btnDisabled]}
             activeOpacity={0.85}
             disabled={loading}
-            onPress={handleResetPassword}
+            onPress={handleCompleteProfile}
           >
             {loading ? (
               <ActivityIndicator color={COLORS.onBrand} size="small" />
             ) : (
-              <Text style={styles.submitBtnText}>{AUTH_STRINGS.submit}</Text>
+              <Text style={styles.submitBtnText}>{AUTH_STRINGS.continue}</Text>
             )}
           </TouchableOpacity>
         </ScrollView>
@@ -186,6 +244,15 @@ const createStyles = (COLORS) => StyleSheet.create({
     paddingHorizontal: 24,
     paddingTop: 16,
   },
+  iconRing: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: COLORS.brandSoft,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 18,
+  },
   title: {
     fontSize: 24,
     fontWeight: '800',
@@ -195,7 +262,7 @@ const createStyles = (COLORS) => StyleSheet.create({
     fontSize: 13.5,
     color: COLORS.muted,
     marginTop: 4,
-    marginBottom: 20,
+    marginBottom: 12,
   },
   errorBanner: {
     flexDirection: 'row',
@@ -204,7 +271,7 @@ const createStyles = (COLORS) => StyleSheet.create({
     backgroundColor: COLORS.redSoft,
     padding: 12,
     borderRadius: SIZES.radiusMd,
-    marginBottom: 16,
+    marginBottom: 12,
   },
   errorBannerText: {
     flex: 1,
@@ -237,15 +304,15 @@ const createStyles = (COLORS) => StyleSheet.create({
     paddingVertical: 10,
   },
   submitBtn: {
-    backgroundColor: COLORS.brand,
     minHeight: 52,
-    borderRadius: SIZES.radiusMd,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: COLORS.brand,
+    borderRadius: SIZES.radiusMd,
     marginTop: 24,
   },
   btnDisabled: {
-    opacity: 0.6,
+    opacity: 0.7,
   },
   submitBtnText: {
     color: COLORS.onBrand,

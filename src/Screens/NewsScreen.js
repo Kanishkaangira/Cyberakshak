@@ -16,6 +16,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { fetchCyberSecurityNews } from '../services/newsApi';
+import BubbleBackground from '../components/BubbleBackground';
 import { useTheme } from '../context/ThemeContext';
 import useThemeStyles from '../hooks/useThemeStyles';
 
@@ -138,12 +139,18 @@ export default function NewsScreen({ navigation }) {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
+      <BubbleBackground theme={COLORS} />
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={COLORS.bg} />
 
       {/* Screen Header */}
       <View style={styles.header}>
         <View style={styles.headerTitleRow}>
-          <Text style={styles.screenTitle}>{t('news.title')}</Text>
+          <View style={styles.headerIcon}>
+            <Icon name="newspaper-outline" size={18} color={COLORS.brand} />
+          </View>
+          <Text style={styles.screenTitle} numberOfLines={1}>
+            {t('news.title')}
+          </Text>
           <View style={styles.liveIndicator}>
             <View style={styles.liveDot} />
             <Text style={styles.liveText}>{t('common.live')}</Text>
@@ -283,47 +290,70 @@ const createStyles = (COLORS) => StyleSheet.create({
     backgroundColor: COLORS.bg,
   },
   header: {
-    paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 12,
+    marginHorizontal: 16,
+    marginTop: 8,
+    marginBottom: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    borderRadius: 20,
+    backgroundColor: COLORS.surface,
+    borderWidth: 1,
+    borderColor: COLORS.line,
+    borderLeftWidth: 3,
+    borderLeftColor: COLORS.brand,
+    shadowColor: COLORS.ink,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 2,
   },
   headerTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
   },
+  headerIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 13,
+    backgroundColor: COLORS.brandSoft,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   screenTitle: {
-    fontSize: 26,
-    fontWeight: '700',
+    flex: 1,
+    fontSize: 23,
+    fontWeight: '800',
     color: COLORS.ink,
     letterSpacing: -0.4,
   },
   liveIndicator: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor:
-      COLORS.mode === 'dark' ? COLORS.redSoft : '#FEE2E2',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 12,
-    gap: 4,
+    gap: 5,
+    paddingHorizontal: 9,
+    paddingVertical: 5,
+    borderRadius: 14,
+    backgroundColor: COLORS.redSoft,
   },
   liveDot: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: COLORS.mode === 'dark' ? COLORS.red : '#DC2626',
+    backgroundColor: COLORS.red,
   },
   liveText: {
-    color: COLORS.mode === 'dark' ? COLORS.red : '#DC2626',
+    color: COLORS.red,
     fontSize: 10,
-    fontWeight: '800',
-    letterSpacing: 0.5,
+    fontWeight: '700',
+    letterSpacing: 0.3,
   },
   screenSubtitle: {
     fontSize: 13,
     color: COLORS.muted,
-    marginTop: 2,
+    lineHeight: 19,
+    marginTop: 8,
+    paddingLeft: 46,
   },
   listContainer: {
     paddingHorizontal: 18,
