@@ -181,6 +181,8 @@ export default function HomeScreen({ navigation }) {
           activeOpacity={0.9}
           onPress={() => navigation.navigate('Chatbot')}
         >
+          <View pointerEvents="none" style={styles.heroDecorationLarge} />
+          <View pointerEvents="none" style={styles.heroDecorationSmall} />
           <View style={styles.heroHeader}>
             <View style={styles.heroTag}>
               <Text style={styles.heroTagText}>{t('home.assistant')}</Text>
@@ -225,9 +227,21 @@ export default function HomeScreen({ navigation }) {
                   },
                 ]}
               >
-                <Icon name={item.icon} size={21} color={COLORS.ink} />
+                <Icon
+                  name={item.icon}
+                  size={22}
+                  color={
+                    item.id === 'link'
+                      ? COLORS.orange
+                      : item.id === 'report'
+                        ? COLORS.red
+                        : COLORS.green
+                  }
+                />
               </View>
-              <Text style={styles.actionLabel}>{t(item.labelKey)}</Text>
+              <Text style={styles.actionLabel} numberOfLines={2}>
+                {t(item.labelKey)}
+              </Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -290,15 +304,15 @@ const createStyles = (COLORS) => StyleSheet.create({
     backgroundColor: COLORS.bg,
   },
   scrollContent: {
-    paddingHorizontal: 20,
-    paddingBottom: 104,
-    gap: 16,
+    paddingHorizontal: 18,
+    paddingBottom: 112,
+    gap: 14,
   },
   topBar: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 12,
+    paddingVertical: 10,
   },
   brandRow: {
     flexDirection: 'row',
@@ -306,12 +320,17 @@ const createStyles = (COLORS) => StyleSheet.create({
     gap: 8,
   },
   logoBadge: {
-    width: 34,
-    height: 34,
-    borderRadius: 10,
+    width: 38,
+    height: 38,
+    borderRadius: 13,
     backgroundColor: COLORS.brand,
     justifyContent: 'center',
     alignItems: 'center',
+    elevation: 3,
+    shadowColor: COLORS.brand,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
   logoIcon: {
     fontSize: 18,
@@ -328,10 +347,12 @@ const createStyles = (COLORS) => StyleSheet.create({
     gap: 10,
   },
   iconBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: COLORS.surface,
+    borderWidth: 1,
+    borderColor: COLORS.line,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: COLORS.cardShadow,
@@ -356,9 +377,9 @@ const createStyles = (COLORS) => StyleSheet.create({
     fontSize: 16,
   },
   avatarBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: COLORS.brand,
     justifyContent: 'center',
     alignItems: 'center',
@@ -369,7 +390,8 @@ const createStyles = (COLORS) => StyleSheet.create({
     fontSize: 16,
   },
   greetingSection: {
-    marginTop: 4,
+    marginTop: 2,
+    marginBottom: 2,
   },
   welcomeText: {
     fontSize: 13,
@@ -377,23 +399,41 @@ const createStyles = (COLORS) => StyleSheet.create({
     fontWeight: '500',
   },
   userName: {
-    fontSize: 24,
-    fontWeight: '700',
+    fontSize: 27,
+    fontWeight: '800',
     color: COLORS.ink,
     marginTop: 2,
     letterSpacing: -0.4,
   },
   heroCard: {
     backgroundColor: COLORS.brand,
-    borderRadius: SIZES.radiusLg,
-    padding: 18,
+    borderRadius: 26,
+    padding: 20,
     overflow: 'hidden',
     position: 'relative',
     shadowColor: COLORS.brand,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.25,
-    shadowRadius: 10,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.23,
+    shadowRadius: 14,
+    elevation: 6,
+  },
+  heroDecorationLarge: {
+    position: 'absolute',
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    top: -86,
+    right: -50,
+    backgroundColor: 'rgba(255,255,255,0.10)',
+  },
+  heroDecorationSmall: {
+    position: 'absolute',
+    width: 84,
+    height: 84,
+    borderRadius: 42,
+    bottom: -48,
+    right: 66,
+    backgroundColor: 'rgba(255,255,255,0.07)',
   },
   heroHeader: {
     flexDirection: 'row',
@@ -421,15 +461,15 @@ const createStyles = (COLORS) => StyleSheet.create({
   },
   heroTitle: {
     color: COLORS.onBrand,
-    fontSize: 19,
-    fontWeight: '700',
-    lineHeight: 24,
-    marginBottom: 4,
+    fontSize: 21,
+    fontWeight: '800',
+    lineHeight: 27,
+    marginBottom: 5,
   },
   heroSubtitle: {
     color: COLORS.onBrand,
     fontSize: 13,
-    marginBottom: 16,
+    marginBottom: 18,
     lineHeight: 18,
   },
   fakeInput: {
@@ -438,9 +478,10 @@ const createStyles = (COLORS) => StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: COLORS.surface,
     borderRadius: SIZES.radiusPill,
-    paddingVertical: 7,
+    paddingVertical: 8,
     paddingLeft: 16,
     paddingRight: 6,
+    minHeight: 48,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
@@ -453,9 +494,9 @@ const createStyles = (COLORS) => StyleSheet.create({
     fontWeight: '500',
   },
   fakeInputArrow: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+    width: 34,
+    height: 34,
+    borderRadius: 17,
     backgroundColor: COLORS.brand,
     justifyContent: 'center',
     alignItems: 'center',
@@ -468,48 +509,53 @@ const createStyles = (COLORS) => StyleSheet.create({
   },
   quickActionsGrid: {
     flexDirection: 'row',
-    gap: 10,
-    marginTop: 2,
+    gap: 11,
+    marginTop: 0,
   },
   actionCard: {
     flex: 1,
     backgroundColor: COLORS.surface,
-    borderRadius: SIZES.radiusMd,
-    paddingVertical: 12,
-    paddingHorizontal: 6,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: COLORS.line,
+    paddingVertical: 14,
+    paddingHorizontal: 8,
     alignItems: 'center',
-    shadowColor: COLORS.cardShadow,
-    shadowOffset: { width: 0, height: 2 },
+    minHeight: 104,
+    justifyContent: 'center',
+    shadowColor: COLORS.ink,
+    shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.06,
-    shadowRadius: 3,
-    elevation: 1,
+    shadowRadius: 7,
+    elevation: 2,
   },
   actionIconContainer: {
-    width: 38,
-    height: 38,
-    borderRadius: 12,
+    width: 46,
+    height: 46,
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 6,
+    marginBottom: 9,
   },
   actionEmoji: {
     fontSize: 18,
   },
   actionLabel: {
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '700',
     color: COLORS.ink,
     textAlign: 'center',
+    lineHeight: 16,
   },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 6,
+    marginTop: 3,
   },
   sectionTitle: {
-    fontSize: 17,
-    fontWeight: '700',
+    fontSize: 18,
+    fontWeight: '800',
     color: COLORS.ink,
   },
   seeAllText: {
@@ -518,19 +564,24 @@ const createStyles = (COLORS) => StyleSheet.create({
     color: COLORS.brand,
   },
   fraudListContainer: {
-    gap: 10,
-    paddingVertical: 4,
-    paddingRight: 6,
+    gap: 12,
+    paddingVertical: 5,
+    paddingRight: 8,
   },
   fraudCard: {
-    width: 150,
-    minHeight: 112,
+    width: 174,
+    minHeight: 132,
     backgroundColor: COLORS.surface,
-    borderRadius: SIZES.radiusMd,
+    borderRadius: 20,
     borderWidth: 1,
     borderColor: COLORS.line,
-    padding: 12,
+    padding: 15,
     justifyContent: 'space-between',
+    shadowColor: COLORS.ink,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.05,
+    shadowRadius: 7,
+    elevation: 2,
   },
   fraudTitle: {
     fontSize: 14,
@@ -549,9 +600,11 @@ const createStyles = (COLORS) => StyleSheet.create({
     alignItems: 'center',
     gap: 12,
     backgroundColor: COLORS.greenSoft,
-    borderRadius: SIZES.radiusMd,
-    padding: 14,
-    marginTop: 4,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: COLORS.line,
+    padding: 16,
+    marginTop: 2,
   },
   tipIconBadge: {
     width: 36,

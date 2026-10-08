@@ -15,17 +15,17 @@ const Tab = createBottomTabNavigator();
 
 function renderTabIcon({ focused, name, theme, styles }) {
   const icons = {
-    Home: 'home-outline',
-    News: 'newspaper-outline',
-    Events: 'calendar-outline',
-    Profile: 'person-outline',
+    Home: focused ? 'home' : 'home-outline',
+    News: focused ? 'newspaper' : 'newspaper-outline',
+    Events: focused ? 'calendar' : 'calendar-outline',
+    Profile: focused ? 'person' : 'person-outline',
   };
 
   return (
     <View style={[styles.iconContainer, focused && styles.iconContainerFocused]}>
       <Icon
         name={icons[name] || 'ellipse-outline'}
-        size={19}
+        size={20}
         color={focused ? theme.brand : theme.muted}
       />
     </View>
@@ -66,25 +66,27 @@ const createStyles = (COLORS) => StyleSheet.create({
     bottom: 8,
     backgroundColor: COLORS.surface,
     borderTopWidth: 0,
-    borderRadius: 22,
-    height: 64,
-    paddingBottom: 8,
+    borderWidth: 1,
+    borderColor: COLORS.line,
+    borderRadius: 26,
+    height: 72,
+    paddingBottom: 9,
     paddingTop: 8,
-    elevation: 12,
-    shadowColor: COLORS.cardShadow,
+    elevation: 14,
+    shadowColor: COLORS.ink,
     shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
   },
   tabLabel: {
     fontSize: 11,
     fontWeight: '600',
-    marginTop: -2,
+    marginTop: 1,
   },
   iconContainer: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 42,
+    height: 30,
+    borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center',
   },
