@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { SIZES } from '../constants/theme';
 import { subscribeToEvents, fetchEventsOnce } from '../services/eventsService';
+import BubbleBackground from '../components/BubbleBackground';
 import { useTheme } from '../context/ThemeContext';
 import useThemeStyles from '../hooks/useThemeStyles';
 
@@ -114,6 +115,7 @@ export default function EventsScreen() {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
+      <BubbleBackground theme={COLORS} />
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={COLORS.bg} />
 
       {/* Screen Header */}

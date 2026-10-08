@@ -75,11 +75,15 @@ We recommend **Supabase** as the single primary backend database and authenticat
 
 1. **Supabase Built-in Email Sender Limits**:
    - *Constraint*: Supabase's default email service has a strict rate limit of **3 emails per hour** per project (intended strictly for development/testing).
-   - *Requirement*: Prior to staging/production launch, a free custom SMTP service must be configured in the Supabase Dashboard (`Authentication -> Email Settings`).
-   - *Recommended SMTP Providers*: **Resend** (3,000 free emails/month), **Brevo** (formerly Sendinblue, 300 free emails/day), or **SendGrid** (100 free emails/day).
+   - *Requirement*: Configure custom SMTP in the Supabase Dashboard (`Authentication -> SMTP Settings`); auth email delivery is performed by Supabase, not by the mobile app.
+   - *Current provider*: Gmail SMTP (`smtp.gmail.com`, port `465`, SSL), using the Gmail account as the sender and username and a Google App Password as the SMTP password. Set the sender name to `CyberAkshak`. Keep the App Password only in the Supabase dashboard; never add it to the app or repository.
+   - *Important*: Saving SMTP credentials as Edge Function secrets does not configure Supabase Auth email delivery. Enter them in the project's Auth SMTP settings.
+   - *OTP templates*: Signup confirmation and password recovery email templates must render `{{ .Token }}` as the code. Keep signup verification and recovery verification as Supabase email OTPs.
+   - *Signup flow*: The mobile app requests an email OTP first, verifies it with the `email` OTP type, then collects profile details and sets the password. Profile setup remains required across app restarts until it succeeds.
+   - *Account deletion*: The app invokes `public.delete_user_account()` as the authenticated user. Apply `supabase/migrations/004_delete_user_account.sql` in the Supabase SQL Editor. The function can delete only the caller's Auth user; existing foreign keys cascade deletion to `public.profiles` and profile-owned device tokens.
 
 2. **OTP Cooldown & Security Policies**:
-   - **Resend Cooldown**: 60 seconds (enforced in mobile app UI & Supabase rate limit settings).
+   - **Resend Cooldown**: 80 seconds (matches the configured Supabase minimum interval per user and is enforced in the mobile app UI).
    - **OTP Code Expiry**: 10 minutes (configured in Supabase Auth settings).
    - **Password Policy**: Minimum 8 characters, requiring at least one letter and one number.
 

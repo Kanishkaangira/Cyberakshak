@@ -48,11 +48,7 @@ export default function ForgotPasswordScreen({ route, navigation }) {
         type: 'recovery',
       });
     } catch (err) {
-      // Security rule: Do not reveal whether email exists or not
-      navigation.navigate('VerifyOTP', {
-        email: cleanEmail,
-        type: 'recovery',
-      });
+      setErrorMsg(err.message || AUTH_STRINGS.errGeneric);
     } finally {
       setLoading(false);
     }

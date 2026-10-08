@@ -6,6 +6,7 @@ import AuthStack from './AuthStack';
 import ChatbotScreen from '../Screens/ChatbotScreen';
 import FraudEducationScreen from '../Screens/FraudEducationScreen';
 import NotificationsScreen from '../Screens/NotificationsScreen';
+import ProfileSetupScreen from '../Screens/Auth/ProfileSetupScreen';
 import { supabase, isSupabaseConfigured } from '../services/supabaseClient';
 import { REQUIRE_AUTH } from '../config/secrets';
 import { useTheme } from '../context/ThemeContext';
@@ -56,6 +57,8 @@ export default function Stacknavigation() {
   }
 
   const showAuth = REQUIRE_AUTH && !session;
+  const requiresProfileSetup =
+    !!session?.user?.user_metadata?.profile_setup_required;
 
   return (
     <Stack.Navigator
@@ -66,6 +69,8 @@ export default function Stacknavigation() {
     >
       {showAuth ? (
         <Stack.Screen name="Auth" component={AuthStack} />
+      ) : requiresProfileSetup ? (
+        <Stack.Screen name="ProfileSetup" component={ProfileSetupScreen} />
       ) : (
         <>
           <Stack.Screen name="MainTabs" component={HomeBottomNav} />

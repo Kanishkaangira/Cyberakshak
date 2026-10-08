@@ -3,6 +3,7 @@ import { DeviceEventEmitter } from 'react-native';
 import { supabase, isSupabaseConfigured } from './supabaseClient';
 
 const READ_NOTIFICATIONS_KEY = 'CYBERAKSHAK_READ_NOTIFICATIONS';
+const NOTIFICATION_RETENTION_DAYS = 10;
 export const NOTIFICATIONS_UPDATED_EVENT = 'cyberakshak:notifications-updated';
 
 export async function fetchNotifications() {
@@ -10,11 +11,16 @@ export async function fetchNotifications() {
     throw new Error('Supabase is not configured.');
   }
 
+  const retentionCutoff = new Date(
+    Date.now() - NOTIFICATION_RETENTION_DAYS * 24 * 60 * 60 * 1000
+  ).toISOString();
+
   const { data, error } = await supabase
     .from('notifications')
     .select('id, title, body, data, sent_at, created_at')
     .eq('audience', 'all')
     .not('sent_at', 'is', null)
+    .gte('sent_at', retentionCutoff)
     .order('sent_at', { ascending: false });
 
   if (error) throw error;
@@ -61,7 +67,11 @@ export async function markNotificationsAsSeen(notificationIds) {
 
   const storageKey = `${READ_NOTIFICATIONS_KEY}:${userId}`;
   const existingIds = await getReadNotificationIds(userId);
-  const updatedIds = new Set([...existingIds, ...notificationIds]);
+  const activeIds = new Set(notificationIds);
+  const updatedIds = new Set([
+    ...existingIds.filter((id) => activeIds.has(id)),
+    ...notificationIds,
+  ]);
   await AsyncStorage.setItem(storageKey, JSON.stringify([...updatedIds]));
 }
 

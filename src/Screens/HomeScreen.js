@@ -18,6 +18,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { SIZES } from '../constants/theme';
 import { FRAUD_CATEGORIES, QUICK_ACTIONS } from '../constants/data';
 import { SeverityPill } from '../components/fraud/FraudUI';
+import BubbleBackground from '../components/BubbleBackground';
 import { getCurrentUserProfile } from '../services/authService';
 import { useTheme } from '../context/ThemeContext';
 import useThemeStyles from '../hooks/useThemeStyles';
@@ -123,6 +124,7 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
+      <BubbleBackground theme={COLORS} />
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={COLORS.bg} />
 
       <ScrollView
