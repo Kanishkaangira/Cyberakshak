@@ -232,3 +232,8 @@ tokens in `public.device_tokens`, displays foreground pushes in the system
 notification tray, and opens the Events tab when the user taps an event push.
 The event create/update workflow should invoke the server-side push dispatcher
 only when `notify_app_users` is true; never send FCM credentials from the app.
+For audible Android alerts, set the FCM Android `channel_id` to
+`event-updates-sound-v3` (or omit it to use the manifest default) and include
+`sound: "default"` in the Android notification config. The app creates this
+high-importance channel with the device's default notification sound. Android
+users can still mute the channel or device in system settings.
