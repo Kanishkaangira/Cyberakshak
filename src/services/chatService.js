@@ -4,12 +4,11 @@ import { API_BASE_URL, API_KEY } from '../config/secrets';
 
 let sessionId = null;
 let convState = null; // signed token from the server; send it back with every message
-let serverAwake = false;
 
 const WARMUP_TIMEOUT_MS = 70000; // background wake-up of a sleeping free server (~1 minute)
-const CHAT_TIMEOUT_MS = 25000;   // a chat call that takes longer falls back to your local answer
+const CHAT_TIMEOUT_MS = 25000; // a chat call that takes longer falls back to your local answer
 
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 async function fetchWithTimeout(url, options, ms) {
   const controller = new AbortController();
@@ -32,7 +31,11 @@ function failure(kind) {
         : 'Abhi server se connect nahi ho pa raha. Kripya thodi der baad dobara try karein.\n\nAgar aapke saath fraud hua hai, to der na karein: turant 1930 par call karein aur cybercrime.gov.in par shikayat darj karein.',
     actions: [
       { type: 'call', label: 'Call 1930', value: 'tel:1930' },
-      { type: 'link', label: 'cybercrime.gov.in', value: 'https://cybercrime.gov.in' },
+      {
+        type: 'link',
+        label: 'cybercrime.gov.in',
+        value: 'https://cybercrime.gov.in',
+      },
     ],
     chips: [],
     steps: [],
@@ -44,7 +47,6 @@ function failure(kind) {
 export async function warmUp() {
   try {
     await fetchWithTimeout(`${API_BASE_URL}/health`, {}, WARMUP_TIMEOUT_MS);
-    serverAwake = true;
   } catch (e) {
     /* ignore: sendMessage will retry */
   }
@@ -65,7 +67,12 @@ export function resetChat() {
  * If ok is false, use your own local answer (see toBotMessage / ChatbotScreen changes).
  */
 export async function sendMessage(text, language = null) {
-  const body = JSON.stringify({ message: text, session_id: sessionId, state: convState, language });
+  const body = JSON.stringify({
+    message: text,
+    session_id: sessionId,
+    state: convState,
+    language,
+  });
   const options = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'X-API-Key': API_KEY },
@@ -75,10 +82,16 @@ export async function sendMessage(text, language = null) {
 
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
-      const res = await fetchWithTimeout(`${API_BASE_URL}/v1/chat`, options, timeout);
+      const res = await fetchWithTimeout(
+        `${API_BASE_URL}/v1/chat`,
+        options,
+        timeout,
+      );
       if (res.status === 429) return failure('busy');
       if (res.status === 401) {
-        console.warn('[chat] API key rejected (401). Check API_KEY in src/config/secrets.js');
+        console.warn(
+          '[chat] API key rejected (401). Check API_KEY in src/config/secrets.js',
+        );
         return failure('auth');
       }
       if (!res.ok) {
@@ -91,12 +104,14 @@ export async function sendMessage(text, language = null) {
       const d = await res.json();
       sessionId = d.session_id || sessionId;
       convState = d.state || convState;
-      serverAwake = true;
       return {
         ok: true,
         reply: d.reply,
         actions: d.quick_actions || [],
-        chips: [...((d.question && d.question.chips) || []), ...(d.suggestions || [])],
+        chips: [
+          ...((d.question && d.question.chips) || []),
+          ...(d.suggestions || []),
+        ],
         steps: d.steps || [],
         urgent: !!d.urgent,
         stage: d.stage,
@@ -125,7 +140,12 @@ export async function sendFeedback(messageId, rating, comment = '') {
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-API-Key': API_KEY },
-        body: JSON.stringify({ session_id: sessionId, message_id: messageId, rating, comment }),
+        body: JSON.stringify({
+          session_id: sessionId,
+          message_id: messageId,
+          rating,
+          comment,
+        }),
       },
       10000,
     );

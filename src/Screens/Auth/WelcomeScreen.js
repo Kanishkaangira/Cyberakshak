@@ -24,8 +24,11 @@ export default function WelcomeScreen({ navigation }) {
   const insets = useSafeAreaInsets();
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <StatusBar barStyle={isDark ? 'dark-content' : 'light-content'} backgroundColor={COLORS.brand} />
-      
+      <StatusBar
+        barStyle={isDark ? 'dark-content' : 'light-content'}
+        backgroundColor={COLORS.brand}
+      />
+
       <View style={styles.topHero}>
         <View style={styles.shieldBadge}>
           <Image
@@ -47,7 +50,9 @@ export default function WelcomeScreen({ navigation }) {
         ]}
       >
         <Text style={styles.welcomeTitle}>{AUTH_STRINGS.welcomeTitle}</Text>
-        <Text style={styles.welcomeSubtitle}>{AUTH_STRINGS.welcomeSubtitle}</Text>
+        <Text style={styles.welcomeSubtitle}>
+          {AUTH_STRINGS.welcomeSubtitle}
+        </Text>
 
         <View style={styles.btnStack}>
           <TouchableOpacity
@@ -67,105 +72,102 @@ export default function WelcomeScreen({ navigation }) {
             <Icon name="person-add-outline" size={19} color={COLORS.brand} />
             <Text style={styles.secondaryBtnText}>{AUTH_STRINGS.signUp}</Text>
           </TouchableOpacity>
-
         </View>
       </ScrollView>
     </View>
   );
 }
 
-const createStyles = (COLORS) => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.brand,
-  },
-  topHero: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 24,
-  },
-  shieldBadge: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  shieldImage: {
-    width: 56,
-    height: 56,
-  },
-  brandTitle: {
-    fontSize: 32,
-    fontWeight: '800',
-    color: COLORS.onBrand,
-    letterSpacing: -0.5,
-  },
-  brandTagline: {
-    fontSize: 13,
-    color:
-      COLORS.mode === 'dark'
-        ? COLORS.onBrand
-        : 'rgba(255,255,255,0.85)',
-    fontWeight: '500',
-    marginTop: 4,
-  },
-  bottomSheet: {
-    backgroundColor: COLORS.bg,
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
-    paddingHorizontal: 24,
-    paddingTop: 32,
-  },
-  welcomeTitle: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: COLORS.ink,
-    textAlign: 'center',
-    lineHeight: 28,
-  },
-  welcomeSubtitle: {
-    fontSize: 13.5,
-    color: COLORS.muted,
-    textAlign: 'center',
-    marginTop: 8,
-    lineHeight: 19,
-    marginBottom: 28,
-  },
-  btnStack: {
-    gap: 12,
-  },
-  primaryBtn: {
-    backgroundColor: COLORS.brand,
-    minHeight: 52,
-    borderRadius: SIZES.radiusMd,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-  },
-  primaryBtnText: {
-    color: COLORS.onBrand,
-    fontSize: 15,
-    fontWeight: '700',
-  },
-  secondaryBtn: {
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.brand,
-    minHeight: 52,
-    borderRadius: SIZES.radiusMd,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-  },
-  secondaryBtnText: {
-    color: COLORS.brand,
-    fontSize: 15,
-    fontWeight: '700',
-  },
-});
+const createStyles = COLORS =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: COLORS.brand,
+    },
+    topHero: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingHorizontal: 24,
+    },
+    shieldBadge: {
+      width: 96,
+      height: 96,
+      borderRadius: 48,
+      backgroundColor: 'rgba(255,255,255,0.2)',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: 16,
+    },
+    shieldImage: {
+      width: 56,
+      height: 56,
+    },
+    brandTitle: {
+      fontSize: 32,
+      fontWeight: '800',
+      color: COLORS.onBrand,
+      letterSpacing: -0.5,
+    },
+    brandTagline: {
+      fontSize: 13,
+      color: COLORS.mode === 'dark' ? COLORS.onBrand : 'rgba(255,255,255,0.85)',
+      fontWeight: '500',
+      marginTop: 4,
+    },
+    bottomSheet: {
+      backgroundColor: COLORS.bg,
+      borderTopLeftRadius: 32,
+      borderTopRightRadius: 32,
+      paddingHorizontal: 24,
+      paddingTop: 32,
+    },
+    welcomeTitle: {
+      fontSize: 22,
+      fontWeight: '700',
+      color: COLORS.ink,
+      textAlign: 'center',
+      lineHeight: 28,
+    },
+    welcomeSubtitle: {
+      fontSize: 13.5,
+      color: COLORS.muted,
+      textAlign: 'center',
+      marginTop: 8,
+      lineHeight: 19,
+      marginBottom: 28,
+    },
+    btnStack: {
+      gap: 12,
+    },
+    primaryBtn: {
+      backgroundColor: COLORS.brand,
+      minHeight: 52,
+      borderRadius: SIZES.radiusMd,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 8,
+    },
+    primaryBtnText: {
+      color: COLORS.onBrand,
+      fontSize: 15,
+      fontWeight: '700',
+    },
+    secondaryBtn: {
+      backgroundColor: COLORS.surface,
+      borderWidth: 1,
+      borderColor: COLORS.brand,
+      minHeight: 52,
+      borderRadius: SIZES.radiusMd,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 8,
+    },
+    secondaryBtnText: {
+      color: COLORS.brand,
+      fontSize: 15,
+      fontWeight: '700',
+    },
+  });
