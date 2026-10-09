@@ -49,9 +49,10 @@ We recommend **Supabase** as the single primary backend database and authenticat
 
 ### Current Firebase Usage in Repository:
 - **Code Audit**:
-  - `firebase.js`: Root file initializing Firebase Web SDK (v12) with hardcoded web config.
-  - `src/services/eventsService.js`: Uses Firestore `collection(db, 'events')` and `onSnapshot` / `getDocs`.
-  - Dependencies: `@react-native-firebase/app`, `@react-native-firebase/firestore`, and `firebase`.
+  - `firebase.js`: Root file initializing Firebase Web SDK (v12) for Firestore answer-report writes in `src/services/reportService.js`.
+  - `src/services/pushNotificationService.js` and `src/components/PushNotificationManager.js`: Use React Native Firebase Messaging for push notifications; Android native config supplies the Firebase project.
+  - `src/services/eventsService.js`: Reads Supabase's `events` table, not Firestore.
+  - Dependencies include both Firebase SDKs: `firebase` for answer reports, and `@react-native-firebase/app`, `@react-native-firebase/firestore`, and `@react-native-firebase/messaging`.
 
 ### Why Migrate DB/Auth to Supabase instead of expanding Firebase?
 

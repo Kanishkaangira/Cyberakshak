@@ -2,16 +2,16 @@ import { initializeApp, getApps, getApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyAl1I-6zDNuiZ2IMpfSsjhIyPWpJrJM1qA",
-    authDomain: "cyberakshak-c02c2.firebaseapp.com",
-    projectId: "cyberakshak-c02c2",
-    storageBucket: "cyberakshak-c02c2.firebasestorage.app",
-    messagingSenderId: "943821986123",
-    appId: "1:943821986123:web:8ce0d14d1e0b349d4b70ce",
-    measurementId: "G-R2S5SDQTY7",
+    apiKey: "AIzaSyA-liJPrVjhV5t3jCdS4akImjOFq69RtyE",
+  authDomain: "cyberakshak-d71e9.firebaseapp.com",
+  projectId: "cyberakshak-d71e9",
+  storageBucket: "cyberakshak-d71e9.firebasestorage.app",
+  messagingSenderId: "122273195929",
+  appId: "1:122273195929:web:aa4d7820c674cf37109508",
+  measurementId: "G-FH0GXQVHW3",
 };
 
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
 export const db = getFirestore(app);
-export default app;
+export default app;
