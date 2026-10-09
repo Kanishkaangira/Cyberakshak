@@ -4,6 +4,7 @@
 
 export const API_BASE_URL = 'https://cyberakshak-api.onrender.com'; // FastAPI Chatbot endpoint
 export const API_KEY = 'YOUR_FASTAPI_CHATBOT_KEY';
+export const FIREBASE_API_KEY = 'YOUR_FIREBASE_WEB_API_KEY';
 
 // Supabase Backend Configuration
 export const SUPABASE_URL = 'https://YOUR_PROJECT_REF.supabase.co';
