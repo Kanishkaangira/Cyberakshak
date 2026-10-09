@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Cyberakshak</string>
-    <string name="default_notification_channel_id">event-updates-v2</string>
+    <string name="default_notification_channel_id">event-updates-sound-v3</string>
     <string name="default_notification_channel_name">Cyberakshak event updates</string>
+    <string name="default_notification_channel_description">Announcements about upcoming cyber safety events.</string>
 </resources>

@@ -7,7 +7,7 @@ import notifee, {
 } from '@notifee/react-native';
 import { supabase, isSupabaseConfigured } from './supabaseClient';
 
-export const EVENT_NOTIFICATION_CHANNEL_ID = 'event-updates-v2';
+export const EVENT_NOTIFICATION_CHANNEL_ID = 'event-updates-sound-v3';
 export const PENDING_EVENT_NOTIFICATION_KEY =
   'CYBERAKSHAK_PENDING_EVENT_NOTIFICATION';
 const NOTIFICATION_COLOR = '#4B4FE0';
@@ -27,6 +27,8 @@ export async function registerDeviceForPushNotifications(userId) {
     name: 'Cyberakshak event updates',
     description: 'Announcements about upcoming cyber safety events.',
     importance: AndroidImportance.HIGH,
+    sound: 'default',
+    vibration: true,
   });
 
   const token = await getToken(getMessaging());
@@ -99,6 +101,7 @@ export async function showForegroundPushNotification(message) {
       smallIcon: 'ic_notification',
       color: NOTIFICATION_COLOR,
       category: 'event',
+      sound: 'default',
       pressAction: { id: 'default' },
       ...(eventImage
         ? {
