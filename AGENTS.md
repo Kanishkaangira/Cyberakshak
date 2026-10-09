@@ -19,8 +19,10 @@ This document defines hard architectural boundaries, stack constraints, and codi
 ## 🚨 HARD NEVER-TOUCH RULES
 
 1. **Chatbot Isolation**:
-   - **NEVER** modify `src/Screens/ChatbotScreen.js` or `src/services/chatService.js` API contracts.
-   - **NEVER** transmit personal identifiable data (name, email, phone number, user ID) to the chatbot server.
+   - `src/Screens/ChatbotScreen.js` and `src/services/chatService.js` may be edited ONLY for: bug fixes, lint/type/warning fixes, and crash fixes.
+   - The request/response format of the chatbot API (URL, payload fields, response fields) must NOT change. If a fix needs that, stop and ask the owner.
+   - Any change to these two files must be listed separately in the final report.
+   - **NEVER** transmit personally identifiable data (name, email, phone number, user ID) to the chatbot server.
 2. **Secrets & Security**:
    - **NEVER** commit secret keys, passwords, or service-role keys into Git.
    - Real secrets stay in `src/config/secrets.js` (git-ignored).
