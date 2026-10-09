@@ -1,8 +1,9 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { FIREBASE_API_KEY } from "./src/config/secrets";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyA-liJPrVjhV5t3jCdS4akImjOFq69RtyE",
+    apiKey: FIREBASE_API_KEY,
   authDomain: "cyberakshak-d71e9.firebaseapp.com",
   projectId: "cyberakshak-d71e9",
   storageBucket: "cyberakshak-d71e9.firebasestorage.app",
