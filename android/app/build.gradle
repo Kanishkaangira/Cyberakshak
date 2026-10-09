@@ -62,6 +62,53 @@ apply from: file("../../node_modules/react-native-vector-icons/fonts.gradle")
  */
 def enableProguardInReleaseBuilds = false
 
+def releaseSigningPropertiesFile = rootProject.file("keystore.properties")
+def releaseSigningProperties = new Properties()
+if (releaseSigningPropertiesFile.isFile()) {
+    releaseSigningPropertiesFile.withInputStream { stream ->
+        releaseSigningProperties.load(stream)
+    }
+}
+
+def requiredReleaseSigningProperties = [
+    "storeFile",
+    "storePassword",
+    "keyAlias",
+    "keyPassword"
+]
+
+def validateReleaseSigning = tasks.register("validateReleaseSigning") {
+    doLast {
+        if (!releaseSigningPropertiesFile.isFile()) {
+            throw new GradleException(
+                "Release signing is not configured. Create android/keystore.properties with storeFile, storePassword, keyAlias, and keyPassword."
+            )
+        }
+
+        def missingProperties = requiredReleaseSigningProperties.findAll {
+            !releaseSigningProperties.getProperty(it)?.trim()
+        }
+        if (!missingProperties.isEmpty()) {
+            throw new GradleException(
+                "Release signing configuration is missing: ${missingProperties.join(', ')} in android/keystore.properties."
+            )
+        }
+
+        def keystoreFile = rootProject.file(releaseSigningProperties.getProperty("storeFile"))
+        if (!keystoreFile.isFile()) {
+            throw new GradleException(
+                "Release keystore does not exist at the configured storeFile path in android/keystore.properties."
+            )
+        }
+    }
+}
+
+tasks.configureEach { task ->
+    if (task.name == "assembleRelease" || task.name == "bundleRelease") {
+        task.dependsOn(validateReleaseSigning)
+    }
+}
+
 /**
  * The preferred build flavor of JavaScriptCore (JSC)
  *
@@ -95,15 +142,22 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            if (releaseSigningPropertiesFile.isFile() &&
+                requiredReleaseSigningProperties.every { releaseSigningProperties.getProperty(it)?.trim() }) {
+                storeFile rootProject.file(releaseSigningProperties.getProperty("storeFile"))
+                storePassword releaseSigningProperties.getProperty("storePassword")
+                keyAlias releaseSigningProperties.getProperty("keyAlias")
+                keyPassword releaseSigningProperties.getProperty("keyPassword")
+            }
+        }
     }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
         }
         release {
-            // Caution! In production, you need to generate your own keystore file.
-            // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }

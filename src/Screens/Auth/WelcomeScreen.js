@@ -3,6 +3,7 @@ import {
   StyleSheet,
   Text,
   View,
+  Image,
   TouchableOpacity,
   StatusBar,
   ScrollView,
@@ -27,7 +28,12 @@ export default function WelcomeScreen({ navigation }) {
       
       <View style={styles.topHero}>
         <View style={styles.shieldBadge}>
-          <Icon name="shield-checkmark" size={48} color={COLORS.onBrand} />
+          <Image
+            source={require('../../assets/cyberakshak-app-icon.png')}
+            style={styles.shieldImage}
+            resizeMode="contain"
+            accessibilityLabel={AUTH_STRINGS.appName}
+          />
         </View>
         <Text style={styles.brandTitle}>{AUTH_STRINGS.appName}</Text>
         <Text style={styles.brandTagline}>{AUTH_STRINGS.appTagline}</Text>
@@ -87,6 +93,10 @@ const createStyles = (COLORS) => StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
+  },
+  shieldImage: {
+    width: 56,
+    height: 56,
   },
   brandTitle: {
     fontSize: 32,

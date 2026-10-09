@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Animated,
+  Image,
   StyleSheet,
   Text,
   View,
@@ -135,7 +136,12 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.topBar}>
           <View style={styles.brandRow}>
             <View style={styles.logoBadge}>
-              <Icon name="shield-checkmark" size={20} color={COLORS.onBrand} />
+              <Image
+                source={require('../assets/cyberakshak-app-icon.png')}
+                style={styles.logoImage}
+                resizeMode="contain"
+                accessibilityLabel="Cyberakshak"
+              />
             </View>
             <Text style={styles.brandTitle}>Cyberakshak</Text>
           </View>
@@ -334,6 +340,10 @@ const createStyles = (COLORS) => StyleSheet.create({
   },
   logoIcon: {
     fontSize: 18,
+  },
+  logoImage: {
+    width: 24,
+    height: 24,
   },
   brandTitle: {
     fontSize: 20,
