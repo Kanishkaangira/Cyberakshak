@@ -8,7 +8,16 @@ let convState = null; // signed token from the server; send it back with every m
 const WARMUP_TIMEOUT_MS = 70000; // background wake-up of a sleeping free server (~1 minute)
 const CHAT_TIMEOUT_MS = 25000; // a chat call that takes longer falls back to your local answer
 
+const EMAIL_PATTERN = /\b[\w.+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi;
+const PHONE_PATTERN = /(^|[^\d])(\+?\d(?:[\s().-]?\d){9,14})(?=$|[^\d])/g;
+
 const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+function redactPersonalData(text) {
+  return text
+    .replace(EMAIL_PATTERN, '[email]')
+    .replace(PHONE_PATTERN, (_, boundary) => `${boundary}[phone]`);
+}
 
 async function fetchWithTimeout(url, options, ms) {
   const controller = new AbortController();
@@ -68,7 +77,7 @@ export function resetChat() {
  */
 export async function sendMessage(text, language = null) {
   const body = JSON.stringify({
-    message: text,
+    message: redactPersonalData(text),
     session_id: sessionId,
     state: convState,
     language,
