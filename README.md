@@ -33,7 +33,7 @@
 Cyberakshak/
 ├── App.js                       # Main application entry point & root providers
 ├── index.js                     # React Native app registration
-├── firebase.js                  # Legacy Firebase Web SDK initialization
+├── firebase.js                  # Firebase Web SDK initialization for answer reports
 ├── package.json                 # Project dependencies & scripts
 ├── android/                     # Android native project files
 ├── ios/                         # iOS native project files
