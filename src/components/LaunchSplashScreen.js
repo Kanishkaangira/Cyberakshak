@@ -1,13 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import {
-  Animated,
-  Easing,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
-
+import { Animated, Easing, Image, StyleSheet, Text, View } from 'react-native';
 export default function LaunchSplashScreen({
   color,
   surfaceColor,
@@ -72,7 +64,12 @@ export default function LaunchSplashScreen({
         ]}
       >
         <View style={[styles.logoBadge, { backgroundColor: surfaceColor }]}>
-          <Icon name="shield-checkmark" size={76} color={color} />
+          <Image
+            source={require('../assets/cyberakshak-app-icon.png')}
+            style={styles.logoImage}
+            resizeMode="contain"
+            accessibilityLabel="Cyberakshak"
+          />
         </View>
         <Text style={[styles.appName, { color: contrastColor }]}>
           Cyberakshak
@@ -109,6 +106,10 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.2,
     shadowRadius: 16,
+  },
+  logoImage: {
+    width: 88,
+    height: 88,
   },
   appName: {
     fontSize: 30,
