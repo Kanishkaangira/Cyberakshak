@@ -337,24 +337,14 @@ const createStyles = COLORS =>
       gap: 8,
     },
     logoBadge: {
-      width: 38,
-      height: 38,
-      borderRadius: 13,
-      backgroundColor: COLORS.brand,
+      width: 40,
+      height: 40,
       justifyContent: 'center',
       alignItems: 'center',
-      elevation: 3,
-      shadowColor: COLORS.brand,
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.2,
-      shadowRadius: 4,
-    },
-    logoIcon: {
-      fontSize: 18,
     },
     logoImage: {
-      width: 24,
-      height: 24,
+      width: 40,
+      height: 40,
     },
     brandTitle: {
       fontSize: 20,
