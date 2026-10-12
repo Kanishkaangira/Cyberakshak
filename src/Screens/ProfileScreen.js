@@ -234,12 +234,7 @@ export default function ProfileScreen({ navigation }) {
               icon="information-circle-outline"
               title={t('profile.aboutApp')}
               last
-              onPress={() =>
-                Alert.alert(
-                  t('profile.aboutTitle'),
-                  t('profile.aboutMessage')
-                )
-              }
+              onPress={() => navigation.navigate('AboutApp')}
             />
           </View>
 
