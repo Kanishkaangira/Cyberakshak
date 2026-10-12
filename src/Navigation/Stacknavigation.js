@@ -6,6 +6,7 @@ import AuthStack from './AuthStack';
 import ChatbotScreen from '../Screens/ChatbotScreen';
 import FraudEducationScreen from '../Screens/FraudEducationScreen';
 import NotificationsScreen from '../Screens/NotificationsScreen';
+import AboutAppScreen from '../Screens/AboutAppScreen';
 import ProfileSetupScreen from '../Screens/Auth/ProfileSetupScreen';
 import { supabase, isSupabaseConfigured } from '../services/supabaseClient';
 import { REQUIRE_AUTH } from '../config/secrets';
@@ -99,6 +100,13 @@ export default function Stacknavigation() {
           <Stack.Screen
             name="Notifications"
             component={NotificationsScreen}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen
+            name="AboutApp"
+            component={AboutAppScreen}
             options={{
               animation: 'slide_from_right',
             }}
